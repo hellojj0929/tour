@@ -234,16 +234,22 @@ const BreakoutGame = () => {
             }
         }
 
-        if (ballRef.current.x + ballRef.current.dx > canvas.width - BALL_RADIUS || ballRef.current.x + ballRef.current.dx < BALL_RADIUS) {
-            ballRef.current.dx = -ballRef.current.dx;
+        if (ballRef.current.x + ballRef.current.dx > canvas.width - BALL_RADIUS) {
+            ballRef.current.dx = -Math.abs(ballRef.current.dx);
+        } else if (ballRef.current.x + ballRef.current.dx < BALL_RADIUS) {
+            ballRef.current.dx = Math.abs(ballRef.current.dx);
         }
+
         if (ballRef.current.y + ballRef.current.dy < BALL_RADIUS) {
-            ballRef.current.dy = -ballRef.current.dy;
-        } else if (ballRef.current.y + ballRef.current.dy > canvas.height - BALL_RADIUS - 10) {
-            if (ballRef.current.x > paddleRef.current.x && ballRef.current.x < paddleRef.current.x + PADDLE_WIDTH) {
-                if (ballRef.current.y < canvas.height - 10) {
-                    ballRef.current.dy = -ballRef.current.dy;
-                    ballRef.current.dx += (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
+            ballRef.current.dy = Math.abs(ballRef.current.dy);
+        } else if (ballRef.current.y + ballRef.current.dy > canvas.height - PADDLE_HEIGHT - 10 - BALL_RADIUS) {
+            // Check if ball is horizontally above the paddle
+            if (ballRef.current.x > paddleRef.current.x - 5 && ballRef.current.x < paddleRef.current.x + PADDLE_WIDTH + 5) {
+                // Only bounce if it's coming from above
+                if (ballRef.current.dy > 0 && ballRef.current.y <= canvas.height - PADDLE_HEIGHT - 10) {
+                    ballRef.current.dy = -Math.abs(ballRef.current.dy);
+                    const deltaX = (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
+                    ballRef.current.dx = Math.max(-8, Math.min(8, ballRef.current.dx + deltaX)); // Cap horizontal speed
                     hitTimerRef.current = 45;
                 }
             } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
