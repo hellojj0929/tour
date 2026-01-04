@@ -20,13 +20,13 @@ const BreakoutGame = () => {
     const PADDLE_HEIGHT = 70;
     const PADDLE_WIDTH = 130;
     const BALL_RADIUS = 10;
-    const BRICK_ROW_COUNT = 5;
-    const BRICK_COLUMN_COUNT = 9;
+    const BRICK_ROW_COUNT = 6;
+    const BRICK_COLUMN_COUNT = 10;
     const BRICK_WIDTH = 60;
-    const BRICK_HEIGHT = 60;
-    const BRICK_PADDING = 8;
+    const BRICK_HEIGHT = 45;
+    const BRICK_PADDING = 2;
     const BRICK_OFFSET_TOP = 40;
-    const BRICK_OFFSET_LEFT = 15;
+    const BRICK_OFFSET_LEFT = 10;
 
     const BREAD_EMOJIS = ['🍞', '🥐', '🥖', '🥨', '🥯', '🥞', '🍩', '🧁', '🍰'];
 
@@ -122,21 +122,11 @@ const BreakoutGame = () => {
                     b.x = brickX;
                     b.y = brickY;
 
-                    // Draw a soft circle background for emojis
-                    ctx.beginPath();
-                    ctx.arc(brickX + BRICK_WIDTH / 2, brickY + BRICK_HEIGHT / 2, BRICK_WIDTH / 2, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.closePath();
-
-                    // Draw Emoji
-                    ctx.font = '40px sans-serif';
+                    // Draw Emoji directly on background (Transparent)
+                    ctx.font = '45px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(b.emoji, brickX + BRICK_WIDTH / 2, brickY + BRICK_HEIGHT / 2 + 3);
+                    ctx.fillText(b.emoji, brickX + BRICK_WIDTH / 2, brickY + BRICK_HEIGHT / 2);
                 }
             }
         }
