@@ -6,11 +6,19 @@ import paddleImage from '../assets/paddle_custom.png';
 import paddleHitImage from '../assets/paddle_hit.png';
 import gameBgImage from '../assets/game_bg.png';
 
+// Pororo & Friends Characters
+import charPororo from '../assets/char_pororo.png';
+import charCrong from '../assets/char_crong.png';
+import charLoopy from '../assets/char_loopy.png';
+import charEddy from '../assets/char_eddy.png';
+import charPetty from '../assets/char_petty.png';
+
 const BreakoutGame = () => {
     const canvasRef = useRef(null);
     const paddleImgRef = useRef(null);
     const paddleHitImgRef = useRef(null);
     const bgImgRef = useRef(null);
+    const charImgsRef = useRef([]);
     const hitTimerRef = useRef(0);
     const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER, WON
     const [score, setScore] = useState(0);
@@ -22,11 +30,11 @@ const BreakoutGame = () => {
     const BALL_RADIUS = 8;
     const BRICK_ROW_COUNT = 5;
     const BRICK_COLUMN_COUNT = 7;
-    const BRICK_WIDTH = 75;
-    const BRICK_HEIGHT = 20;
-    const BRICK_PADDING = 10;
+    const BRICK_WIDTH = 60; // Adjusted for characters
+    const BRICK_HEIGHT = 60; // Square icons
+    const BRICK_PADDING = 15;
     const BRICK_OFFSET_TOP = 40;
-    const BRICK_OFFSET_LEFT = 35;
+    const BRICK_OFFSET_LEFT = 60;
 
     const requestRef = useRef();
     const paddleRef = useRef({ x: 0 });
@@ -35,21 +43,23 @@ const BreakoutGame = () => {
 
     // Load assets
     useEffect(() => {
-        const img = new Image();
-        img.src = paddleImage;
-        img.onload = () => {
-            paddleImgRef.current = img;
+        const loadImg = (src) => {
+            const img = new Image();
+            img.src = src;
+            return img;
         };
-        const hitImg = new Image();
-        hitImg.src = paddleHitImage;
-        hitImg.onload = () => {
-            paddleHitImgRef.current = hitImg;
-        };
-        const bgImg = new Image();
-        bgImg.src = gameBgImage;
-        bgImg.onload = () => {
-            bgImgRef.current = bgImg;
-        };
+
+        paddleImgRef.current = loadImg(paddleImage);
+        paddleHitImgRef.current = loadImg(paddleHitImage);
+        bgImgRef.current = loadImg(gameBgImage);
+
+        charImgsRef.current = [
+            loadImg(charPororo),
+            loadImg(charCrong),
+            loadImg(charLoopy),
+            loadImg(charEddy),
+            loadImg(charPetty)
+        ];
     }, []);
 
     // Initialize bricks
@@ -84,15 +94,14 @@ const BreakoutGame = () => {
         // Draw Background Image
         if (bgImgRef.current) {
             ctx.drawImage(bgImgRef.current, 0, 0, canvas.width, canvas.height);
-            // Add a slight white overlay to make bricks more visible
             ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         } else {
-            ctx.fillStyle = '#f0f9ff'; // Light sky blue fallback
+            ctx.fillStyle = '#f0f9ff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Draw Bricks
+        // Draw Bricks (Characters)
         for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
             for (let r = 0; r < BRICK_ROW_COUNT; r++) {
                 const b = bricksRef.current[c][r];
@@ -102,28 +111,17 @@ const BreakoutGame = () => {
                     b.x = brickX;
                     b.y = brickY;
 
-                    const gradient = ctx.createLinearGradient(brickX, brickY, brickX, brickY + BRICK_HEIGHT);
-                    // Brighter, candy-like colors
-                    const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF9F43', '#1DD1A1'];
-                    gradient.addColorStop(0, colors[r]);
-                    gradient.addColorStop(1, colors[r]);
-
-                    ctx.beginPath();
-                    ctx.roundRect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT, 4);
-                    ctx.fillStyle = gradient;
-                    // Add subtle glow to bricks
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = colors[r];
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.closePath();
-
-                    ctx.beginPath();
-                    ctx.roundRect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT, 4);
-                    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    ctx.closePath();
+                    const charImg = charImgsRef.current[r % charImgsRef.current.length];
+                    if (charImg && charImg.complete) {
+                        ctx.drawImage(charImg, brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT);
+                    } else {
+                        // Fallback fallback
+                        ctx.beginPath();
+                        ctx.roundRect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT, 10);
+                        ctx.fillStyle = '#ddd';
+                        ctx.fill();
+                        ctx.closePath();
+                    }
                 }
             }
         }
@@ -131,7 +129,7 @@ const BreakoutGame = () => {
         // Draw Ball
         ctx.beginPath();
         ctx.arc(ballRef.current.x, ballRef.current.y, BALL_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = "#FF4757"; // Vibrant red ball
+        ctx.fillStyle = "#FF4757";
         ctx.shadowBlur = 15;
         ctx.shadowColor = "rgba(255, 71, 87, 0.5)";
         ctx.fill();
@@ -144,7 +142,6 @@ const BreakoutGame = () => {
             : paddleImgRef.current;
 
         if (currentImg) {
-            // Draw a subtle shadow for the kids
             ctx.shadowBlur = 20;
             ctx.shadowColor = 'rgba(0,0,0,0.2)';
             ctx.drawImage(
@@ -184,12 +181,11 @@ const BreakoutGame = () => {
         if (ballRef.current.y + ballRef.current.dy < BALL_RADIUS) {
             ballRef.current.dy = -ballRef.current.dy;
         } else if (ballRef.current.y + ballRef.current.dy > canvas.height - BALL_RADIUS - 10) {
-            // Paddle Collision
             if (ballRef.current.x > paddleRef.current.x && ballRef.current.x < paddleRef.current.x + PADDLE_WIDTH) {
                 if (ballRef.current.y < canvas.height - 10) {
                     ballRef.current.dy = -ballRef.current.dy;
                     ballRef.current.dx += (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
-                    hitTimerRef.current = 45; // Show hit image for 45 frames (approx 0.75s)
+                    hitTimerRef.current = 45;
                 }
             } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
                 setGameState('GAMEOVER');
@@ -254,7 +250,6 @@ const BreakoutGame = () => {
 
     return (
         <div className="min-h-screen bg-[#f0f9ff] text-slate-800 flex flex-col items-center p-8 font-sans overflow-hidden">
-            {/* Soft decorative circles for a friendly look */}
             <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-sky-200/50 rounded-full blur-[100px] -z-10"></div>
             <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-orange-100/50 rounded-full blur-[100px] -z-10"></div>
 
@@ -290,7 +285,7 @@ const BreakoutGame = () => {
                         {gameState === 'START' && (
                             <div className="bg-white/80 p-10 rounded-[3rem] shadow-xl border border-white">
                                 <h2 className="text-4xl font-black mb-4 tracking-tighter text-sky-500 uppercase">뽀로로 마을 대모험</h2>
-                                <p className="text-slate-600 mb-8 font-medium">아이들과 함께 블록을 깨보아요! ❄️</p>
+                                <p className="text-slate-600 mb-8 font-medium">칭구들을 구해주세여! ❄️</p>
                                 <button
                                     onClick={startGame}
                                     className="bg-sky-500 hover:bg-sky-600 text-white px-10 py-5 rounded-[2.5rem] font-black tracking-widest text-lg shadow-xl shadow-sky-200 transition-all active:scale-95 flex items-center gap-3"
@@ -313,8 +308,8 @@ const BreakoutGame = () => {
                         )}
                         {gameState === 'WON' && (
                             <div className="bg-white/80 p-10 rounded-[3rem] shadow-xl border border-white">
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-500">와! 성공이에요!</h2>
-                                <p className="text-slate-600 mb-8 font-medium">모든 블록을 다 깨뜨렸어요! 🎉</p>
+                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-400">와! 성공이에요!</h2>
+                                <p className="text-slate-600 mb-8 font-medium">모든 칭구들을 만났어요! 🎉</p>
                                 <button
                                     onClick={startGame}
                                     className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm shadow-xl shadow-sky-200 transition-all active:scale-95"
