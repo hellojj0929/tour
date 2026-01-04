@@ -20,12 +20,12 @@ const BreakoutGame = () => {
     const PADDLE_HEIGHT = 70;
     const PADDLE_WIDTH = 130;
     const BALL_RADIUS = 10;
-    const BRICK_ROW_COUNT = 4;
+    const BRICK_ROW_COUNT = 3;
     const BRICK_COLUMN_COUNT = 10;
     const BRICK_WIDTH = 60;
     const BRICK_HEIGHT = 60;
     const BRICK_PADDING = 4;
-    const BRICK_OFFSET_TOP = 40;
+    const BRICK_OFFSET_TOP = 25;
     const BRICK_OFFSET_LEFT = 10;
 
     const BREAD_EMOJIS = ['🍞', '🥐', '🥖', '🥨', '🥯', '🥞', '🍩', '🧁', '🍰'];
