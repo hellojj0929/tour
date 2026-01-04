@@ -25,20 +25,20 @@ const BreakoutGame = () => {
     const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('breakoutHighScore') || '0'));
 
     // Game constants
-    const PADDLE_HEIGHT = 80;
-    const PADDLE_WIDTH = 160;
-    const BALL_RADIUS = 8;
-    const BRICK_ROW_COUNT = 5;
+    const PADDLE_HEIGHT = 70;
+    const PADDLE_WIDTH = 130;
+    const BALL_RADIUS = 10;
+    const BRICK_ROW_COUNT = 3; // Fewer rows but larger icons
     const BRICK_COLUMN_COUNT = 7;
-    const BRICK_WIDTH = 60; // Adjusted for characters
-    const BRICK_HEIGHT = 60; // Square icons
-    const BRICK_PADDING = 15;
+    const BRICK_WIDTH = 75;
+    const BRICK_HEIGHT = 75;
+    const BRICK_PADDING = 8;
     const BRICK_OFFSET_TOP = 40;
-    const BRICK_OFFSET_LEFT = 60;
+    const BRICK_OFFSET_LEFT = 30; // Closer to centered
 
     const requestRef = useRef();
     const paddleRef = useRef({ x: 0 });
-    const ballRef = useRef({ x: 0, y: 0, dx: 2.5, dy: -2.5 });
+    const ballRef = useRef({ x: 0, y: 0, dx: 3, dy: -3 });
     const bricksRef = useRef([]);
 
     // Load assets
