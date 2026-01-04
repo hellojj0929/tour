@@ -3,10 +3,13 @@ import { ArrowLeft, RefreshCw, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import paddleImage from '../assets/paddle_custom.png';
+import paddleHitImage from '../assets/paddle_hit.png';
 
 const BreakoutGame = () => {
     const canvasRef = useRef(null);
     const paddleImgRef = useRef(null);
+    const paddleHitImgRef = useRef(null);
+    const hitTimerRef = useRef(0);
     const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER, WON
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('breakoutHighScore') || '0'));
@@ -28,12 +31,17 @@ const BreakoutGame = () => {
     const ballRef = useRef({ x: 0, y: 0, dx: 4, dy: -4 });
     const bricksRef = useRef([]);
 
-    // Load paddle image
+    // Load paddle images
     useEffect(() => {
         const img = new Image();
         img.src = paddleImage;
         img.onload = () => {
             paddleImgRef.current = img;
+        };
+        const hitImg = new Image();
+        hitImg.src = paddleHitImage;
+        hitImg.onload = () => {
+            paddleHitImgRef.current = hitImg;
         };
     }, []);
 
@@ -108,14 +116,19 @@ const BreakoutGame = () => {
         ctx.closePath();
 
         // Draw Paddle (Image)
-        if (paddleImgRef.current) {
+        const currentImg = (hitTimerRef.current > 0 && paddleHitImgRef.current)
+            ? paddleHitImgRef.current
+            : paddleImgRef.current;
+
+        if (currentImg) {
             ctx.drawImage(
-                paddleImgRef.current,
+                currentImg,
                 paddleRef.current.x,
                 canvas.height - PADDLE_HEIGHT - 10,
                 PADDLE_WIDTH,
                 PADDLE_HEIGHT
             );
+            if (hitTimerRef.current > 0) hitTimerRef.current--;
         } else {
             ctx.beginPath();
             ctx.roundRect(paddleRef.current.x, canvas.height - 20, PADDLE_WIDTH, 10, 6);
@@ -155,6 +168,7 @@ const BreakoutGame = () => {
                 if (ballRef.current.y < canvas.height - 10) {
                     ballRef.current.dy = -ballRef.current.dy;
                     ballRef.current.dx += (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
+                    hitTimerRef.current = 10; // Show hit image for 10 frames
                 }
             } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
                 setGameState('GAMEOVER');
