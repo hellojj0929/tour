@@ -43,22 +43,53 @@ const BreakoutGame = () => {
 
     // Load assets
     useEffect(() => {
-        const loadImg = (src) => {
+        const removeWhiteBackground = (img) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                // Remove pixels that are almost white
+                if (data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235) {
+                    data[i + 3] = 0;
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+            return canvas;
+        };
+
+        const loadImg = (src, isChar = false, index = -1) => {
             const img = new Image();
             img.src = src;
+            img.onload = () => {
+                if (isChar && index !== -1) {
+                    charImgsRef.current[index] = removeWhiteBackground(img);
+                }
+            };
             return img;
         };
 
-        paddleImgRef.current = loadImg(paddleImage);
-        paddleHitImgRef.current = loadImg(paddleHitImage);
+        const loadPaddle = (src, ref) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = () => {
+                ref.current = removeWhiteBackground(img);
+            };
+        };
+
+        loadPaddle(paddleImage, paddleImgRef);
+        loadPaddle(paddleHitImage, paddleHitImgRef);
         bgImgRef.current = loadImg(gameBgImage);
 
         charImgsRef.current = [
-            loadImg(charPororo),
-            loadImg(charCrong),
-            loadImg(charLoopy),
-            loadImg(charEddy),
-            loadImg(charPetty)
+            loadImg(charPororo, true, 0),
+            loadImg(charCrong, true, 1),
+            loadImg(charLoopy, true, 2),
+            loadImg(charEddy, true, 3),
+            loadImg(charPetty, true, 4)
         ];
     }, []);
 
@@ -112,7 +143,8 @@ const BreakoutGame = () => {
                     b.y = brickY;
 
                     const charImg = charImgsRef.current[r % charImgsRef.current.length];
-                    if (charImg && charImg.complete) {
+                    const isReady = charImg && (charImg instanceof HTMLCanvasElement || charImg.complete);
+                    if (isReady) {
                         ctx.drawImage(charImg, brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT);
                     } else {
                         // Fallback fallback
