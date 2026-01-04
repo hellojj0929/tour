@@ -2,15 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, RefreshCw, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import paddleImage from '../assets/paddle_custom.png';
+
 const BreakoutGame = () => {
     const canvasRef = useRef(null);
+    const paddleImgRef = useRef(null);
     const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER, WON
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('breakoutHighScore') || '0'));
 
     // Game constants
-    const PADDLE_HEIGHT = 12;
-    const PADDLE_WIDTH = 100;
+    const PADDLE_HEIGHT = 60;
+    const PADDLE_WIDTH = 80;
     const BALL_RADIUS = 8;
     const BRICK_ROW_COUNT = 5;
     const BRICK_COLUMN_COUNT = 7;
@@ -24,6 +27,15 @@ const BreakoutGame = () => {
     const paddleRef = useRef({ x: 0 });
     const ballRef = useRef({ x: 0, y: 0, dx: 4, dy: -4 });
     const bricksRef = useRef([]);
+
+    // Load paddle image
+    useEffect(() => {
+        const img = new Image();
+        img.src = paddleImage;
+        img.onload = () => {
+            paddleImgRef.current = img;
+        };
+    }, []);
 
     // Initialize bricks
     const initBricks = () => {
@@ -41,7 +53,7 @@ const BreakoutGame = () => {
         paddleRef.current.x = (canvas.width - PADDLE_WIDTH) / 2;
         ballRef.current = {
             x: canvas.width / 2,
-            y: canvas.height - 30,
+            y: canvas.height - 40 - PADDLE_HEIGHT,
             dx: 4 * (Math.random() > 0.5 ? 1 : -1),
             dy: -4
         };
@@ -58,11 +70,12 @@ const BreakoutGame = () => {
         // Draw Bricks
         for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
             for (let r = 0; r < BRICK_ROW_COUNT; r++) {
-                if (bricksRef.current[c][r].status === 1) {
+                const b = bricksRef.current[c][r];
+                if (b.status === 1) {
                     const brickX = c * (BRICK_WIDTH + BRICK_PADDING) + BRICK_OFFSET_LEFT;
                     const brickY = r * (BRICK_HEIGHT + BRICK_PADDING) + BRICK_OFFSET_TOP;
-                    bricksRef.current[c][r].x = brickX;
-                    bricksRef.current[c][r].y = brickY;
+                    b.x = brickX;
+                    b.y = brickY;
 
                     const gradient = ctx.createLinearGradient(brickX, brickY, brickX, brickY + BRICK_HEIGHT);
                     const colors = ['#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6'];
@@ -75,7 +88,6 @@ const BreakoutGame = () => {
                     ctx.fill();
                     ctx.closePath();
 
-                    // Subtle border
                     ctx.beginPath();
                     ctx.roundRect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT, 4);
                     ctx.strokeStyle = 'rgba(255,255,255,0.1)';
@@ -92,21 +104,27 @@ const BreakoutGame = () => {
         ctx.shadowBlur = 15;
         ctx.shadowColor = "#fff";
         ctx.fill();
-        ctx.shadowBlur = 0; // Reset shadow
+        ctx.shadowBlur = 0;
         ctx.closePath();
 
-        // Draw Paddle
-        const paddleGradient = ctx.createLinearGradient(paddleRef.current.x, 0, paddleRef.current.x + PADDLE_WIDTH, 0);
-        paddleGradient.addColorStop(0, '#6366f1');
-        paddleGradient.addColorStop(1, '#a855f7');
+        // Draw Paddle (Image)
+        if (paddleImgRef.current) {
+            ctx.drawImage(
+                paddleImgRef.current,
+                paddleRef.current.x,
+                canvas.height - PADDLE_HEIGHT - 10,
+                PADDLE_WIDTH,
+                PADDLE_HEIGHT
+            );
+        } else {
+            ctx.beginPath();
+            ctx.roundRect(paddleRef.current.x, canvas.height - 20, PADDLE_WIDTH, 10, 6);
+            ctx.fillStyle = '#6366f1';
+            ctx.fill();
+            ctx.closePath();
+        }
 
-        ctx.beginPath();
-        ctx.roundRect(paddleRef.current.x, canvas.height - PADDLE_HEIGHT - 10, PADDLE_WIDTH, PADDLE_HEIGHT, 6);
-        ctx.fillStyle = paddleGradient;
-        ctx.fill();
-        ctx.closePath();
-
-        // Collision Detection
+        // Brick Collision
         for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
             for (let r = 0; r < BRICK_ROW_COUNT; r++) {
                 const b = bricksRef.current[c][r];
@@ -132,17 +150,18 @@ const BreakoutGame = () => {
         if (ballRef.current.y + ballRef.current.dy < BALL_RADIUS) {
             ballRef.current.dy = -ballRef.current.dy;
         } else if (ballRef.current.y + ballRef.current.dy > canvas.height - BALL_RADIUS - 10) {
+            // Paddle Collision
             if (ballRef.current.x > paddleRef.current.x && ballRef.current.x < paddleRef.current.x + PADDLE_WIDTH) {
-                ballRef.current.dy = -ballRef.current.dy;
-                // Add paddle speed influence
-                ballRef.current.dx += (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
-            } else {
+                if (ballRef.current.y < canvas.height - 10) {
+                    ballRef.current.dy = -ballRef.current.dy;
+                    ballRef.current.dx += (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
+                }
+            } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
                 setGameState('GAMEOVER');
                 return;
             }
         }
 
-        // Move Ball
         ballRef.current.x += ballRef.current.dx;
         ballRef.current.y += ballRef.current.dy;
 
@@ -231,20 +250,20 @@ const BreakoutGame = () => {
                     <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
                         {gameState === 'START' && (
                             <>
-                                <h2 className="text-4xl font-black mb-4 tracking-tighter">READY?</h2>
-                                <p className="text-slate-400 mb-8 font-medium">마우스로 바를 움직여 공을 튕겨보세요!</p>
+                                <h2 className="text-4xl font-black mb-4 tracking-tighter text-indigo-400 uppercase">Super Kid Mode</h2>
+                                <p className="text-slate-400 mb-8 font-medium italic">"공을 놓치지 마세요!"</p>
                                 <button
                                     onClick={startGame}
                                     className="bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-3xl font-black tracking-widest text-sm shadow-xl shadow-indigo-500/30 transition-all active:scale-95"
                                 >
-                                    START GAME
+                                    GAME START
                                 </button>
                             </>
                         )}
                         {gameState === 'GAMEOVER' && (
                             <>
                                 <h2 className="text-5xl font-black mb-2 tracking-tighter text-pink-500">GAME OVER</h2>
-                                <p className="text-slate-400 mb-8 font-medium">아쉽습니다! 다시 도전해보세요.</p>
+                                <p className="text-slate-400 mb-8 font-medium">다시 한번 해봐요!</p>
                                 <button
                                     onClick={startGame}
                                     className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-8 py-4 rounded-3xl font-black tracking-widest text-sm border border-slate-600 transition-all active:scale-95"
@@ -255,16 +274,14 @@ const BreakoutGame = () => {
                         )}
                         {gameState === 'WON' && (
                             <>
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-400">YOU WON!</h2>
-                                <p className="text-slate-400 mb-8 font-medium">모든 블록을 제거했습니다! 대단해요.</p>
-                                <div className="flex gap-4">
-                                    <button
-                                        onClick={startGame}
-                                        className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-3xl font-black tracking-widest text-sm shadow-xl transition-all active:scale-95"
-                                    >
-                                        PLAY AGAIN
-                                    </button>
-                                </div>
+                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-400">VICTORY!</h2>
+                                <p className="text-slate-400 mb-8 font-medium">대단해요! 미션을 완료했습니다.</p>
+                                <button
+                                    onClick={startGame}
+                                    className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-3xl font-black tracking-widest text-sm shadow-xl transition-all active:scale-95"
+                                >
+                                    PLAY AGAIN
+                                </button>
                             </>
                         )}
                     </div>
@@ -272,10 +289,9 @@ const BreakoutGame = () => {
             </div>
 
             <div className="mt-8 text-slate-500 text-xs font-bold tracking-[0.3em] uppercase opacity-50">
-                Move mouse to control paddle
+                Move mouse to control Super Kid
             </div>
 
-            {/* Background glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[100px]"></div>
         </div>
     );
