@@ -13,7 +13,7 @@ const BreakoutGame = () => {
 
     // Game constants
     const PADDLE_HEIGHT = 80;
-    const PADDLE_WIDTH = 120;
+    const PADDLE_WIDTH = 160;
     const BALL_RADIUS = 8;
     const BRICK_ROW_COUNT = 5;
     const BRICK_COLUMN_COUNT = 7;
