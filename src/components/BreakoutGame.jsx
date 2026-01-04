@@ -20,11 +20,11 @@ const BreakoutGame = () => {
     const PADDLE_HEIGHT = 70;
     const PADDLE_WIDTH = 130;
     const BALL_RADIUS = 10;
-    const BRICK_ROW_COUNT = 6;
+    const BRICK_ROW_COUNT = 4;
     const BRICK_COLUMN_COUNT = 10;
     const BRICK_WIDTH = 60;
-    const BRICK_HEIGHT = 45;
-    const BRICK_PADDING = 2;
+    const BRICK_HEIGHT = 60;
+    const BRICK_PADDING = 4;
     const BRICK_OFFSET_TOP = 40;
     const BRICK_OFFSET_LEFT = 10;
 
@@ -123,10 +123,11 @@ const BreakoutGame = () => {
                     b.y = brickY;
 
                     // Draw Emoji directly on background (Transparent)
-                    ctx.font = '45px sans-serif';
+                    ctx.shadowBlur = 0; // Ensure no shadow blur is causing fuzziness
+                    ctx.font = '48px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(b.emoji, brickX + BRICK_WIDTH / 2, brickY + BRICK_HEIGHT / 2);
+                    ctx.fillText(b.emoji, Math.floor(brickX + BRICK_WIDTH / 2), Math.floor(brickY + BRICK_HEIGHT / 2));
                 }
             }
         }
