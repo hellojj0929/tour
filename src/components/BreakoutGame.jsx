@@ -6,19 +6,11 @@ import paddleImage from '../assets/paddle_custom.png';
 import paddleHitImage from '../assets/paddle_hit.png';
 import gameBgImage from '../assets/game_bg.png';
 
-// Pororo & Friends Characters
-import charPororo from '../assets/char_pororo.png';
-import charCrong from '../assets/char_crong.png';
-import charLoopy from '../assets/char_loopy.png';
-import charEddy from '../assets/char_eddy.png';
-import charPetty from '../assets/char_petty.png';
-
 const BreakoutGame = () => {
     const canvasRef = useRef(null);
     const paddleImgRef = useRef(null);
     const paddleHitImgRef = useRef(null);
     const bgImgRef = useRef(null);
-    const charImgsRef = useRef([]);
     const hitTimerRef = useRef(0);
     const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER, WON
     const [score, setScore] = useState(0);
@@ -28,13 +20,15 @@ const BreakoutGame = () => {
     const PADDLE_HEIGHT = 70;
     const PADDLE_WIDTH = 130;
     const BALL_RADIUS = 10;
-    const BRICK_ROW_COUNT = 3; // Fewer rows but larger icons
-    const BRICK_COLUMN_COUNT = 7;
-    const BRICK_WIDTH = 75;
-    const BRICK_HEIGHT = 75;
+    const BRICK_ROW_COUNT = 5;
+    const BRICK_COLUMN_COUNT = 9;
+    const BRICK_WIDTH = 60;
+    const BRICK_HEIGHT = 60;
     const BRICK_PADDING = 8;
     const BRICK_OFFSET_TOP = 40;
-    const BRICK_OFFSET_LEFT = 30; // Closer to centered
+    const BRICK_OFFSET_LEFT = 15;
+
+    const BREAD_EMOJIS = ['🍞', '🥐', '🥖', '🥨', '🥯', '🥞', '🍩', '🧁', '🍰'];
 
     const requestRef = useRef();
     const paddleRef = useRef({ x: 0 });
@@ -52,24 +46,12 @@ const BreakoutGame = () => {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
-                // Remove pixels that are almost white
                 if (data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235) {
                     data[i + 3] = 0;
                 }
             }
             ctx.putImageData(imageData, 0, 0);
             return canvas;
-        };
-
-        const loadImg = (src, isChar = false, index = -1) => {
-            const img = new Image();
-            img.src = src;
-            img.onload = () => {
-                if (isChar && index !== -1) {
-                    charImgsRef.current[index] = removeWhiteBackground(img);
-                }
-            };
-            return img;
         };
 
         const loadPaddle = (src, ref) => {
@@ -82,24 +64,20 @@ const BreakoutGame = () => {
 
         loadPaddle(paddleImage, paddleImgRef);
         loadPaddle(paddleHitImage, paddleHitImgRef);
-        bgImgRef.current = loadImg(gameBgImage);
 
-        charImgsRef.current = [
-            loadImg(charPororo, true, 0),
-            loadImg(charCrong, true, 1),
-            loadImg(charLoopy, true, 2),
-            loadImg(charEddy, true, 3),
-            loadImg(charPetty, true, 4)
-        ];
+        const bgImg = new Image();
+        bgImg.src = gameBgImage;
+        bgImg.onload = () => {
+            bgImgRef.current = bgImg;
+        };
     }, []);
 
-    // Initialize bricks
     const initBricks = () => {
         const bricks = [];
         for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
             bricks[c] = [];
             for (let r = 0; r < BRICK_ROW_COUNT; r++) {
-                bricks[c][r] = { x: 0, y: 0, status: 1 };
+                bricks[c][r] = { x: 0, y: 0, status: 1, emoji: BREAD_EMOJIS[(c + r) % BREAD_EMOJIS.length] };
             }
         }
         return bricks;
@@ -110,8 +88,8 @@ const BreakoutGame = () => {
         ballRef.current = {
             x: canvas.width / 2,
             y: canvas.height - 40 - PADDLE_HEIGHT,
-            dx: 2.5 * (Math.random() > 0.5 ? 1 : -1),
-            dy: -2.5
+            dx: 3 * (Math.random() > 0.5 ? 1 : -1),
+            dy: -3
         };
         bricksRef.current = initBricks();
         setScore(0);
@@ -122,17 +100,19 @@ const BreakoutGame = () => {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
 
-        // Draw Background Image
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Background
         if (bgImgRef.current) {
             ctx.drawImage(bgImgRef.current, 0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         } else {
-            ctx.fillStyle = '#f0f9ff';
+            ctx.fillStyle = '#fef3c7'; // Warm bread-like yellow
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Draw Bricks (Characters)
+        // Draw Bricks (Bread Emojis)
         for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
             for (let r = 0; r < BRICK_ROW_COUNT; r++) {
                 const b = bricksRef.current[c][r];
@@ -142,18 +122,21 @@ const BreakoutGame = () => {
                     b.x = brickX;
                     b.y = brickY;
 
-                    const charImg = charImgsRef.current[r % charImgsRef.current.length];
-                    const isReady = charImg && (charImg instanceof HTMLCanvasElement || charImg.complete);
-                    if (isReady) {
-                        ctx.drawImage(charImg, brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT);
-                    } else {
-                        // Fallback fallback
-                        ctx.beginPath();
-                        ctx.roundRect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT, 10);
-                        ctx.fillStyle = '#ddd';
-                        ctx.fill();
-                        ctx.closePath();
-                    }
+                    // Draw a soft circle background for emojis
+                    ctx.beginPath();
+                    ctx.arc(brickX + BRICK_WIDTH / 2, brickY + BRICK_HEIGHT / 2, BRICK_WIDTH / 2, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.closePath();
+
+                    // Draw Emoji
+                    ctx.font = '40px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(b.emoji, brickX + BRICK_WIDTH / 2, brickY + BRICK_HEIGHT / 2 + 3);
                 }
             }
         }
@@ -161,9 +144,9 @@ const BreakoutGame = () => {
         // Draw Ball
         ctx.beginPath();
         ctx.arc(ballRef.current.x, ballRef.current.y, BALL_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = "#FF4757";
+        ctx.fillStyle = "#fbbf24"; // Honey yellow ball
         ctx.shadowBlur = 15;
-        ctx.shadowColor = "rgba(255, 71, 87, 0.5)";
+        ctx.shadowColor = "rgba(251, 191, 36, 0.5)";
         ctx.fill();
         ctx.shadowBlur = 0;
         ctx.closePath();
@@ -175,7 +158,7 @@ const BreakoutGame = () => {
 
         if (currentImg) {
             ctx.shadowBlur = 20;
-            ctx.shadowColor = 'rgba(0,0,0,0.2)';
+            ctx.shadowColor = 'rgba(0,0,0,0.1)';
             ctx.drawImage(
                 currentImg,
                 paddleRef.current.x,
@@ -187,7 +170,7 @@ const BreakoutGame = () => {
             if (hitTimerRef.current > 0) hitTimerRef.current--;
         }
 
-        // Brick Collision
+        // Collision detection
         for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
             for (let r = 0; r < BRICK_ROW_COUNT; r++) {
                 const b = bricksRef.current[c][r];
@@ -206,7 +189,6 @@ const BreakoutGame = () => {
             }
         }
 
-        // Wall Collision
         if (ballRef.current.x + ballRef.current.dx > canvas.width - BALL_RADIUS || ballRef.current.x + ballRef.current.dx < BALL_RADIUS) {
             ballRef.current.dx = -ballRef.current.dx;
         }
@@ -228,7 +210,6 @@ const BreakoutGame = () => {
         ballRef.current.x += ballRef.current.dx;
         ballRef.current.y += ballRef.current.dy;
 
-        // Check Win
         let activeBricks = 0;
         for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
             for (let r = 0; r < BRICK_ROW_COUNT; r++) {
@@ -281,23 +262,23 @@ const BreakoutGame = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#f0f9ff] text-slate-800 flex flex-col items-center p-8 font-sans overflow-hidden">
-            <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-sky-200/50 rounded-full blur-[100px] -z-10"></div>
-            <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-orange-100/50 rounded-full blur-[100px] -z-10"></div>
+        <div className="min-h-screen bg-orange-50 text-slate-800 flex flex-col items-center p-8 font-sans overflow-hidden">
+            <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-orange-200/50 rounded-full blur-[100px] -z-10"></div>
+            <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-yellow-100/50 rounded-full blur-[100px] -z-10"></div>
 
             <div className="max-w-3xl w-full flex justify-between items-center mb-8 relative z-10">
-                <Link to="/game" className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors bg-white/50 px-4 py-2 rounded-2xl backdrop-blur-sm border border-white/50 shadow-sm">
+                <Link to="/game" className="flex items-center gap-2 text-orange-700 hover:text-orange-900 transition-colors bg-white/50 px-4 py-2 rounded-2xl backdrop-blur-sm border border-orange-100 shadow-sm">
                     <ArrowLeft size={20} />
-                    <span className="font-bold tracking-tight">EXIT</span>
+                    <span className="font-bold tracking-tight uppercase">Exit</span>
                 </Link>
                 <div className="flex gap-4">
-                    <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white shadow-sm font-black tracking-tighter flex items-center gap-2">
-                        <span className="text-sky-500 text-xs uppercase tracking-widest">Score</span>
+                    <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2">
+                        <span className="text-orange-500 text-xs uppercase tracking-widest">Score</span>
                         <span className="text-xl text-slate-700">{score}</span>
                     </div>
-                    <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white shadow-sm font-black tracking-tighter flex items-center gap-2">
+                    <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2">
                         <Trophy size={16} className="text-yellow-500" />
-                        <span className="text-sky-500 text-xs uppercase tracking-widest">Best</span>
+                        <span className="text-orange-500 text-xs uppercase tracking-widest">Best</span>
                         <span className="text-xl text-slate-700">{highScore}</span>
                     </div>
                 </div>
@@ -308,43 +289,43 @@ const BreakoutGame = () => {
                     ref={canvasRef}
                     width={640}
                     height={480}
-                    className="bg-white rounded-[2.5rem] border-4 border-white shadow-2xl cursor-none overflow-hidden"
+                    className="bg-white/80 rounded-[2.5rem] border-4 border-white shadow-2xl cursor-none overflow-hidden"
                     onMouseMove={handleMouseMove}
                 />
 
                 {gameState !== 'PLAYING' && (
-                    <div className="absolute inset-0 bg-white/40 backdrop-blur-md rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
+                    <div className="absolute inset-0 bg-orange-900/10 backdrop-blur-md rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
                         {gameState === 'START' && (
-                            <div className="bg-white/80 p-10 rounded-[3rem] shadow-xl border border-white">
-                                <h2 className="text-4xl font-black mb-4 tracking-tighter text-sky-500 uppercase">뽀로로 마을 대모험</h2>
-                                <p className="text-slate-600 mb-8 font-medium">칭구들을 구해주세여! ❄️</p>
+                            <div className="bg-white/90 p-10 rounded-[3rem] shadow-xl border border-orange-100">
+                                <h2 className="text-4xl font-black mb-4 tracking-tighter text-orange-600 uppercase">고베 빵 축제! 🥐</h2>
+                                <p className="text-slate-600 mb-8 font-medium">아이들과 함께 맛있는 빵을 모아보아요! ✨</p>
                                 <button
                                     onClick={startGame}
-                                    className="bg-sky-500 hover:bg-sky-600 text-white px-10 py-5 rounded-[2.5rem] font-black tracking-widest text-lg shadow-xl shadow-sky-200 transition-all active:scale-95 flex items-center gap-3"
+                                    className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-5 rounded-[2.5rem] font-black tracking-widest text-lg shadow-xl shadow-orange-200 transition-all active:scale-95 flex items-center gap-3"
                                 >
-                                    시작하기! 🚀
+                                    빵 모으기 시작! 🥯
                                 </button>
                             </div>
                         )}
                         {gameState === 'GAMEOVER' && (
-                            <div className="bg-white/80 p-10 rounded-[3rem] shadow-xl border border-white">
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-orange-500">다시 해볼까요?</h2>
-                                <p className="text-slate-600 mb-8 font-medium">눈밭에 공이 빠졌어요! ❄️</p>
+                            <div className="bg-white/90 p-10 rounded-[3rem] shadow-xl border border-orange-100">
+                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-red-500">아쉬워요!</h2>
+                                <p className="text-slate-600 mb-8 font-medium">빵을 떨어뜨렸어요. 다시 도전해볼까요?</p>
                                 <button
                                     onClick={startGame}
                                     className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm border border-white shadow-sm transition-all active:scale-95"
                                 >
-                                    <RefreshCw size={18} /> 한 번 더!
+                                    <RefreshCw size={18} /> 재도전!
                                 </button>
                             </div>
                         )}
                         {gameState === 'WON' && (
-                            <div className="bg-white/80 p-10 rounded-[3rem] shadow-xl border border-white">
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-400">와! 성공이에요!</h2>
-                                <p className="text-slate-600 mb-8 font-medium">모든 칭구들을 만났어요! 🎉</p>
+                            <div className="bg-white/90 p-10 rounded-[3rem] shadow-xl border border-orange-100">
+                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-500">미션 성공! 🎉</h2>
+                                <p className="text-slate-600 mb-8 font-medium">모든 빵을 맛있게 모았어요! 대단해요!</p>
                                 <button
                                     onClick={startGame}
-                                    className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm shadow-xl shadow-sky-200 transition-all active:scale-95"
+                                    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm shadow-xl shadow-orange-200 transition-all active:scale-95"
                                 >
                                     다시 하기
                                 </button>
@@ -354,8 +335,8 @@ const BreakoutGame = () => {
                 )}
             </div>
 
-            <div className="mt-10 text-slate-400 text-sm font-bold tracking-[0.2em] uppercase bg-white/50 px-6 py-2 rounded-full backdrop-blur-sm border border-white">
-                마우스로 아이들을 움직여 공을 튕겨주세요! ✨
+            <div className="mt-10 text-orange-400 text-sm font-bold tracking-[0.2em] uppercase bg-white/50 px-6 py-2 rounded-full backdrop-blur-sm border border-orange-50">
+                마우스로 아이들을 움직여 빵을 튕겨주세요! ✨
             </div>
         </div>
     );
