@@ -4,11 +4,13 @@ import { Link } from 'react-router-dom';
 
 import paddleImage from '../assets/paddle_custom.png';
 import paddleHitImage from '../assets/paddle_hit.png';
+import gameBgImage from '../assets/game_bg.png';
 
 const BreakoutGame = () => {
     const canvasRef = useRef(null);
     const paddleImgRef = useRef(null);
     const paddleHitImgRef = useRef(null);
+    const bgImgRef = useRef(null);
     const hitTimerRef = useRef(0);
     const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER, WON
     const [score, setScore] = useState(0);
@@ -31,7 +33,7 @@ const BreakoutGame = () => {
     const ballRef = useRef({ x: 0, y: 0, dx: 2.5, dy: -2.5 });
     const bricksRef = useRef([]);
 
-    // Load paddle images
+    // Load assets
     useEffect(() => {
         const img = new Image();
         img.src = paddleImage;
@@ -42,6 +44,11 @@ const BreakoutGame = () => {
         hitImg.src = paddleHitImage;
         hitImg.onload = () => {
             paddleHitImgRef.current = hitImg;
+        };
+        const bgImg = new Image();
+        bgImg.src = gameBgImage;
+        bgImg.onload = () => {
+            bgImgRef.current = bgImg;
         };
     }, []);
 
@@ -73,7 +80,17 @@ const BreakoutGame = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Background Image
+        if (bgImgRef.current) {
+            ctx.drawImage(bgImgRef.current, 0, 0, canvas.width, canvas.height);
+            // Add a slight white overlay to make bricks more visible
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+            ctx.fillStyle = '#f0f9ff'; // Light sky blue fallback
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
         // Draw Bricks
         for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
@@ -86,19 +103,25 @@ const BreakoutGame = () => {
                     b.y = brickY;
 
                     const gradient = ctx.createLinearGradient(brickX, brickY, brickX, brickY + BRICK_HEIGHT);
-                    const colors = ['#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6'];
+                    // Brighter, candy-like colors
+                    const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF9F43', '#1DD1A1'];
                     gradient.addColorStop(0, colors[r]);
                     gradient.addColorStop(1, colors[r]);
 
                     ctx.beginPath();
                     ctx.roundRect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT, 4);
                     ctx.fillStyle = gradient;
+                    // Add subtle glow to bricks
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = colors[r];
                     ctx.fill();
+                    ctx.shadowBlur = 0;
                     ctx.closePath();
 
                     ctx.beginPath();
                     ctx.roundRect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT, 4);
-                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+                    ctx.lineWidth = 2;
                     ctx.stroke();
                     ctx.closePath();
                 }
@@ -108,9 +131,9 @@ const BreakoutGame = () => {
         // Draw Ball
         ctx.beginPath();
         ctx.arc(ballRef.current.x, ballRef.current.y, BALL_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = "#FF4757"; // Vibrant red ball
         ctx.shadowBlur = 15;
-        ctx.shadowColor = "#fff";
+        ctx.shadowColor = "rgba(255, 71, 87, 0.5)";
         ctx.fill();
         ctx.shadowBlur = 0;
         ctx.closePath();
@@ -121,6 +144,9 @@ const BreakoutGame = () => {
             : paddleImgRef.current;
 
         if (currentImg) {
+            // Draw a subtle shadow for the kids
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'rgba(0,0,0,0.2)';
             ctx.drawImage(
                 currentImg,
                 paddleRef.current.x,
@@ -128,13 +154,8 @@ const BreakoutGame = () => {
                 PADDLE_WIDTH,
                 PADDLE_HEIGHT
             );
+            ctx.shadowBlur = 0;
             if (hitTimerRef.current > 0) hitTimerRef.current--;
-        } else {
-            ctx.beginPath();
-            ctx.roundRect(paddleRef.current.x, canvas.height - 20, PADDLE_WIDTH, 10, 6);
-            ctx.fillStyle = '#6366f1';
-            ctx.fill();
-            ctx.closePath();
         }
 
         // Brick Collision
@@ -232,21 +253,25 @@ const BreakoutGame = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center p-8 font-sans overflow-hidden">
-            <div className="max-w-3xl w-full flex justify-between items-center mb-8">
-                <Link to="/game" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+        <div className="min-h-screen bg-[#f0f9ff] text-slate-800 flex flex-col items-center p-8 font-sans overflow-hidden">
+            {/* Soft decorative circles for a friendly look */}
+            <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-sky-200/50 rounded-full blur-[100px] -z-10"></div>
+            <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-orange-100/50 rounded-full blur-[100px] -z-10"></div>
+
+            <div className="max-w-3xl w-full flex justify-between items-center mb-8 relative z-10">
+                <Link to="/game" className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors bg-white/50 px-4 py-2 rounded-2xl backdrop-blur-sm border border-white/50 shadow-sm">
                     <ArrowLeft size={20} />
-                    <span className="font-bold tracking-tight">EXIT GAME</span>
+                    <span className="font-bold tracking-tight">EXIT</span>
                 </Link>
                 <div className="flex gap-4">
-                    <div className="bg-slate-800/80 px-4 py-2 rounded-2xl border border-slate-700 font-black tracking-tighter flex items-center gap-2">
-                        <span className="text-indigo-400 text-xs uppercase tracking-widest">Score</span>
-                        <span className="text-xl">{score}</span>
+                    <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white shadow-sm font-black tracking-tighter flex items-center gap-2">
+                        <span className="text-sky-500 text-xs uppercase tracking-widest">Score</span>
+                        <span className="text-xl text-slate-700">{score}</span>
                     </div>
-                    <div className="bg-slate-800/80 px-4 py-2 rounded-2xl border border-slate-700 font-black tracking-tighter flex items-center gap-2">
+                    <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white shadow-sm font-black tracking-tighter flex items-center gap-2">
                         <Trophy size={16} className="text-yellow-500" />
-                        <span className="text-indigo-400 text-xs uppercase tracking-widest">Best</span>
-                        <span className="text-xl">{highScore}</span>
+                        <span className="text-sky-500 text-xs uppercase tracking-widest">Best</span>
+                        <span className="text-xl text-slate-700">{highScore}</span>
                     </div>
                 </div>
             </div>
@@ -256,57 +281,55 @@ const BreakoutGame = () => {
                     ref={canvasRef}
                     width={640}
                     height={480}
-                    className="bg-[#1e293b] rounded-[2.5rem] border border-slate-700 shadow-2xl cursor-none"
+                    className="bg-white rounded-[2.5rem] border-4 border-white shadow-2xl cursor-none overflow-hidden"
                     onMouseMove={handleMouseMove}
                 />
 
                 {gameState !== 'PLAYING' && (
-                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
+                    <div className="absolute inset-0 bg-white/40 backdrop-blur-md rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
                         {gameState === 'START' && (
-                            <>
-                                <h2 className="text-4xl font-black mb-4 tracking-tighter text-indigo-400 uppercase">Super Kid Mode</h2>
-                                <p className="text-slate-400 mb-8 font-medium italic">"공을 놓치지 마세요!"</p>
+                            <div className="bg-white/80 p-10 rounded-[3rem] shadow-xl border border-white">
+                                <h2 className="text-4xl font-black mb-4 tracking-tighter text-sky-500 uppercase">뽀로로 마을 대모험</h2>
+                                <p className="text-slate-600 mb-8 font-medium">아이들과 함께 블록을 깨보아요! ❄️</p>
                                 <button
                                     onClick={startGame}
-                                    className="bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-3xl font-black tracking-widest text-sm shadow-xl shadow-indigo-500/30 transition-all active:scale-95"
+                                    className="bg-sky-500 hover:bg-sky-600 text-white px-10 py-5 rounded-[2.5rem] font-black tracking-widest text-lg shadow-xl shadow-sky-200 transition-all active:scale-95 flex items-center gap-3"
                                 >
-                                    GAME START
+                                    시작하기! 🚀
                                 </button>
-                            </>
+                            </div>
                         )}
                         {gameState === 'GAMEOVER' && (
-                            <>
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-pink-500">GAME OVER</h2>
-                                <p className="text-slate-400 mb-8 font-medium">다시 한번 해봐요!</p>
+                            <div className="bg-white/80 p-10 rounded-[3rem] shadow-xl border border-white">
+                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-orange-500">다시 해볼까요?</h2>
+                                <p className="text-slate-600 mb-8 font-medium">눈밭에 공이 빠졌어요! ❄️</p>
                                 <button
                                     onClick={startGame}
-                                    className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-8 py-4 rounded-3xl font-black tracking-widest text-sm border border-slate-600 transition-all active:scale-95"
+                                    className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm border border-white shadow-sm transition-all active:scale-95"
                                 >
-                                    <RefreshCw size={18} /> RETRY
+                                    <RefreshCw size={18} /> 한 번 더!
                                 </button>
-                            </>
+                            </div>
                         )}
                         {gameState === 'WON' && (
-                            <>
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-400">VICTORY!</h2>
-                                <p className="text-slate-400 mb-8 font-medium">대단해요! 미션을 완료했습니다.</p>
+                            <div className="bg-white/80 p-10 rounded-[3rem] shadow-xl border border-white">
+                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-500">와! 성공이에요!</h2>
+                                <p className="text-slate-600 mb-8 font-medium">모든 블록을 다 깨뜨렸어요! 🎉</p>
                                 <button
                                     onClick={startGame}
-                                    className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-3xl font-black tracking-widest text-sm shadow-xl transition-all active:scale-95"
+                                    className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm shadow-xl shadow-sky-200 transition-all active:scale-95"
                                 >
-                                    PLAY AGAIN
+                                    다시 하기
                                 </button>
-                            </>
+                            </div>
                         )}
                     </div>
                 )}
             </div>
 
-            <div className="mt-8 text-slate-500 text-xs font-bold tracking-[0.3em] uppercase opacity-50">
-                Move mouse to control Super Kid
+            <div className="mt-10 text-slate-400 text-sm font-bold tracking-[0.2em] uppercase bg-white/50 px-6 py-2 rounded-full backdrop-blur-sm border border-white">
+                마우스로 아이들을 움직여 공을 튕겨주세요! ✨
             </div>
-
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[100px]"></div>
         </div>
     );
 };
