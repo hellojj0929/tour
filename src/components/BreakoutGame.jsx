@@ -28,7 +28,7 @@ const BreakoutGame = () => {
 
     const requestRef = useRef();
     const paddleRef = useRef({ x: 0 });
-    const ballRef = useRef({ x: 0, y: 0, dx: 4, dy: -4 });
+    const ballRef = useRef({ x: 0, y: 0, dx: 2.5, dy: -2.5 });
     const bricksRef = useRef([]);
 
     // Load paddle images
@@ -62,8 +62,8 @@ const BreakoutGame = () => {
         ballRef.current = {
             x: canvas.width / 2,
             y: canvas.height - 40 - PADDLE_HEIGHT,
-            dx: 4 * (Math.random() > 0.5 ? 1 : -1),
-            dy: -4
+            dx: 2.5 * (Math.random() > 0.5 ? 1 : -1),
+            dy: -2.5
         };
         bricksRef.current = initBricks();
         setScore(0);
