@@ -94,66 +94,65 @@ const BreakoutGame = () => {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw Warm Gradient Background (Bakery Garden Vibe)
-        const bgGradient = ctx.createRadialGradient(
-            canvas.width / 2, canvas.height / 3, 50,
-            canvas.width / 2, canvas.height / 2, canvas.width / 1.2
-        );
-        bgGradient.addColorStop(0, '#fffbeb'); // light cream
-        bgGradient.addColorStop(1, '#ffedd5'); // soft orange
+        // Draw Fairytale Gradient Background
+        const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        bgGradient.addColorStop(0, '#fff1f2'); // Soft pink sky
+        bgGradient.addColorStop(1, '#ffedd5'); // Warm orange hills
         ctx.fillStyle = bgGradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // --- NEW: Draw Minimalist Bakery Village Background ---
-        const drawVillage = () => {
+        // --- NEW: Draw Fairytale Donut Forest Background ---
+        const drawDonutForest = () => {
             ctx.save();
-            ctx.globalAlpha = 0.3; // Very light to prevent clashing
+            ctx.globalAlpha = 0.4; // Soft transparency
 
-            // Rolling Hills
+            const drawDonutTree = (x, y, scale, donutColor) => {
+                // Trunk
+                ctx.fillStyle = '#78350f';
+                ctx.fillRect(x - 5 * scale, y, 10 * scale, 40 * scale);
+
+                // Donut Foliage
+                ctx.beginPath();
+                ctx.arc(x, y, 25 * scale, 0, Math.PI * 2);
+                ctx.fillStyle = donutColor;
+                ctx.fill();
+
+                // Donut Hole
+                ctx.beginPath();
+                ctx.arc(x, y, 8 * scale, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff1f2'; // Match top sky color
+                ctx.fill();
+
+                // Sprinkles
+                const sprinkleColors = ['#fb7185', '#60a5fa', '#facc15', '#ffffff'];
+                for (let i = 0; i < 8; i++) {
+                    ctx.fillStyle = sprinkleColors[i % 4];
+                    ctx.beginPath();
+                    ctx.arc(x + Math.cos(i) * 15 * scale, y + Math.sin(i) * 15 * scale, 2 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            };
+
+            // Draw trees along the bottom corners
+            drawDonutTree(80, 420, 1.2, '#f472b6'); // Pink donut tree left
+            drawDonutTree(160, 440, 0.8, '#fbbf24'); // Yellow donut tree left
+
+            drawDonutTree(canvas.width - 80, 420, 1.3, '#c084fc'); // Purple donut tree right
+            drawDonutTree(canvas.width - 150, 445, 0.9, '#fb7185'); // Strawberry donut tree right
+
+            // Magic Grass
             ctx.fillStyle = '#fde68a';
             ctx.beginPath();
-            ctx.ellipse(150, 480, 400, 100, 0, 0, Math.PI * 2);
+            ctx.ellipse(150, 500, 300, 60, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.ellipse(500, 480, 350, 80, 0, 0, Math.PI * 2);
+            ctx.ellipse(canvas.width - 150, 500, 300, 60, 0, 0, Math.PI * 2);
             ctx.fill();
-
-            // Left Side Bakery House
-            ctx.fillStyle = '#f87171'; // Red roof
-            ctx.beginPath();
-            ctx.moveTo(30, 480);
-            ctx.lineTo(80, 420);
-            ctx.lineTo(130, 480);
-            ctx.fill();
-            ctx.fillStyle = '#fff7ed'; // House body
-            ctx.fillRect(45, 445, 70, 35);
-            ctx.fillStyle = '#78350f'; // Door
-            ctx.fillRect(75, 460, 10, 20);
-
-            // Right Side Mill/Shop
-            ctx.fillStyle = '#60a5fa'; // Blue roof
-            ctx.beginPath();
-            ctx.moveTo(500, 480);
-            ctx.lineTo(550, 400);
-            ctx.lineTo(600, 480);
-            ctx.fill();
-            ctx.fillStyle = '#fff7ed';
-            ctx.fillRect(520, 435, 60, 45);
-
-            // Floating "Baking Aroma" (Cute small clouds/spirals)
-            ctx.strokeStyle = '#fbbf24';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(100, 400, 10, 0, Math.PI, true);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(540, 380, 15, 0, Math.PI, true);
-            ctx.stroke();
 
             ctx.restore();
         };
 
-        drawVillage();
+        drawDonutForest();
 
         // Draw Subtle Deco - soft sparkles
         ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
@@ -340,8 +339,8 @@ const BreakoutGame = () => {
                     <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
                         {gameState === 'START' && (
                             <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-orange-50">
-                                <h2 className="text-4xl font-black mb-4 tracking-tighter text-orange-600 uppercase">고베 빵 페스티벌! 🥐</h2>
-                                <p className="text-slate-600 mb-8 font-medium">따끈따끈한 빵들을 구해주세여! ✨</p>
+                                <h2 className="text-4xl font-black mb-4 tracking-tighter text-pink-500 uppercase">도넛 숲의 모험! 🍩</h2>
+                                <p className="text-slate-600 mb-8 font-medium">신비로운 도넛 숲에서 빵 친구들을 구해주세여! ✨</p>
                                 <button
                                     onClick={startGame}
                                     className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-5 rounded-[2.5rem] font-black tracking-widest text-lg shadow-xl shadow-orange-100 transition-all active:scale-95 flex items-center gap-3"
@@ -364,8 +363,8 @@ const BreakoutGame = () => {
                         )}
                         {gameState === 'WON' && (
                             <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-emerald-50">
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-500">성공! 🎉</h2>
-                                <p className="text-slate-600 mb-8 font-medium">모든 빵을 맛있게 모았어용!</p>
+                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-500">대성공! 🎉</h2>
+                                <p className="text-slate-600 mb-8 font-medium">도넛 숲의 모든 빵 친구들을 구했어요! 🍩✨</p>
                                 <button
                                     onClick={startGame}
                                     className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm shadow-xl shadow-orange-100 transition-all active:scale-95"
