@@ -12,8 +12,8 @@ const BreakoutGame = () => {
     const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('breakoutHighScore') || '0'));
 
     // Game constants
-    const PADDLE_HEIGHT = 60;
-    const PADDLE_WIDTH = 80;
+    const PADDLE_HEIGHT = 80;
+    const PADDLE_WIDTH = 120;
     const BALL_RADIUS = 8;
     const BRICK_ROW_COUNT = 5;
     const BRICK_COLUMN_COUNT = 7;
