@@ -104,6 +104,57 @@ const BreakoutGame = () => {
         ctx.fillStyle = bgGradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        // --- NEW: Draw Minimalist Bakery Village Background ---
+        const drawVillage = () => {
+            ctx.save();
+            ctx.globalAlpha = 0.3; // Very light to prevent clashing
+
+            // Rolling Hills
+            ctx.fillStyle = '#fde68a';
+            ctx.beginPath();
+            ctx.ellipse(150, 480, 400, 100, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(500, 480, 350, 80, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Left Side Bakery House
+            ctx.fillStyle = '#f87171'; // Red roof
+            ctx.beginPath();
+            ctx.moveTo(30, 480);
+            ctx.lineTo(80, 420);
+            ctx.lineTo(130, 480);
+            ctx.fill();
+            ctx.fillStyle = '#fff7ed'; // House body
+            ctx.fillRect(45, 445, 70, 35);
+            ctx.fillStyle = '#78350f'; // Door
+            ctx.fillRect(75, 460, 10, 20);
+
+            // Right Side Mill/Shop
+            ctx.fillStyle = '#60a5fa'; // Blue roof
+            ctx.beginPath();
+            ctx.moveTo(500, 480);
+            ctx.lineTo(550, 400);
+            ctx.lineTo(600, 480);
+            ctx.fill();
+            ctx.fillStyle = '#fff7ed';
+            ctx.fillRect(520, 435, 60, 45);
+
+            // Floating "Baking Aroma" (Cute small clouds/spirals)
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(100, 400, 10, 0, Math.PI, true);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(540, 380, 15, 0, Math.PI, true);
+            ctx.stroke();
+
+            ctx.restore();
+        };
+
+        drawVillage();
+
         // Draw Subtle Deco - soft sparkles
         ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
         for (let i = 0; i < 5; i++) {
