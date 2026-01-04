@@ -123,8 +123,10 @@ const BreakoutGame = () => {
                     b.y = brickY;
 
                     // Draw Emoji directly on background (Transparent)
-                    ctx.shadowBlur = 0; // Ensure no shadow blur is causing fuzziness
-                    ctx.font = '48px sans-serif';
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1.0; // Reset alpha to full
+                    ctx.fillStyle = '#000'; // Reset fill style to solid
+                    ctx.font = '54px sans-serif'; // Slightly larger for better visibility
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(b.emoji, Math.floor(brickX + BRICK_WIDTH / 2), Math.floor(brickY + BRICK_HEIGHT / 2));
