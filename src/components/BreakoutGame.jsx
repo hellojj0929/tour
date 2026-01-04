@@ -168,7 +168,7 @@ const BreakoutGame = () => {
                 if (ballRef.current.y < canvas.height - 10) {
                     ballRef.current.dy = -ballRef.current.dy;
                     ballRef.current.dx += (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
-                    hitTimerRef.current = 10; // Show hit image for 10 frames
+                    hitTimerRef.current = 45; // Show hit image for 45 frames (approx 0.75s)
                 }
             } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
                 setGameState('GAMEOVER');
