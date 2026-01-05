@@ -16,8 +16,13 @@ const BreakoutGame = () => {
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('breakoutHighScore') || '0'));
     const [leaderboard, setLeaderboard] = useState(() => {
-        const saved = localStorage.getItem('breakoutLeaderboard');
-        return saved ? JSON.parse(saved) : [];
+        try {
+            const saved = localStorage.getItem('breakoutLeaderboard');
+            const data = saved ? JSON.parse(saved) : [];
+            return Array.isArray(data) ? data : [];
+        } catch (e) {
+            return [];
+        }
     });
     const [playerName, setPlayerName] = useState(() => localStorage.getItem('breakoutPlayerName') || "");
     const [showNameInput, setShowNameInput] = useState(false);
@@ -104,20 +109,37 @@ const BreakoutGame = () => {
 
     const saveScore = () => {
         if (!playerName.trim()) return;
+
         const newEntry = {
-            name: playerName,
+            name: playerName.trim(),
             score: score,
             time: finalTimeRef.current,
             date: new Date().toLocaleDateString('ko-KR')
         };
-        const newLeaderboard = [...leaderboard, newEntry]
+
+        // Update leaderboard: Deduplicate by name and keep best record
+        const updatedList = [...leaderboard];
+        const existingIdx = updatedList.findIndex(e => e.name === newEntry.name);
+
+        if (existingIdx !== -1) {
+            // Only update if the new score is better, or same score with better time
+            const existing = updatedList[existingIdx];
+            if (newEntry.score > existing.score || (newEntry.score === existing.score && newEntry.time < existing.time)) {
+                updatedList[existingIdx] = newEntry;
+            }
+        } else {
+            updatedList.push(newEntry);
+        }
+
+        const sortedList = updatedList
             .sort((a, b) => {
                 if (b.score !== a.score) return b.score - a.score;
-                return (a.time || 999) - (b.time || 999); // Smaller time is better
+                return (a.time || 999) - (b.time || 999);
             })
-            .slice(0, 5); // Keep top 5
-        setLeaderboard(newLeaderboard);
-        localStorage.setItem('breakoutLeaderboard', JSON.stringify(newLeaderboard));
+            .slice(0, 5);
+
+        setLeaderboard(sortedList);
+        localStorage.setItem('breakoutLeaderboard', JSON.stringify(sortedList));
         setShowNameInput(false);
         setGameState('LEADERBOARD');
     };
@@ -454,25 +476,40 @@ const BreakoutGame = () => {
                                     {gameState === 'WON' ? '도넛 숲의 모든 빵 친구들을 구했어요! 🍩✨' : '빵이 바닥에 떨어졌어요! 🥖'}
                                 </p>
                                 {showNameInput ? (
-                                    <div className="bg-orange-50 p-6 rounded-3xl mb-6 animate-in slide-in-from-bottom duration-500">
-                                        <p className="text-orange-600 font-black text-sm mb-3 uppercase tracking-widest">새로운 기록! 저장하시겠습니까?</p>
-                                        <div className="flex flex-col gap-3">
-                                            <p className="font-black text-slate-700 text-xl">{playerName}</p>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={saveScore}
-                                                    className="flex-1 bg-orange-500 text-white px-6 py-3 rounded-2xl font-black hover:bg-orange-600 transition-all"
-                                                >
-                                                    랭킹 등록
-                                                </button>
-                                                <button
-                                                    onClick={() => setShowNameInput(false)}
-                                                    className="px-4 py-3 rounded-2xl font-bold text-slate-400"
-                                                >
-                                                    취소
-                                                </button>
+                                    <div className="bg-orange-50 p-5 md:p-6 rounded-3xl mb-6 animate-in slide-in-from-bottom duration-500 border border-orange-100">
+                                        <div className="flex justify-around mb-4 bg-white/50 py-3 rounded-2xl">
+                                            <div className="text-center">
+                                                <p className="text-[10px] text-orange-400 font-bold uppercase tracking-widest">Score</p>
+                                                <p className="text-xl font-black text-slate-700">{score}</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <p className="text-[10px] text-orange-400 font-bold uppercase tracking-widest">Time</p>
+                                                <p className="text-xl font-black text-slate-700">{gameTime}s</p>
                                             </div>
                                         </div>
+                                        <p className="text-orange-600 font-black text-[10px] mb-2 uppercase tracking-widest">명예의 전당에 등록할 이름</p>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                value={playerName}
+                                                onChange={(e) => setPlayerName(e.target.value)}
+                                                placeholder="닉네임"
+                                                maxLength={10}
+                                                className="flex-1 px-4 py-3 rounded-2xl border-2 border-orange-200 focus:border-orange-500 outline-none font-bold text-sm"
+                                            />
+                                            <button
+                                                onClick={saveScore}
+                                                className="bg-orange-500 text-white px-5 py-3 rounded-2xl font-black hover:bg-orange-600 transition-all shadow-md shadow-orange-100 text-sm"
+                                            >
+                                                등록
+                                            </button>
+                                        </div>
+                                        <button
+                                            onClick={() => setShowNameInput(false)}
+                                            className="mt-3 text-[10px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-tighter"
+                                        >
+                                            등록하지 않고 계속하기
+                                        </button>
                                     </div>
                                 ) : (
                                     <div className="bg-slate-50 py-4 px-6 rounded-3xl mb-6 flex justify-around">
@@ -534,7 +571,7 @@ const BreakoutGame = () => {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-lg md:text-xl font-black text-orange-500 tracking-tighter leading-none">{entry.score}</p>
-                                                    <p className="text-[10px] text-orange-400 font-bold uppercase mt-0.5">{entry.time ? entry.time + 's' : '-'}</p>
+                                                    <p className="text-[10px] text-orange-400 font-bold uppercase mt-0.5">{entry.time !== undefined ? entry.time + 's' : '-'}</p>
                                                 </div>
                                             </div>
                                         ))
