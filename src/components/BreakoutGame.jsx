@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, RefreshCw, Trophy, Users, Medal, ChevronRight } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trophy, Users, Medal, ChevronRight, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import paddleImage from '../assets/paddle_custom.png';
@@ -22,13 +22,14 @@ const BreakoutGame = () => {
     const [playerName, setPlayerName] = useState(() => localStorage.getItem('breakoutPlayerName') || "");
     const [showNameInput, setShowNameInput] = useState(false);
     const [gameTime, setGameTime] = useState(0); // For display
+    const [lives, setLives] = useState(3);
 
     const startTimeRef = useRef(0);
     const finalTimeRef = useRef(0);
 
     // Game constants
     const PADDLE_HEIGHT = 70;
-    const PADDLE_WIDTH = 130;
+    const PADDLE_WIDTH = 160;
     const BALL_RADIUS = 10;
     const BRICK_ROW_COUNT = 3;
     const BRICK_COLUMN_COUNT = 10;
@@ -42,7 +43,7 @@ const BreakoutGame = () => {
 
     const requestRef = useRef();
     const paddleRef = useRef({ x: 0 });
-    const ballRef = useRef({ x: 0, y: 0, dx: 3, dy: -3 });
+    const ballRef = useRef({ x: 0, y: 0, dx: 2.5, dy: -2.5 });
     const bricksRef = useRef([]);
 
     // Load assets and process transparency
@@ -92,11 +93,12 @@ const BreakoutGame = () => {
         ballRef.current = {
             x: canvas.width / 2,
             y: canvas.height - 40 - PADDLE_HEIGHT,
-            dx: 3 * (Math.random() > 0.5 ? 1 : -1),
-            dy: -3
+            dx: 2.5 * (Math.random() > 0.5 ? 1 : -1),
+            dy: -2.5
         };
         bricksRef.current = initBricks();
         setScore(0);
+        setLives(3);
         setGameTime(0);
         startTimeRef.current = Date.now();
         setShowNameInput(false);
@@ -277,6 +279,7 @@ const BreakoutGame = () => {
             }
         }
 
+        // Wall collisions
         if (ballRef.current.x + ballRef.current.dx > canvas.width - BALL_RADIUS) {
             ballRef.current.dx = -Math.abs(ballRef.current.dx);
         } else if (ballRef.current.x + ballRef.current.dx < BALL_RADIUS) {
@@ -286,6 +289,7 @@ const BreakoutGame = () => {
         if (ballRef.current.y + ballRef.current.dy < BALL_RADIUS) {
             ballRef.current.dy = Math.abs(ballRef.current.dy);
         } else if (ballRef.current.y + ballRef.current.dy > canvas.height - PADDLE_HEIGHT - 10 - BALL_RADIUS) {
+            // Paddle collision
             if (ballRef.current.x > paddleRef.current.x - 5 && ballRef.current.x < paddleRef.current.x + PADDLE_WIDTH + 5) {
                 if (ballRef.current.dy > 0 && ballRef.current.y <= canvas.height - PADDLE_HEIGHT - 10) {
                     ballRef.current.dy = -Math.abs(ballRef.current.dy);
@@ -294,11 +298,24 @@ const BreakoutGame = () => {
                     hitTimerRef.current = 45;
                 }
             } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
-                finalTimeRef.current = Math.floor((Date.now() - startTimeRef.current) / 1000);
-                setGameTime(finalTimeRef.current);
-                setGameState('GAMEOVER');
-                setShowNameInput(score >= 50);
-                return;
+                // Ball fell below
+                if (lives > 1) {
+                    setLives(l => l - 1);
+                    ballRef.current = {
+                        x: canvas.width / 2,
+                        y: canvas.height - 40 - PADDLE_HEIGHT,
+                        dx: 2.5 * (Math.random() > 0.5 ? 1 : -1),
+                        dy: -2.5
+                    };
+                    paddleRef.current.x = (canvas.width - PADDLE_WIDTH) / 2;
+                } else {
+                    finalTimeRef.current = Math.floor((Date.now() - startTimeRef.current) / 1000);
+                    setGameTime(finalTimeRef.current);
+                    setLives(0);
+                    setGameState('GAMEOVER');
+                    setShowNameInput(score >= 50);
+                    return;
+                }
             }
         }
 
@@ -382,7 +399,17 @@ const BreakoutGame = () => {
                     <ArrowLeft size={18} className="md:w-5 md:h-5" />
                     <span className="tracking-tight uppercase">Exit</span>
                 </Link>
-                <div className="flex gap-2 md:gap-4">
+                <div className="flex gap-2 md:gap-4 items-center">
+                    <div className="flex gap-1 mr-2 md:mr-4">
+                        {[...Array(3)].map((_, i) => (
+                            <Heart
+                                key={i}
+                                size={20}
+                                className={`transition-all duration-300 ${i < lives ? 'text-pink-500 fill-pink-500' : 'text-slate-200 fill-slate-50'}`}
+                            />
+                        ))}
+                    </div>
+
                     <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2 text-sm md:text-base">
                         <span className="text-orange-500 text-[10px] md:text-xs uppercase tracking-widest">Score</span>
                         <span className="text-slate-700">{score}</span>
