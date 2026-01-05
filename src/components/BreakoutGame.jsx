@@ -112,15 +112,19 @@ const BreakoutGame = () => {
 
     const fetchLeaderboard = async () => {
         try {
+            if (!isSupabaseConfigured) {
+                console.warn("Supabase is not configured. Using local leaderboard only.");
+                return;
+            }
+
             const { data, error } = await supabase
                 .from('breakout_leaderboard')
                 .select('*')
                 .order('score', { ascending: false })
                 .order('time', { ascending: true })
-                .limit(10);
+                .limit(50); // Fetch more records to allow for better local deduplication
 
             if (data) {
-                // Deduplicate by name locally to keep best per person
                 const uniqueData = [];
                 const names = new Set();
                 data.forEach(entry => {
@@ -129,11 +133,14 @@ const BreakoutGame = () => {
                         names.add(entry.name);
                     }
                 });
-                setLeaderboard(uniqueData.slice(0, 5));
-                localStorage.setItem('breakoutLeaderboard', JSON.stringify(uniqueData.slice(0, 5)));
+                const top5 = uniqueData.slice(0, 5);
+                setLeaderboard(top5);
+                localStorage.setItem('breakoutLeaderboard', JSON.stringify(top5));
+            } else if (error) {
+                console.error("Supabase fetch error:", error.message);
             }
         } catch (e) {
-            console.error("Failed to fetch leaderboard from Supabase:", e);
+            console.error("Critical error fetching leaderboard:", e);
         }
     };
 
@@ -144,38 +151,57 @@ const BreakoutGame = () => {
     }, [gameState]);
 
     const saveScore = async () => {
-        if (!playerName.trim() || isSaving) return;
+        const trimmedName = playerName.trim();
+        if (!trimmedName) {
+            alert("랭킹에 등록할 이름을 입력해 주세요! ✨");
+            return;
+        }
+
+        if (isSaving) return;
         setIsSaving(true);
 
         const newEntry = {
-            name: playerName.trim(),
+            name: trimmedName,
             score: score,
             time: finalTimeRef.current || 0,
             date: new Date().toLocaleDateString('ko-KR')
         };
 
-        // 1. Immediate Local Save for instant feedback
+        // 1. Immediate Local Save & UI Transition
+        // Do this first so the user doesn't feel any lag
         const localList = [...leaderboard];
         const existingIdx = localList.findIndex(e => e.name === newEntry.name);
+
+        let shouldUpdateLocal = true;
         if (existingIdx !== -1) {
             const existing = localList[existingIdx];
-            if (newEntry.score > existing.score || (newEntry.score === existing.score && newEntry.time < existing.time)) {
-                localList[existingIdx] = newEntry;
+            // Only update local if it's actually a better score
+            if (newEntry.score < existing.score || (newEntry.score === existing.score && newEntry.time >= existing.time)) {
+                shouldUpdateLocal = false;
             }
-        } else {
-            localList.push(newEntry);
         }
-        const sortedLocal = localList.sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return (a.time || 999) - (b.time || 999);
-        }).slice(0, 5);
 
-        setLeaderboard(sortedLocal);
-        localStorage.setItem('breakoutLeaderboard', JSON.stringify(sortedLocal));
+        if (shouldUpdateLocal) {
+            const updatedList = (existingIdx !== -1)
+                ? localList.map((e, i) => i === existingIdx ? newEntry : e)
+                : [...localList, newEntry];
 
-        // 2. Background Sync with Supabase (if configured)
-        try {
-            if (isSupabaseConfigured) {
+            const sortedLocal = updatedList.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return (a.time || 999) - (b.time || 999);
+            }).slice(0, 5);
+
+            setLeaderboard(sortedLocal);
+            localStorage.setItem('breakoutLeaderboard', JSON.stringify(sortedLocal));
+        }
+
+        // Transition immediately
+        setShowNameInput(false);
+        setGameState('LEADERBOARD');
+
+        // 2. Background Sync with Supabase
+        if (isSupabaseConfigured) {
+            try {
                 const { error } = await supabase.from('breakout_leaderboard').insert([{
                     name: newEntry.name,
                     score: newEntry.score,
@@ -184,15 +210,15 @@ const BreakoutGame = () => {
 
                 if (!error) {
                     await fetchLeaderboard();
+                } else {
+                    console.error("Supabase sync error:", error.message);
                 }
+            } catch (e) {
+                console.error("Supabase connection failed:", e);
             }
-        } catch (e) {
-            console.error("Supabase sync failed:", e);
-        } finally {
-            setIsSaving(false);
-            setShowNameInput(false);
-            setGameState('LEADERBOARD');
         }
+
+        setIsSaving(false);
     };
 
     const resetLeaderboard = async () => {
@@ -626,6 +652,12 @@ const BreakoutGame = () => {
                                 >
                                     <Medal className="text-yellow-500 group-active:scale-110 transition-transform" size={28} />
                                     <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-800 uppercase leading-none">명예의 전당</h2>
+                                    {isSaving && (
+                                        <div className="flex items-center gap-1.5 ml-2 bg-orange-50 px-2 py-1 rounded-full border border-orange-100 animate-pulse">
+                                            <RefreshCw size={10} className="text-orange-400 animate-spin" />
+                                            <span className="text-[10px] font-black text-orange-400 uppercase tracking-tighter">Syncing</span>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex-1 overflow-y-auto space-y-2 mb-4 pr-1 custom-scrollbar">
                                     {leaderboard.length > 0 ? (
