@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, RefreshCw, Trophy, Users, Medal, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 import paddleImage from '../assets/paddle_custom.png';
 import paddleHitImage from '../assets/paddle_hit.png';
@@ -108,47 +109,94 @@ const BreakoutGame = () => {
         setShowNameInput(false);
     };
 
-    const saveScore = () => {
+    const fetchLeaderboard = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('breakout_leaderboard')
+                .select('*')
+                .order('score', { ascending: false })
+                .order('time', { ascending: true })
+                .limit(10);
+
+            if (data) {
+                // Deduplicate by name locally to keep best per person
+                const uniqueData = [];
+                const names = new Set();
+                data.forEach(entry => {
+                    if (!names.has(entry.name)) {
+                        uniqueData.push(entry);
+                        names.add(entry.name);
+                    }
+                });
+                setLeaderboard(uniqueData.slice(0, 5));
+                localStorage.setItem('breakoutLeaderboard', JSON.stringify(uniqueData.slice(0, 5)));
+            }
+        } catch (e) {
+            console.error("Failed to fetch leaderboard from Supabase:", e);
+        }
+    };
+
+    useEffect(() => {
+        if (gameState === 'LEADERBOARD' || gameState === 'START') {
+            fetchLeaderboard();
+        }
+    }, [gameState]);
+
+    const saveScore = async () => {
         if (!playerName.trim()) return;
 
         const newEntry = {
             name: playerName.trim(),
             score: score,
             time: finalTimeRef.current,
-            date: new Date().toLocaleDateString('ko-KR')
         };
 
-        // Update leaderboard: Deduplicate by name and keep best record
-        const updatedList = [...leaderboard];
-        const existingIdx = updatedList.findIndex(e => e.name === newEntry.name);
+        try {
+            // 1. Save to Supabase
+            await supabase.from('breakout_leaderboard').insert([newEntry]);
 
-        if (existingIdx !== -1) {
-            // Only update if the new score is better, or same score with better time
-            const existing = updatedList[existingIdx];
-            if (newEntry.score > existing.score || (newEntry.score === existing.score && newEntry.time < existing.time)) {
-                updatedList[existingIdx] = newEntry;
+            // 2. Refresh local state
+            await fetchLeaderboard();
+        } catch (e) {
+            console.error("Failed to save score to Supabase:", e);
+
+            // Fallback to local only if server fails
+            const updatedList = [...leaderboard];
+            const existingIdx = updatedList.findIndex(e => e.name === newEntry.name);
+            if (existingIdx !== -1) {
+                const existing = updatedList[existingIdx];
+                if (newEntry.score > existing.score || (newEntry.score === existing.score && newEntry.time < existing.time)) {
+                    updatedList[existingIdx] = { ...newEntry, date: new Date().toLocaleDateString('ko-KR') };
+                }
+            } else {
+                updatedList.push({ ...newEntry, date: new Date().toLocaleDateString('ko-KR') });
             }
-        } else {
-            updatedList.push(newEntry);
+            const sortedList = updatedList
+                .sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return (a.time || 999) - (b.time || 999);
+                })
+                .slice(0, 5);
+            setLeaderboard(sortedList);
+            localStorage.setItem('breakoutLeaderboard', JSON.stringify(sortedList));
         }
 
-        const sortedList = updatedList
-            .sort((a, b) => {
-                if (b.score !== a.score) return b.score - a.score;
-                return (a.time || 999) - (b.time || 999);
-            })
-            .slice(0, 5);
-
-        setLeaderboard(sortedList);
-        localStorage.setItem('breakoutLeaderboard', JSON.stringify(sortedList));
         setShowNameInput(false);
         setGameState('LEADERBOARD');
     };
 
-    const resetLeaderboard = () => {
+    const resetLeaderboard = async () => {
         if (window.confirm("정말로 모든 명예의 전당 기록을 초기화할까요? 🧹")) {
-            setLeaderboard([]);
-            localStorage.removeItem('breakoutLeaderboard');
+            try {
+                // Warning: This deletes all records. In a real app, you might want more security.
+                await supabase.from('breakout_leaderboard').delete().neq('id', 0);
+                setLeaderboard([]);
+                localStorage.removeItem('breakoutLeaderboard');
+            } catch (e) {
+                console.error("Failed to reset leaderboard:", e);
+                setLeaderboard([]);
+                localStorage.removeItem('breakoutLeaderboard');
+            }
         }
     };
 
@@ -571,7 +619,9 @@ const BreakoutGame = () => {
                                                     </div>
                                                     <div className="text-left">
                                                         <p className="font-black text-slate-700 leading-none text-sm md:text-base">{entry.name}</p>
-                                                        <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase mt-1">{entry.date}</p>
+                                                        <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase mt-1">
+                                                            {entry.created_at ? new Date(entry.created_at).toLocaleDateString('ko-KR') : entry.date || '-'}
+                                                        </p>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
