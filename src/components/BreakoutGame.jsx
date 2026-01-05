@@ -467,30 +467,30 @@ const BreakoutGame = () => {
                         )}
 
                         {gameState === 'LEADERBOARD' && (
-                            <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-100 max-w-[90%] w-full max-h-[90%] overflow-hidden flex flex-col">
+                            <div className="bg-white p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-100 max-w-[90%] w-full max-h-[90%] overflow-hidden flex flex-col">
                                 <div className="flex items-center justify-center gap-3 mb-6">
                                     <Medal className="text-yellow-500" size={32} />
                                     <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-800 uppercase">명예의 전당</h2>
                                 </div>
 
-                                <div className="flex-1 space-y-2 mb-8">
+                                <div className="flex-1 overflow-y-auto space-y-2 mb-4 pr-1 custom-scrollbar">
                                     {leaderboard.map((entry, idx) => (
-                                        <div key={idx} className={`flex items-center justify-between p-4 rounded-2xl border ${idx === 0 ? 'bg-yellow-50 border-yellow-200' : 'bg-slate-50 border-slate-100'}`}>
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${idx === 0 ? 'bg-yellow-400 text-white' :
-                                                        idx === 1 ? 'bg-slate-300 text-slate-700' :
-                                                            idx === 2 ? 'bg-orange-300 text-white' : 'bg-white text-slate-400'
+                                        <div key={idx} className={`flex items-center justify-between p-3 md:p-4 rounded-2xl border ${idx === 0 ? 'bg-yellow-50 border-yellow-200' : 'bg-slate-50 border-slate-100'}`}>
+                                            <div className="flex items-center gap-3 md:gap-4">
+                                                <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center font-black text-xs md:text-sm ${idx === 0 ? 'bg-yellow-400 text-white' :
+                                                    idx === 1 ? 'bg-slate-300 text-slate-700' :
+                                                        idx === 2 ? 'bg-orange-300 text-white' : 'bg-white text-slate-400'
                                                     }`}>
                                                     {idx + 1}
                                                 </div>
                                                 <div className="text-left">
-                                                    <p className="font-black text-slate-700 leading-none">{entry.name}</p>
-                                                    <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{entry.date}</p>
+                                                    <p className="font-black text-slate-700 leading-none text-sm md:text-base">{entry.name}</p>
+                                                    <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase mt-1">{entry.date}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-xl font-black text-orange-500 tracking-tighter">{entry.score}</p>
-                                                <p className="text-[10px] text-orange-300 font-bold uppercase">Points</p>
+                                                <p className="text-lg md:text-xl font-black text-orange-500 tracking-tighter">{entry.score}</p>
+                                                <p className="text-[9px] md:text-[10px] text-orange-300 font-bold uppercase">Points</p>
                                             </div>
                                         </div>
                                     ))}
@@ -498,7 +498,7 @@ const BreakoutGame = () => {
 
                                 <button
                                     onClick={() => setGameState('START')}
-                                    className="bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95"
+                                    className="flex-shrink-0 bg-slate-800 hover:bg-slate-900 text-white py-4 md:py-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
                                 >
                                     메인으로 돌아가기
                                 </button>
