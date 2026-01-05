@@ -29,6 +29,8 @@ const BreakoutGame = () => {
     const [showNameInput, setShowNameInput] = useState(false);
     const [gameTime, setGameTime] = useState(0); // For display
     const [isSaving, setIsSaving] = useState(false);
+    const [dbStatus, setDbStatus] = useState('checking'); // checking, online, offline, error
+    const [dbError, setDbError] = useState('');
     const resetClickCountRef = useRef(0);
 
     const startTimeRef = useRef(0);
@@ -113,18 +115,25 @@ const BreakoutGame = () => {
     const fetchLeaderboard = async () => {
         try {
             if (!isSupabaseConfigured) {
+                setDbStatus('offline');
                 console.warn("Supabase is not configured. Using local leaderboard only.");
                 return;
             }
 
+            setDbStatus('checking');
             const { data, error } = await supabase
                 .from('breakout_leaderboard')
                 .select('*')
                 .order('score', { ascending: false })
                 .order('time', { ascending: true })
-                .limit(50); // Fetch more records to allow for better local deduplication
+                .limit(50);
 
-            if (data) {
+            if (error) {
+                setDbStatus('error');
+                setDbError(error.message);
+                console.error("Supabase fetch error:", error.message);
+            } else if (data) {
+                setDbStatus('online');
                 const uniqueData = [];
                 const names = new Set();
                 data.forEach(entry => {
@@ -136,10 +145,10 @@ const BreakoutGame = () => {
                 const top5 = uniqueData.slice(0, 5);
                 setLeaderboard(top5);
                 localStorage.setItem('breakoutLeaderboard', JSON.stringify(top5));
-            } else if (error) {
-                console.error("Supabase fetch error:", error.message);
             }
         } catch (e) {
+            setDbStatus('error');
+            setDbError(e.message);
             console.error("Critical error fetching leaderboard:", e);
         }
     };
@@ -559,6 +568,15 @@ const BreakoutGame = () => {
                                         <Medal size={16} /> 명예의 전당 보기
                                     </button>
                                 </div>
+                                <div className="mt-6 flex flex-col items-center gap-2 opacity-40">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Kobe Edition v2.8</p>
+                                    <div className="flex items-center gap-1.5 grayscale">
+                                        <div className={`w-1 h-1 rounded-full ${isSupabaseConfigured ? 'bg-emerald-400' : 'bg-slate-400'}`} />
+                                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">
+                                            {isSupabaseConfigured ? 'Cloud Sync Ready' : 'Local Mode Only'}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         )}
 
@@ -647,18 +665,39 @@ const BreakoutGame = () => {
                         {gameState === 'LEADERBOARD' && (
                             <div className="bg-white p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-100 max-w-[90%] w-full max-h-[90%] overflow-hidden flex flex-col">
                                 <div
-                                    className="flex items-center gap-3 mb-6 px-2 cursor-default select-none group"
+                                    className="flex items-center gap-3 mb-4 px-2 cursor-default select-none group"
                                     onClick={handleTitleClick}
                                 >
                                     <Medal className="text-yellow-500 group-active:scale-110 transition-transform" size={28} />
                                     <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-800 uppercase leading-none">명예의 전당</h2>
-                                    {isSaving && (
-                                        <div className="flex items-center gap-1.5 ml-2 bg-orange-50 px-2 py-1 rounded-full border border-orange-100 animate-pulse">
-                                            <RefreshCw size={10} className="text-orange-400 animate-spin" />
-                                            <span className="text-[10px] font-black text-orange-400 uppercase tracking-tighter">Syncing</span>
-                                        </div>
-                                    )}
+
+                                    {/* Cloud Status Indicator */}
+                                    <div className="flex items-center ml-auto gap-2">
+                                        {dbStatus === 'online' ? (
+                                            <div className="flex items-center gap-1.5 bg-blue-50 px-2 py-1 rounded-full border border-blue-100" title="클라우드 동기화 완료">
+                                                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" />
+                                                <span className="text-[10px] font-black text-blue-500 uppercase tracking-tighter">Shared</span>
+                                            </div>
+                                        ) : dbStatus === 'offline' ? (
+                                            <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-full border border-slate-100" title="로컬 모드 (서버 미설정)">
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Local Only</span>
+                                            </div>
+                                        ) : dbStatus === 'error' ? (
+                                            <div className="flex items-center gap-1.5 bg-red-50 px-2 py-1 rounded-full border border-red-100" title={dbError}>
+                                                <span className="text-[10px] font-black text-red-500 uppercase tracking-tighter">Sync Error</span>
+                                            </div>
+                                        ) : (
+                                            <RefreshCw size={12} className="text-slate-300 animate-spin" />
+                                        )}
+                                    </div>
                                 </div>
+
+                                {dbStatus === 'error' && (
+                                    <div className="mb-4 p-3 bg-red-50 rounded-2xl border border-red-100 text-[10px] text-red-600 font-bold leading-tight">
+                                        ⚠️ 서버 연결 실패: {dbError}
+                                        <br />Vercel 환경 변수가 반영되었는지 확인해 주세요.
+                                    </div>
+                                )}
                                 <div className="flex-1 overflow-y-auto space-y-2 mb-4 pr-1 custom-scrollbar">
                                     {leaderboard.length > 0 ? (
                                         leaderboard.map((entry, idx) => (
