@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, RefreshCw, Trophy, Users, Medal, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 import paddleImage from '../assets/paddle_custom.png';
 import paddleHitImage from '../assets/paddle_hit.png';
@@ -28,6 +28,7 @@ const BreakoutGame = () => {
     const [playerName, setPlayerName] = useState(() => localStorage.getItem('breakoutPlayerName') || "");
     const [showNameInput, setShowNameInput] = useState(false);
     const [gameTime, setGameTime] = useState(0); // For display
+    const [isSaving, setIsSaving] = useState(false);
     const resetClickCountRef = useRef(0);
 
     const startTimeRef = useRef(0);
@@ -143,46 +144,55 @@ const BreakoutGame = () => {
     }, [gameState]);
 
     const saveScore = async () => {
-        if (!playerName.trim()) return;
+        if (!playerName.trim() || isSaving) return;
+        setIsSaving(true);
 
         const newEntry = {
             name: playerName.trim(),
             score: score,
-            time: finalTimeRef.current,
+            time: finalTimeRef.current || 0,
+            date: new Date().toLocaleDateString('ko-KR')
         };
 
-        try {
-            // 1. Save to Supabase
-            await supabase.from('breakout_leaderboard').insert([newEntry]);
-
-            // 2. Refresh local state
-            await fetchLeaderboard();
-        } catch (e) {
-            console.error("Failed to save score to Supabase:", e);
-
-            // Fallback to local only if server fails
-            const updatedList = [...leaderboard];
-            const existingIdx = updatedList.findIndex(e => e.name === newEntry.name);
-            if (existingIdx !== -1) {
-                const existing = updatedList[existingIdx];
-                if (newEntry.score > existing.score || (newEntry.score === existing.score && newEntry.time < existing.time)) {
-                    updatedList[existingIdx] = { ...newEntry, date: new Date().toLocaleDateString('ko-KR') };
-                }
-            } else {
-                updatedList.push({ ...newEntry, date: new Date().toLocaleDateString('ko-KR') });
+        // 1. Immediate Local Save for instant feedback
+        const localList = [...leaderboard];
+        const existingIdx = localList.findIndex(e => e.name === newEntry.name);
+        if (existingIdx !== -1) {
+            const existing = localList[existingIdx];
+            if (newEntry.score > existing.score || (newEntry.score === existing.score && newEntry.time < existing.time)) {
+                localList[existingIdx] = newEntry;
             }
-            const sortedList = updatedList
-                .sort((a, b) => {
-                    if (b.score !== a.score) return b.score - a.score;
-                    return (a.time || 999) - (b.time || 999);
-                })
-                .slice(0, 5);
-            setLeaderboard(sortedList);
-            localStorage.setItem('breakoutLeaderboard', JSON.stringify(sortedList));
+        } else {
+            localList.push(newEntry);
         }
+        const sortedLocal = localList.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return (a.time || 999) - (b.time || 999);
+        }).slice(0, 5);
 
-        setShowNameInput(false);
-        setGameState('LEADERBOARD');
+        setLeaderboard(sortedLocal);
+        localStorage.setItem('breakoutLeaderboard', JSON.stringify(sortedLocal));
+
+        // 2. Background Sync with Supabase (if configured)
+        try {
+            if (isSupabaseConfigured) {
+                const { error } = await supabase.from('breakout_leaderboard').insert([{
+                    name: newEntry.name,
+                    score: newEntry.score,
+                    time: newEntry.time
+                }]);
+
+                if (!error) {
+                    await fetchLeaderboard();
+                }
+            }
+        } catch (e) {
+            console.error("Supabase sync failed:", e);
+        } finally {
+            setIsSaving(false);
+            setShowNameInput(false);
+            setGameState('LEADERBOARD');
+        }
     };
 
     const resetLeaderboard = async () => {
@@ -558,9 +568,17 @@ const BreakoutGame = () => {
                                             />
                                             <button
                                                 onClick={saveScore}
-                                                className="bg-orange-500 text-white px-5 py-3 rounded-2xl font-black hover:bg-orange-600 transition-all shadow-md shadow-orange-100 text-sm"
+                                                disabled={isSaving}
+                                                className={`bg-orange-500 text-white px-5 py-3 rounded-2xl font-black hover:bg-orange-600 transition-all shadow-md shadow-orange-100 text-sm flex items-center gap-2 ${isSaving ? 'opacity-70 cursor-wait' : ''}`}
                                             >
-                                                등록
+                                                {isSaving ? (
+                                                    <>
+                                                        <RefreshCw size={16} className="animate-spin" />
+                                                        저장 중...
+                                                    </>
+                                                ) : (
+                                                    '등록'
+                                                )}
                                             </button>
                                         </div>
                                         <button
