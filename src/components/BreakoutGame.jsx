@@ -268,9 +268,10 @@ const BreakoutGame = () => {
                         ballRef.current.y > b.y &&
                         ballRef.current.y < b.y + BRICK_HEIGHT
                     ) {
-                        ballRef.current.dy = -Math.abs(ballRef.current.dy);
+                        ballRef.current.dy = Math.abs(ballRef.current.dy); // Bounce DOWN
                         b.status = 0;
                         setScore(s => s + 10);
+                        break; // Process only one collision per frame
                     }
                 }
             }
