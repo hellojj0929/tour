@@ -18,13 +18,17 @@ const BreakoutGame = () => {
     const [leaderboard, setLeaderboard] = useState(() => {
         const saved = localStorage.getItem('breakoutLeaderboard');
         return saved ? JSON.parse(saved) : [
-            { name: "빵순이", score: 500, date: "2024.01.01" },
-            { name: "초코짱", score: 450, date: "2024.01.01" },
-            { name: "밀가루러버", score: 300, date: "2024.01.01" }
+            { name: "빵순이", score: 500, time: 45, date: "2024.01.01" },
+            { name: "초코짱", score: 450, time: 50, date: "2024.01.01" },
+            { name: "밀가루러버", score: 300, time: 65, date: "2024.01.01" }
         ];
     });
     const [playerName, setPlayerName] = useState("");
     const [showNameInput, setShowNameInput] = useState(false);
+    const [gameTime, setGameTime] = useState(0); // For display
+
+    const startTimeRef = useRef(0);
+    const finalTimeRef = useRef(0);
 
     // Game constants
     const PADDLE_HEIGHT = 70;
@@ -97,6 +101,8 @@ const BreakoutGame = () => {
         };
         bricksRef.current = initBricks();
         setScore(0);
+        setGameTime(0);
+        startTimeRef.current = Date.now();
         setShowNameInput(false);
     };
 
@@ -105,10 +111,14 @@ const BreakoutGame = () => {
         const newEntry = {
             name: playerName,
             score: score,
+            time: finalTimeRef.current,
             date: new Date().toLocaleDateString('ko-KR')
         };
         const newLeaderboard = [...leaderboard, newEntry]
-            .sort((a, b) => b.score - a.score)
+            .sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return (a.time || 999) - (b.time || 999); // Smaller time is better
+            })
             .slice(0, 5); // Keep top 5
         setLeaderboard(newLeaderboard);
         localStorage.setItem('breakoutLeaderboard', JSON.stringify(newLeaderboard));
@@ -281,6 +291,8 @@ const BreakoutGame = () => {
                     hitTimerRef.current = 45;
                 }
             } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
+                finalTimeRef.current = Math.floor((Date.now() - startTimeRef.current) / 1000);
+                setGameTime(finalTimeRef.current);
                 setGameState('GAMEOVER');
                 setShowNameInput(score >= 50); // Show name input if score is decent
                 return;
@@ -297,6 +309,8 @@ const BreakoutGame = () => {
             }
         }
         if (activeBricks === 0) {
+            finalTimeRef.current = Math.floor((Date.now() - startTimeRef.current) / 1000);
+            setGameTime(finalTimeRef.current);
             setGameState('WON');
             setShowNameInput(true);
             return;
@@ -443,9 +457,16 @@ const BreakoutGame = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="bg-slate-50 py-4 px-6 rounded-3xl mb-6">
-                                        <p className="text-slate-400 text-xs uppercase tracking-widest mb-1 font-bold">Current Score</p>
-                                        <p className="text-3xl font-black text-slate-700">{score}</p>
+                                    <div className="bg-slate-50 py-4 px-6 rounded-3xl mb-6 flex justify-around">
+                                        <div>
+                                            <p className="text-slate-400 text-xs uppercase tracking-widest mb-1 font-bold">Score</p>
+                                            <p className="text-3xl font-black text-slate-700">{score}</p>
+                                        </div>
+                                        <div className="w-px h-10 bg-slate-200 self-center" />
+                                        <div>
+                                            <p className="text-slate-400 text-xs uppercase tracking-widest mb-1 font-bold">Time</p>
+                                            <p className="text-3xl font-black text-slate-700">{gameTime}s</p>
+                                        </div>
                                     </div>
                                 )}
 
@@ -489,8 +510,8 @@ const BreakoutGame = () => {
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-lg md:text-xl font-black text-orange-500 tracking-tighter">{entry.score}</p>
-                                                <p className="text-[9px] md:text-[10px] text-orange-300 font-bold uppercase">Points</p>
+                                                <p className="text-lg md:text-xl font-black text-orange-500 tracking-tighter leading-none">{entry.score}</p>
+                                                <p className="text-[10px] text-orange-400 font-bold uppercase mt-0.5">{entry.time ? entry.time + 's' : '-'}</p>
                                             </div>
                                         </div>
                                     ))}
