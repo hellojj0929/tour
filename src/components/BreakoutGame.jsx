@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, RefreshCw, Trophy } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trophy, Users, Medal, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import paddleImage from '../assets/paddle_custom.png';
@@ -10,9 +10,21 @@ const BreakoutGame = () => {
     const paddleImgRef = useRef(null);
     const paddleHitImgRef = useRef(null);
     const hitTimerRef = useRef(0);
-    const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER, WON
+
+    // States
+    const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER, WON, LEADERBOARD
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('breakoutHighScore') || '0'));
+    const [leaderboard, setLeaderboard] = useState(() => {
+        const saved = localStorage.getItem('breakoutLeaderboard');
+        return saved ? JSON.parse(saved) : [
+            { name: "빵순이", score: 500, date: "2024.01.01" },
+            { name: "초코짱", score: 450, date: "2024.01.01" },
+            { name: "밀가루러버", score: 300, date: "2024.01.01" }
+        ];
+    });
+    const [playerName, setPlayerName] = useState("");
+    const [showNameInput, setShowNameInput] = useState(false);
 
     // Game constants
     const PADDLE_HEIGHT = 70;
@@ -85,6 +97,24 @@ const BreakoutGame = () => {
         };
         bricksRef.current = initBricks();
         setScore(0);
+        setShowNameInput(false);
+    };
+
+    const saveScore = () => {
+        if (!playerName.trim()) return;
+        const newEntry = {
+            name: playerName,
+            score: score,
+            date: new Date().toLocaleDateString('ko-KR')
+        };
+        const newLeaderboard = [...leaderboard, newEntry]
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 5); // Keep top 5
+        setLeaderboard(newLeaderboard);
+        localStorage.setItem('breakoutLeaderboard', JSON.stringify(newLeaderboard));
+        setPlayerName("");
+        setShowNameInput(false);
+        setGameState('LEADERBOARD');
     };
 
     const draw = () => {
@@ -226,7 +256,7 @@ const BreakoutGame = () => {
                         ballRef.current.y > b.y &&
                         ballRef.current.y < b.y + BRICK_HEIGHT
                     ) {
-                        ballRef.current.dy = -ballRef.current.dy;
+                        ballRef.current.dy = -Math.abs(ballRef.current.dy);
                         b.status = 0;
                         setScore(s => s + 10);
                     }
@@ -243,17 +273,16 @@ const BreakoutGame = () => {
         if (ballRef.current.y + ballRef.current.dy < BALL_RADIUS) {
             ballRef.current.dy = Math.abs(ballRef.current.dy);
         } else if (ballRef.current.y + ballRef.current.dy > canvas.height - PADDLE_HEIGHT - 10 - BALL_RADIUS) {
-            // Check if ball is horizontally above the paddle
             if (ballRef.current.x > paddleRef.current.x - 5 && ballRef.current.x < paddleRef.current.x + PADDLE_WIDTH + 5) {
-                // Only bounce if it's coming from above
                 if (ballRef.current.dy > 0 && ballRef.current.y <= canvas.height - PADDLE_HEIGHT - 10) {
                     ballRef.current.dy = -Math.abs(ballRef.current.dy);
                     const deltaX = (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
-                    ballRef.current.dx = Math.max(-8, Math.min(8, ballRef.current.dx + deltaX)); // Cap horizontal speed
+                    ballRef.current.dx = Math.max(-8, Math.min(8, ballRef.current.dx + deltaX));
                     hitTimerRef.current = 45;
                 }
             } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
                 setGameState('GAMEOVER');
+                setShowNameInput(score >= 50); // Show name input if score is decent
                 return;
             }
         }
@@ -269,6 +298,7 @@ const BreakoutGame = () => {
         }
         if (activeBricks === 0) {
             setGameState('WON');
+            setShowNameInput(true);
             return;
         }
 
@@ -314,7 +344,6 @@ const BreakoutGame = () => {
     const handleTouchMove = (e) => {
         if (e.touches.length > 0) {
             handleMove(e.touches[0].clientX);
-            // Non-passive event listener is needed for preventDefault
             if (e.cancelable) e.preventDefault();
         }
     };
@@ -326,6 +355,7 @@ const BreakoutGame = () => {
 
     return (
         <div className="min-h-screen bg-[#fffbeb] text-slate-800 flex flex-col items-center p-4 md:p-8 font-sans overflow-x-hidden">
+            {/* Header / Scoreboard */}
             <div className="max-w-3xl w-full flex justify-between items-center mb-6 md:mb-8 relative z-10">
                 <Link to="/game" className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-orange-100 shadow-sm font-bold text-sm md:text-base">
                     <ArrowLeft size={18} className="md:w-5 md:h-5" />
@@ -336,60 +366,141 @@ const BreakoutGame = () => {
                         <span className="text-orange-500 text-[10px] md:text-xs uppercase tracking-widest">Score</span>
                         <span className="text-slate-700">{score}</span>
                     </div>
-                    <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2 text-sm md:text-base">
-                        <Trophy size={14} className="text-yellow-500 md:w-4 md:h-4" />
-                        <span className="text-orange-500 text-[10px] md:text-xs uppercase tracking-widest">Best</span>
-                        <span className="text-xl text-slate-700">{highScore}</span>
-                    </div>
+                    <button
+                        onClick={() => setGameState('LEADERBOARD')}
+                        className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2 text-sm md:text-base text-orange-600 hover:bg-orange-50 transition-colors"
+                    >
+                        <Medal size={16} className="text-yellow-500" />
+                        <span className="text-[10px] md:text-xs uppercase tracking-widest">Ranking</span>
+                    </button>
                 </div>
             </div>
 
+            {/* Main Game Area */}
             <div className="relative group w-full max-w-[640px] flex justify-center">
                 <canvas
                     ref={canvasRef}
                     width={640}
                     height={480}
                     className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] border-4 md:border-8 border-white shadow-2xl cursor-none overflow-hidden touch-none w-full h-auto max-h-[70vh] object-contain"
-                    onMouseMove={e => handleMove(e.clientX)}
+                    onMouseMove={handleMouseMove}
                     onTouchMove={handleTouchMove}
                     onTouchStart={handleTouchMove}
                 />
 
+                {/* Overlays */}
                 {gameState !== 'PLAYING' && (
                     <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center p-4 md:p-8 text-center animate-in fade-in zoom-in duration-300">
+
                         {gameState === 'START' && (
-                            <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-50 max-w-[90%]">
+                            <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-50 max-w-[90%] w-full">
                                 <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-pink-500 uppercase">도넛 숲의 모험! 🍩</h2>
                                 <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">신비로운 도넛 숲에서 빵 친구들을 구해주세여! ✨</p>
-                                <button
-                                    onClick={startGame}
-                                    className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 md:px-10 md:py-5 rounded-[1.5rem] md:rounded-[2.5rem] font-black tracking-widest text-base md:text-lg shadow-xl shadow-orange-100 transition-all active:scale-95 flex items-center gap-2 md:gap-3 mx-auto"
-                                >
-                                    시작하기! 🥯
-                                </button>
+                                <div className="flex flex-col gap-3">
+                                    <button
+                                        onClick={startGame}
+                                        className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 md:px-10 md:py-5 rounded-[1.5rem] md:rounded-[2.5rem] font-black tracking-widest text-base md:text-lg shadow-xl shadow-orange-100 transition-all active:scale-95 flex items-center gap-2 md:gap-3 mx-auto w-full justify-center"
+                                    >
+                                        시작하기! 🥯
+                                    </button>
+                                    <button
+                                        onClick={() => setGameState('LEADERBOARD')}
+                                        className="bg-white hover:bg-slate-50 text-slate-600 px-8 py-3 rounded-[1.5rem] font-bold text-sm border border-slate-100 flex items-center gap-2 mx-auto"
+                                    >
+                                        <Medal size={16} /> 명예의 전당 보기
+                                    </button>
+                                </div>
                             </div>
                         )}
-                        {gameState === 'GAMEOVER' && (
-                            <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-red-50 max-w-[90%]">
-                                <h2 className="text-3xl md:text-5xl font-black mb-2 tracking-tighter text-red-500 uppercase">아쉬워요!</h2>
-                                <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">빵이 바닥에 떨어졌어요! 🥖</p>
-                                <button
-                                    onClick={startGame}
-                                    className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 md:px-8 md:py-4 rounded-[1.5rem] md:rounded-[2rem] font-black tracking-widest text-xs md:text-sm transition-all active:scale-95 mx-auto"
-                                >
-                                    <RefreshCw size={16} className="md:w-[18px] md:h-[18px]" /> 재도전!
-                                </button>
+
+                        {(gameState === 'GAMEOVER' || gameState === 'WON') && (
+                            <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-50 max-w-[90%] w-full">
+                                <h2 className={`text-3xl md:text-5xl font-black mb-2 tracking-tighter uppercase ${gameState === 'WON' ? 'text-emerald-500' : 'text-red-500'}`}>
+                                    {gameState === 'WON' ? '대성공! 🎉' : '아쉬워요!'}
+                                </h2>
+                                <p className="text-sm md:text-base text-slate-600 mb-6 font-medium">
+                                    {gameState === 'WON' ? '도넛 숲의 모든 빵 친구들을 구했어요! 🍩✨' : '빵이 바닥에 떨어졌어요! 🥖'}
+                                </p>
+
+                                {showNameInput ? (
+                                    <div className="bg-orange-50 p-6 rounded-3xl mb-6 animate-in slide-in-from-bottom duration-500">
+                                        <p className="text-orange-600 font-black text-sm mb-3 uppercase tracking-widest">새로운 기록! 이름을 입력하세요</p>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                value={playerName}
+                                                onChange={(e) => setPlayerName(e.target.value)}
+                                                placeholder="닉네임"
+                                                maxLength={10}
+                                                className="flex-1 px-4 py-3 rounded-2xl border-2 border-orange-200 focus:border-orange-500 outline-none font-bold"
+                                            />
+                                            <button
+                                                onClick={saveScore}
+                                                className="bg-orange-500 text-white px-6 py-3 rounded-2xl font-black hover:bg-orange-600 transition-all"
+                                            >
+                                                저장
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="bg-slate-50 py-4 px-6 rounded-3xl mb-6">
+                                        <p className="text-slate-400 text-xs uppercase tracking-widest mb-1 font-bold">Current Score</p>
+                                        <p className="text-3xl font-black text-slate-700">{score}</p>
+                                    </div>
+                                )}
+
+                                <div className="flex gap-3 justify-center">
+                                    <button
+                                        onClick={startGame}
+                                        className="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-4 rounded-[1.5rem] md:rounded-[2rem] font-black tracking-widest text-sm md:text-base shadow-lg shadow-orange-100 transition-all active:scale-95"
+                                    >
+                                        <RefreshCw size={18} /> 재도전
+                                    </button>
+                                    <button
+                                        onClick={() => setGameState('LEADERBOARD')}
+                                        className="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-4 rounded-[1.5rem] md:rounded-[2rem] font-black tracking-widest text-sm"
+                                    >
+                                        <Medal size={18} /> 순위
+                                    </button>
+                                </div>
                             </div>
                         )}
-                        {gameState === 'WON' && (
-                            <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-emerald-50 max-w-[90%]">
-                                <h2 className="text-3xl md:text-5xl font-black mb-2 tracking-tighter text-emerald-500 uppercase">대성공! 🎉</h2>
-                                <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">도넛 숲의 모든 빵 친구들을 구했어요! 🍩✨</p>
+
+                        {gameState === 'LEADERBOARD' && (
+                            <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-100 max-w-[90%] w-full max-h-[90%] overflow-hidden flex flex-col">
+                                <div className="flex items-center justify-center gap-3 mb-6">
+                                    <Medal className="text-yellow-500" size={32} />
+                                    <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-800 uppercase">명예의 전당</h2>
+                                </div>
+
+                                <div className="flex-1 space-y-2 mb-8">
+                                    {leaderboard.map((entry, idx) => (
+                                        <div key={idx} className={`flex items-center justify-between p-4 rounded-2xl border ${idx === 0 ? 'bg-yellow-50 border-yellow-200' : 'bg-slate-50 border-slate-100'}`}>
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${idx === 0 ? 'bg-yellow-400 text-white' :
+                                                        idx === 1 ? 'bg-slate-300 text-slate-700' :
+                                                            idx === 2 ? 'bg-orange-300 text-white' : 'bg-white text-slate-400'
+                                                    }`}>
+                                                    {idx + 1}
+                                                </div>
+                                                <div className="text-left">
+                                                    <p className="font-black text-slate-700 leading-none">{entry.name}</p>
+                                                    <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{entry.date}</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xl font-black text-orange-500 tracking-tighter">{entry.score}</p>
+                                                <p className="text-[10px] text-orange-300 font-bold uppercase">Points</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
                                 <button
-                                    onClick={startGame}
-                                    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-[1.5rem] md:rounded-[2rem] font-black tracking-widest text-xs md:text-sm shadow-xl shadow-orange-100 transition-all active:scale-95 mx-auto"
+                                    onClick={() => setGameState('START')}
+                                    className="bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95"
                                 >
-                                    한 번 더 하기!
+                                    메인으로 돌아가기
                                 </button>
                             </div>
                         )}
@@ -397,7 +508,8 @@ const BreakoutGame = () => {
                 )}
             </div>
 
-            <div className="mt-6 md:mt-10 text-orange-400 text-[10px] md:text-sm font-bold tracking-[0.1em] md:tracking-[0.2em] uppercase bg-white/50 px-4 py-2 md:px-6 md:py-2 rounded-full backdrop-blur-sm border border-orange-100 text-center">
+            {/* Footer / Caption */}
+            <div className="mt-6 md:mt-10 text-orange-400 text-[10px] md:text-sm font-bold tracking-[0.1em] md:tracking-[0.2em] uppercase bg-white/50 px-4 py-2 md:px-6 md:py-2 rounded-full backdrop-blur-sm border border-orange-100 text-center relative z-10">
                 {window.matchMedia('(pointer: coarse)').matches ? '손가락으로 아이들을 움직여 빵을 튕겨주세요!' : '마우스로 아이들을 움직여 빵을 튕겨주세요!'} ✨
             </div>
         </div>
