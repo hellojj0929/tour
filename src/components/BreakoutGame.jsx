@@ -27,6 +27,7 @@ const BreakoutGame = () => {
     const [playerName, setPlayerName] = useState(() => localStorage.getItem('breakoutPlayerName') || "");
     const [showNameInput, setShowNameInput] = useState(false);
     const [gameTime, setGameTime] = useState(0); // For display
+    const resetClickCountRef = useRef(0);
 
     const startTimeRef = useRef(0);
     const finalTimeRef = useRef(0);
@@ -149,6 +150,16 @@ const BreakoutGame = () => {
             setLeaderboard([]);
             localStorage.removeItem('breakoutLeaderboard');
         }
+    };
+
+    const handleTitleClick = () => {
+        resetClickCountRef.current += 1;
+        if (resetClickCountRef.current >= 5) {
+            resetLeaderboard();
+            resetClickCountRef.current = 0;
+        }
+        // Auto-reset counter after 2 seconds of inactivity
+        setTimeout(() => { resetClickCountRef.current = 0; }, 2000);
     };
 
     const draw = () => {
@@ -543,18 +554,12 @@ const BreakoutGame = () => {
 
                         {gameState === 'LEADERBOARD' && (
                             <div className="bg-white p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-100 max-w-[90%] w-full max-h-[90%] overflow-hidden flex flex-col">
-                                <div className="flex items-center justify-between mb-6 px-2">
-                                    <div className="flex items-center gap-3">
-                                        <Medal className="text-yellow-500" size={28} />
-                                        <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-800 uppercase leading-none">명예의 전당</h2>
-                                    </div>
-                                    <button
-                                        onClick={resetLeaderboard}
-                                        className="text-slate-300 hover:text-red-400 transition-colors p-2"
-                                        title="Reset Rankings"
-                                    >
-                                        <RefreshCw size={18} />
-                                    </button>
+                                <div
+                                    className="flex items-center gap-3 mb-6 px-2 cursor-default select-none group"
+                                    onClick={handleTitleClick}
+                                >
+                                    <Medal className="text-yellow-500 group-active:scale-110 transition-transform" size={28} />
+                                    <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-800 uppercase leading-none">명예의 전당</h2>
                                 </div>
                                 <div className="flex-1 overflow-y-auto space-y-2 mb-4 pr-1 custom-scrollbar">
                                     {leaderboard.length > 0 ? (
