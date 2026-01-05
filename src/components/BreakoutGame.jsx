@@ -298,13 +298,25 @@ const BreakoutGame = () => {
         }
     }, [score, highScore]);
 
-    const handleMouseMove = (e) => {
+    const handleMove = (clientX) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const rect = canvas.getBoundingClientRect();
-        const root = document.documentElement;
-        const mouseX = e.clientX - rect.left - root.scrollLeft;
+        const scaleX = canvas.width / rect.width;
+        const mouseX = (clientX - rect.left) * scaleX;
         paddleRef.current.x = Math.max(0, Math.min(canvas.width - PADDLE_WIDTH, mouseX - PADDLE_WIDTH / 2));
+    };
+
+    const handleMouseMove = (e) => {
+        handleMove(e.clientX);
+    };
+
+    const handleTouchMove = (e) => {
+        if (e.touches.length > 0) {
+            handleMove(e.touches[0].clientX);
+            // Non-passive event listener is needed for preventDefault
+            if (e.cancelable) e.preventDefault();
+        }
     };
 
     const startGame = () => {
@@ -313,67 +325,69 @@ const BreakoutGame = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#fffbeb] text-slate-800 flex flex-col items-center p-8 font-sans overflow-hidden">
-            <div className="max-w-3xl w-full flex justify-between items-center mb-8 relative z-10">
-                <Link to="/game" className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors bg-white px-4 py-2 rounded-2xl border border-orange-100 shadow-sm font-bold">
-                    <ArrowLeft size={20} />
+        <div className="min-h-screen bg-[#fffbeb] text-slate-800 flex flex-col items-center p-4 md:p-8 font-sans overflow-x-hidden">
+            <div className="max-w-3xl w-full flex justify-between items-center mb-6 md:mb-8 relative z-10">
+                <Link to="/game" className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-orange-100 shadow-sm font-bold text-sm md:text-base">
+                    <ArrowLeft size={18} className="md:w-5 md:h-5" />
                     <span className="tracking-tight uppercase">Exit</span>
                 </Link>
-                <div className="flex gap-4">
-                    <div className="bg-white px-4 py-2 rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2">
-                        <span className="text-orange-500 text-xs uppercase tracking-widest">Score</span>
-                        <span className="text-xl text-slate-700">{score}</span>
+                <div className="flex gap-2 md:gap-4">
+                    <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2 text-sm md:text-base">
+                        <span className="text-orange-500 text-[10px] md:text-xs uppercase tracking-widest">Score</span>
+                        <span className="text-slate-700">{score}</span>
                     </div>
-                    <div className="bg-white px-4 py-2 rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2">
-                        <Trophy size={16} className="text-yellow-500" />
-                        <span className="text-orange-500 text-xs uppercase tracking-widest">Best</span>
+                    <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-orange-100 shadow-sm font-black tracking-tighter flex items-center gap-2 text-sm md:text-base">
+                        <Trophy size={14} className="text-yellow-500 md:w-4 md:h-4" />
+                        <span className="text-orange-500 text-[10px] md:text-xs uppercase tracking-widest">Best</span>
                         <span className="text-xl text-slate-700">{highScore}</span>
                     </div>
                 </div>
             </div>
 
-            <div className="relative group">
+            <div className="relative group w-full max-w-[640px] flex justify-center">
                 <canvas
                     ref={canvasRef}
                     width={640}
                     height={480}
-                    className="bg-white rounded-[2.5rem] border-8 border-white shadow-2xl cursor-none overflow-hidden"
-                    onMouseMove={handleMouseMove}
+                    className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] border-4 md:border-8 border-white shadow-2xl cursor-none overflow-hidden touch-none w-full h-auto max-h-[70vh] object-contain"
+                    onMouseMove={e => handleMove(e.clientX)}
+                    onTouchMove={handleTouchMove}
+                    onTouchStart={handleTouchMove}
                 />
 
                 {gameState !== 'PLAYING' && (
-                    <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
+                    <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center p-4 md:p-8 text-center animate-in fade-in zoom-in duration-300">
                         {gameState === 'START' && (
-                            <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-orange-50">
-                                <h2 className="text-4xl font-black mb-4 tracking-tighter text-pink-500 uppercase">도넛 숲의 모험! 🍩</h2>
-                                <p className="text-slate-600 mb-8 font-medium">신비로운 도넛 숲에서 빵 친구들을 구해주세여! ✨</p>
+                            <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-50 max-w-[90%]">
+                                <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-pink-500 uppercase">도넛 숲의 모험! 🍩</h2>
+                                <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">신비로운 도넛 숲에서 빵 친구들을 구해주세여! ✨</p>
                                 <button
                                     onClick={startGame}
-                                    className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-5 rounded-[2.5rem] font-black tracking-widest text-lg shadow-xl shadow-orange-100 transition-all active:scale-95 flex items-center gap-3"
+                                    className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 md:px-10 md:py-5 rounded-[1.5rem] md:rounded-[2.5rem] font-black tracking-widest text-base md:text-lg shadow-xl shadow-orange-100 transition-all active:scale-95 flex items-center gap-2 md:gap-3 mx-auto"
                                 >
                                     시작하기! 🥯
                                 </button>
                             </div>
                         )}
                         {gameState === 'GAMEOVER' && (
-                            <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-red-50">
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-red-500">아쉬워요!</h2>
-                                <p className="text-slate-600 mb-8 font-medium">빵이 바닥에 떨어졌어요! 🥖</p>
+                            <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-red-50 max-w-[90%]">
+                                <h2 className="text-3xl md:text-5xl font-black mb-2 tracking-tighter text-red-500 uppercase">아쉬워요!</h2>
+                                <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">빵이 바닥에 떨어졌어요! 🥖</p>
                                 <button
                                     onClick={startGame}
-                                    className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm transition-all active:scale-95"
+                                    className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 md:px-8 md:py-4 rounded-[1.5rem] md:rounded-[2rem] font-black tracking-widest text-xs md:text-sm transition-all active:scale-95 mx-auto"
                                 >
-                                    <RefreshCw size={18} /> 재도전!
+                                    <RefreshCw size={16} className="md:w-[18px] md:h-[18px]" /> 재도전!
                                 </button>
                             </div>
                         )}
                         {gameState === 'WON' && (
-                            <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-emerald-50">
-                                <h2 className="text-5xl font-black mb-2 tracking-tighter text-emerald-500">대성공! 🎉</h2>
-                                <p className="text-slate-600 mb-8 font-medium">도넛 숲의 모든 빵 친구들을 구했어요! 🍩✨</p>
+                            <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-emerald-50 max-w-[90%]">
+                                <h2 className="text-3xl md:text-5xl font-black mb-2 tracking-tighter text-emerald-500 uppercase">대성공! 🎉</h2>
+                                <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">도넛 숲의 모든 빵 친구들을 구했어요! 🍩✨</p>
                                 <button
                                     onClick={startGame}
-                                    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-[2rem] font-black tracking-widest text-sm shadow-xl shadow-orange-100 transition-all active:scale-95"
+                                    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-[1.5rem] md:rounded-[2rem] font-black tracking-widest text-xs md:text-sm shadow-xl shadow-orange-100 transition-all active:scale-95 mx-auto"
                                 >
                                     한 번 더 하기!
                                 </button>
@@ -383,8 +397,8 @@ const BreakoutGame = () => {
                 )}
             </div>
 
-            <div className="mt-10 text-orange-400 text-sm font-bold tracking-[0.2em] uppercase bg-white/50 px-6 py-2 rounded-full backdrop-blur-sm border border-orange-100">
-                마우스로 아이들을 움직여 빵을 튕겨주세요! ✨
+            <div className="mt-6 md:mt-10 text-orange-400 text-[10px] md:text-sm font-bold tracking-[0.1em] md:tracking-[0.2em] uppercase bg-white/50 px-4 py-2 md:px-6 md:py-2 rounded-full backdrop-blur-sm border border-orange-100 text-center">
+                {window.matchMedia('(pointer: coarse)').matches ? '손가락으로 아이들을 움직여 빵을 튕겨주세요!' : '마우스로 아이들을 움직여 빵을 튕겨주세요!'} ✨
             </div>
         </div>
     );
