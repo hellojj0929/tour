@@ -23,7 +23,7 @@ const BreakoutGame = () => {
             { name: "밀가루러버", score: 300, time: 65, date: "2024.01.01" }
         ];
     });
-    const [playerName, setPlayerName] = useState("");
+    const [playerName, setPlayerName] = useState(() => localStorage.getItem('breakoutPlayerName') || "");
     const [showNameInput, setShowNameInput] = useState(false);
     const [gameTime, setGameTime] = useState(0); // For display
 
@@ -363,6 +363,11 @@ const BreakoutGame = () => {
     };
 
     const startGame = () => {
+        if (!playerName.trim()) {
+            alert("게임을 시작하기 전에 이름을 입력해주세요! ✨");
+            return;
+        }
+        localStorage.setItem('breakoutPlayerName', playerName);
         initGame(canvasRef.current);
         setGameState('PLAYING');
     };
@@ -410,6 +415,19 @@ const BreakoutGame = () => {
                             <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-50 max-w-[90%] w-full">
                                 <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-pink-500 uppercase">도넛 숲의 모험! 🍩</h2>
                                 <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">신비로운 도넛 숲에서 빵 친구들을 구해주세여! ✨</p>
+
+                                <div className="mb-6 w-full max-w-[280px] mx-auto">
+                                    <p className="text-orange-500 text-[10px] uppercase tracking-widest font-black mb-2">Player Nickname</p>
+                                    <input
+                                        type="text"
+                                        value={playerName}
+                                        onChange={(e) => setPlayerName(e.target.value)}
+                                        placeholder="이름을 입력하세요"
+                                        maxLength={10}
+                                        className="w-full px-4 py-3 rounded-2xl border-2 border-orange-100 focus:border-orange-500 outline-none font-bold text-center bg-orange-50/50"
+                                    />
+                                </div>
+
                                 <div className="flex flex-col gap-3">
                                     <button
                                         onClick={startGame}
