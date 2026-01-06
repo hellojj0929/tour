@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, RefreshCw, Trophy, Users, Medal, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { supabase, isSupabaseConfigured, supabaseConfigInfo } from '../lib/supabase';
 
 import paddleImage from '../assets/paddle_custom.png';
 import paddleHitImage from '../assets/paddle_hit.png';
@@ -569,7 +569,7 @@ const BreakoutGame = () => {
                                     </button>
                                 </div>
                                 <div className="mt-6 flex flex-col items-center gap-2 opacity-40">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Kobe Edition v2.8</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Kobe Edition v4.0</p>
                                     <div className="flex items-center gap-1.5 grayscale">
                                         <div className={`w-1 h-1 rounded-full ${isSupabaseConfigured ? 'bg-emerald-400' : 'bg-slate-400'}`} />
                                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">
@@ -693,9 +693,29 @@ const BreakoutGame = () => {
                                 </div>
 
                                 {dbStatus === 'error' && (
-                                    <div className="mb-4 p-3 bg-red-50 rounded-2xl border border-red-100 text-[10px] text-red-600 font-bold leading-tight">
-                                        ⚠️ 서버 연결 실패: {dbError}
-                                        <br />Vercel 환경 변수가 반영되었는지 확인해 주세요.
+                                    <div className="mb-4 space-y-2">
+                                        <div className="p-4 bg-red-50 rounded-2xl border border-red-100 text-[11px] text-red-600 font-bold leading-relaxed shadow-sm">
+                                            <div className="flex items-center gap-2 mb-2 text-red-700">
+                                                <span className="text-sm">⚠️</span>
+                                                <span>서버와 통신할 수 없습니다</span>
+                                            </div>
+                                            <p className="mb-2 text-[#b91c1c]">{dbError}</p>
+
+                                            <div className="bg-white/50 p-3 rounded-xl border border-red-100 flex flex-col gap-1.5 mt-3">
+                                                <div className="flex justify-between items-center px-1">
+                                                    <span>환경 변수 설정 여부:</span>
+                                                    <div className="flex gap-2">
+                                                        <span className={supabaseConfigInfo.hasUrl ? 'text-emerald-600' : 'text-red-500'}>URL {supabaseConfigInfo.hasUrl ? '✅' : '❌'}</span>
+                                                        <span className={supabaseConfigInfo.hasKey ? 'text-emerald-600' : 'text-red-500'}>Key {supabaseConfigInfo.hasKey ? '✅' : '❌'}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="h-px bg-red-100 my-1" />
+                                                <p className="text-red-500 flex items-start gap-1.5">
+                                                    <span>💡</span>
+                                                    <span>유력한 원인: <b>광고 차단기(AdBlock)</b>가 활성화되어 있으면 서버 연결이 막힐 수 있습니다. 차단기를 끄거나 다른 브라우저로 확인해 보세요!</span>
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                                 <div className="flex-1 overflow-y-auto space-y-2 mb-4 pr-1 custom-scrollbar">
