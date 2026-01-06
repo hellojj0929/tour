@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, RefreshCw, Trophy, Users, Medal, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase, isSupabaseConfigured, supabaseConfigInfo } from '../lib/supabase';
+import { collection, addDoc, getDocs, query, orderBy, limit, deleteDoc, doc, serverTimestamp } from "firebase/firestore";
+import { db, isFirebaseConfigured } from '../lib/firebase';
 
 import paddleImage from '../assets/paddle_custom.png';
 import paddleHitImage from '../assets/paddle_hit.png';
@@ -114,25 +115,29 @@ const BreakoutGame = () => {
 
     const fetchLeaderboard = async () => {
         try {
-            if (!isSupabaseConfigured) {
+            if (!isFirebaseConfigured) {
                 setDbStatus('offline');
-                console.warn("Supabase is not configured. Using local leaderboard only.");
+                console.warn("Firebase is not configured. Using local leaderboard only.");
                 return;
             }
 
             setDbStatus('checking');
-            const { data, error } = await supabase
-                .from('breakout_leaderboard')
-                .select('*')
-                .order('score', { ascending: false })
-                .order('time', { ascending: true })
-                .limit(50);
+            const q = query(
+                collection(db, "breakout_leaderboard"),
+                orderBy("score", "desc"),
+                orderBy("time", "asc"),
+                limit(50)
+            );
 
-            if (error) {
-                setDbStatus('error');
-                setDbError(error.message);
-                console.error("Supabase fetch error:", error.message);
-            } else if (data) {
+            const querySnapshot = await getDocs(q);
+            const data = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                // Firestore timestamp conversion
+                created_at: doc.data().created_at?.toDate?.()?.toISOString() || null
+            }));
+
+            if (data) {
                 setDbStatus('online');
                 const uniqueData = [];
                 const names = new Set();
@@ -149,7 +154,7 @@ const BreakoutGame = () => {
         } catch (e) {
             setDbStatus('error');
             setDbError(e.message);
-            console.error("Critical error fetching leaderboard:", e);
+            console.error("Critical error fetching leaderboard from Firebase:", e);
         }
     };
 
@@ -208,22 +213,19 @@ const BreakoutGame = () => {
         setShowNameInput(false);
         setGameState('LEADERBOARD');
 
-        // 2. Background Sync with Supabase
-        if (isSupabaseConfigured) {
+        // 2. Background Sync with Firebase
+        if (isFirebaseConfigured) {
             try {
-                const { error } = await supabase.from('breakout_leaderboard').insert([{
+                await addDoc(collection(db, "breakout_leaderboard"), {
                     name: newEntry.name,
                     score: newEntry.score,
-                    time: newEntry.time
-                }]);
+                    time: newEntry.time,
+                    created_at: serverTimestamp()
+                });
 
-                if (!error) {
-                    await fetchLeaderboard();
-                } else {
-                    console.error("Supabase sync error:", error.message);
-                }
+                await fetchLeaderboard();
             } catch (e) {
-                console.error("Supabase connection failed:", e);
+                console.error("Firebase sync failed:", e);
             }
         }
 
@@ -233,8 +235,14 @@ const BreakoutGame = () => {
     const resetLeaderboard = async () => {
         if (window.confirm("정말로 모든 명예의 전당 기록을 초기화할까요? 🧹")) {
             try {
-                // Warning: This deletes all records. In a real app, you might want more security.
-                await supabase.from('breakout_leaderboard').delete().neq('id', 0);
+                if (isFirebaseConfigured) {
+                    const q = query(collection(db, "breakout_leaderboard"));
+                    const querySnapshot = await getDocs(q);
+                    const deletePromises = querySnapshot.docs.map(docSnapshot =>
+                        deleteDoc(doc(db, "breakout_leaderboard", docSnapshot.id))
+                    );
+                    await Promise.all(deletePromises);
+                }
                 setLeaderboard([]);
                 localStorage.removeItem('breakoutLeaderboard');
             } catch (e) {
@@ -571,9 +579,9 @@ const BreakoutGame = () => {
                                 <div className="mt-6 flex flex-col items-center gap-2 opacity-40">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Kobe Edition v4.0</p>
                                     <div className="flex items-center gap-1.5 grayscale">
-                                        <div className={`w-1 h-1 rounded-full ${isSupabaseConfigured ? 'bg-emerald-400' : 'bg-slate-400'}`} />
+                                        <div className={`w-1 h-1 rounded-full ${isFirebaseConfigured ? 'bg-emerald-400' : 'bg-slate-400'}`} />
                                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">
-                                            {isSupabaseConfigured ? 'Cloud Sync Ready' : 'Local Mode Only'}
+                                            {isFirebaseConfigured ? 'Firebase Sync Ready' : 'Local Mode Only'}
                                         </span>
                                     </div>
                                 </div>
@@ -702,17 +710,9 @@ const BreakoutGame = () => {
                                             <p className="mb-2 text-[#b91c1c]">{dbError}</p>
 
                                             <div className="bg-white/50 p-3 rounded-xl border border-red-100 flex flex-col gap-1.5 mt-3">
-                                                <div className="flex justify-between items-center px-1">
-                                                    <span>환경 변수 설정 여부:</span>
-                                                    <div className="flex gap-2">
-                                                        <span className={supabaseConfigInfo.hasUrl ? 'text-emerald-600' : 'text-red-500'}>URL {supabaseConfigInfo.hasUrl ? '✅' : '❌'}</span>
-                                                        <span className={supabaseConfigInfo.hasKey ? 'text-emerald-600' : 'text-red-500'}>Key {supabaseConfigInfo.hasKey ? '✅' : '❌'}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="h-px bg-red-100 my-1" />
                                                 <p className="text-red-500 flex items-start gap-1.5">
                                                     <span>💡</span>
-                                                    <span>유력한 원인: <b>광고 차단기(AdBlock)</b>가 활성화되어 있으면 서버 연결이 막힐 수 있습니다. 차단기를 끄거나 다른 브라우저로 확인해 보세요!</span>
+                                                    <span><b>Firebase 설정</b>을 확인해 주세요. Firestore 규칙이 '테스트 모드'이거나 적절한 권한이 있어야 합니다.</span>
                                                 </p>
                                             </div>
                                         </div>
