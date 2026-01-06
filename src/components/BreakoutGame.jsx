@@ -32,6 +32,7 @@ const BreakoutGame = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [dbStatus, setDbStatus] = useState('checking'); // checking, online, offline, error
     const [dbError, setDbError] = useState('');
+    const [paddleDirection, setPaddleDirection] = useState(0); // -1 left, 0 stop, 1 right
     const resetClickCountRef = useRef(0);
 
     const startTimeRef = useRef(0);
@@ -262,6 +263,27 @@ const BreakoutGame = () => {
         // Auto-reset counter after 2 seconds of inactivity
         setTimeout(() => { resetClickCountRef.current = 0; }, 2000);
     };
+
+    // Mobile button controls
+    const handlePaddleControl = (direction) => {
+        setPaddleDirection(direction);
+    };
+
+    // Update paddle position based on button controls
+    useEffect(() => {
+        if (gameState !== 'PLAYING' || paddleDirection === 0) return;
+
+        const moveInterval = setInterval(() => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+
+            const moveSpeed = 15;
+            paddleRef.current.x += paddleDirection * moveSpeed;
+            paddleRef.current.x = Math.max(0, Math.min(canvas.width - PADDLE_WIDTH, paddleRef.current.x));
+        }, 16); // ~60fps
+
+        return () => clearInterval(moveInterval);
+    }, [paddleDirection, gameState]);
 
     const draw = () => {
         const canvas = canvasRef.current;
@@ -544,6 +566,32 @@ const BreakoutGame = () => {
                     onTouchMove={handleTouchMove}
                     onTouchStart={handleTouchMove}
                 />
+
+                {/* Mobile Touch Controls */}
+                {gameState === 'PLAYING' && (
+                    <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 md:hidden z-10">
+                        <button
+                            onTouchStart={() => handlePaddleControl(-1)}
+                            onTouchEnd={() => handlePaddleControl(0)}
+                            onMouseDown={() => handlePaddleControl(-1)}
+                            onMouseUp={() => handlePaddleControl(0)}
+                            onMouseLeave={() => handlePaddleControl(0)}
+                            className="bg-white/90 backdrop-blur-sm text-orange-600 w-20 h-20 rounded-full shadow-2xl border-4 border-orange-200 flex items-center justify-center font-black text-3xl active:scale-95 transition-transform touch-none"
+                        >
+                            ←
+                        </button>
+                        <button
+                            onTouchStart={() => handlePaddleControl(1)}
+                            onTouchEnd={() => handlePaddleControl(0)}
+                            onMouseDown={() => handlePaddleControl(1)}
+                            onMouseUp={() => handlePaddleControl(0)}
+                            onMouseLeave={() => handlePaddleControl(0)}
+                            className="bg-white/90 backdrop-blur-sm text-orange-600 w-20 h-20 rounded-full shadow-2xl border-4 border-orange-200 flex items-center justify-center font-black text-3xl active:scale-95 transition-transform touch-none"
+                        >
+                            →
+                        </button>
+                    </div>
+                )}
 
                 {gameState !== 'PLAYING' && (
                     <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center p-4 md:p-8 text-center animate-in fade-in zoom-in duration-300">
