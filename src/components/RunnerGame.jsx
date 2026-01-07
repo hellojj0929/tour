@@ -26,13 +26,13 @@ const RunnerGame = () => {
     const [dbError, setDbError] = useState('');
 
     const gameRef = useRef({
-        player: { y: 200, velocity: 0, size: 40 },
+        player: { x: 50, y: 200, velocity: 0, size: 40 },
         obstacles: [],
         score: 0,
         frameCount: 0,
         gravity: 0.6,
         jumpStrength: -12,
-        obstacleSpeed: 2,
+        walkSpeed: 1.5,
         obstacleGap: 300,
         lastObstacle: 0,
         bgScroll: 0
@@ -66,7 +66,7 @@ const RunnerGame = () => {
 
     const startGame = () => {
         const game = gameRef.current;
-        game.player = { y: 200, velocity: 0, size: 40 };
+        game.player = { x: 50, y: 200, velocity: 0, size: 40 };
         game.obstacles = [];
         game.score = 0;
         game.frameCount = 0;
@@ -207,6 +207,14 @@ const RunnerGame = () => {
         game.player.velocity += game.gravity;
         game.player.y += game.player.velocity;
 
+        // Player walks forward
+        game.player.x += game.walkSpeed;
+
+        // Keep player on screen
+        if (game.player.x > canvas.width - game.player.size) {
+            game.player.x = canvas.width - game.player.size;
+        }
+
         // Ground collision
         if (game.player.y > canvas.height - 50 - game.player.size) {
             game.player.y = canvas.height - 50 - game.player.size;
@@ -220,7 +228,7 @@ const RunnerGame = () => {
         }
 
         // Draw player (Hayan character)
-        const playerX = 80;
+        const playerX = game.player.x;
         const playerY = game.player.y;
         const size = game.player.size;
 
@@ -286,8 +294,9 @@ const RunnerGame = () => {
         game.frameCount++;
         if (game.frameCount - game.lastObstacle > game.obstacleGap) {
             const obstacleHeight = 60 + Math.random() * 40; // Random height between 60-100
+            const obstacleX = game.player.x + 400 + Math.random() * 100; // Spawn ahead of player
             game.obstacles.push({
-                x: canvas.width,
+                x: obstacleX,
                 height: obstacleHeight,
                 passed: false
             });
@@ -297,7 +306,7 @@ const RunnerGame = () => {
         // Update and draw obstacles
         for (let i = game.obstacles.length - 1; i >= 0; i--) {
             const obs = game.obstacles[i];
-            obs.x -= game.obstacleSpeed;
+            // Obstacles don't move, player moves toward them
 
             // Draw bottom obstacle only (stacked breads)
             const breadSize = 35;
@@ -312,8 +321,8 @@ const RunnerGame = () => {
             }
 
             // Check collision
-            const playerLeft = 80;
-            const playerRight = 80 + game.player.size;
+            const playerLeft = game.player.x;
+            const playerRight = game.player.x + game.player.size;
             const playerTop = game.player.y;
             const playerBottom = game.player.y + game.player.size;
 
@@ -335,14 +344,14 @@ const RunnerGame = () => {
             }
 
             // Score point
-            if (!obs.passed && obs.x + 50 < 80) {
+            if (!obs.passed && game.player.x > obs.x + 50) {
                 obs.passed = true;
                 game.score++;
                 setScore(game.score);
             }
 
-            // Remove off-screen obstacles
-            if (obs.x < -50) {
+            // Remove off-screen obstacles (behind player)
+            if (obs.x < game.player.x - 100) {
                 game.obstacles.splice(i, 1);
             }
         }
