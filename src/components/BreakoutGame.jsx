@@ -556,7 +556,7 @@ const BreakoutGame = () => {
                     ref={canvasRef}
                     width={640}
                     height={480}
-                    className="bg-white rounded-[1rem] md:rounded-[2.5rem] border-2 md:border-8 border-white shadow-2xl cursor-none overflow-hidden touch-none w-full h-auto max-h-[75vh] md:max-h-[70vh] object-contain"
+                    className="bg-white rounded-[1rem] md:rounded-[2.5rem] border-2 md:border-8 border-white shadow-2xl cursor-none overflow-hidden touch-none w-full h-auto max-h-[80vh] md:max-h-[75vh] object-contain"
                     onMouseMove={handleMouseMove}
                     onTouchMove={handleTouchMove}
                     onTouchStart={handleTouchMove}
