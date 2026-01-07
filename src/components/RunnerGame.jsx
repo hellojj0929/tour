@@ -192,12 +192,20 @@ const RunnerGame = () => {
             const obs = game.obstacles[i];
             obs.x -= game.obstacleSpeed;
 
-            // Draw top obstacle
-            ctx.fillStyle = '#f97316';
-            ctx.fillRect(obs.x, 0, 50, obs.topHeight);
+            // Draw top obstacle (stacked donuts)
+            const donutSize = 35;
+            ctx.font = `${donutSize}px Arial`;
+            const topDonutCount = Math.ceil(obs.topHeight / donutSize);
+            for (let d = 0; d < topDonutCount; d++) {
+                ctx.fillText('🍩', obs.x + 7, (d + 1) * donutSize);
+            }
 
-            // Draw bottom obstacle
-            ctx.fillRect(obs.x, obs.bottomY, 50, canvas.height - 50 - obs.bottomY);
+            // Draw bottom obstacle (stacked donuts)
+            const bottomHeight = canvas.height - 50 - obs.bottomY;
+            const bottomDonutCount = Math.ceil(bottomHeight / donutSize);
+            for (let d = 0; d < bottomDonutCount; d++) {
+                ctx.fillText('🍩', obs.x + 7, obs.bottomY + (d + 1) * donutSize);
+            }
 
             // Check collision
             const playerLeft = 80;
