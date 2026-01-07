@@ -70,7 +70,8 @@ const RunnerGame = () => {
         game.obstacles = [];
         game.score = 0;
         game.frameCount = 0;
-        game.lastObstacle = 0;
+        game.lastObstacle = -game.obstacleGap; // Allow immediate first obstacle
+        game.bgScroll = 0;
         setScore(0);
         setGameState('PLAYING');
     };
@@ -294,7 +295,7 @@ const RunnerGame = () => {
         game.frameCount++;
         if (game.frameCount - game.lastObstacle > game.obstacleGap) {
             const obstacleHeight = 60 + Math.random() * 40; // Random height between 60-100
-            const obstacleX = game.player.x + 300; // Spawn 300px ahead of player
+            const obstacleX = game.player.x + 200; // Spawn 200px ahead of player
             game.obstacles.push({
                 x: obstacleX,
                 height: obstacleHeight,
