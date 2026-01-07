@@ -32,8 +32,8 @@ const RunnerGame = () => {
         frameCount: 0,
         gravity: 0.6,
         jumpStrength: -12,
-        obstacleSpeed: 3,
-        obstacleGap: 250,
+        obstacleSpeed: 2,
+        obstacleGap: 300,
         lastObstacle: 0
     });
 
