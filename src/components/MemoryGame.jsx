@@ -3,6 +3,8 @@ import { ArrowLeft, RefreshCw, Trophy, Medal, Clock, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "firebase/firestore";
 import { db, isFirebaseConfigured } from '../lib/firebase';
+import hayanImg from '../assets/hayan.png';
+import haneulImg from '../assets/haneul.png';
 
 const MemoryGame = () => {
     const [gameState, setGameState] = useState('START'); // START, PLAYING, WON, LEADERBOARD
@@ -27,7 +29,12 @@ const MemoryGame = () => {
     const [dbStatus, setDbStatus] = useState('checking');
     const [dbError, setDbError] = useState('');
 
-    const BREAD_EMOJIS = ['🍞', '🥐', '🥖', '🥨', '🥯', '🥞', '🍩', '🧁', '🍰', '🎂', '🧇', '🥮'];
+    const BREAD_EMOJIS = [
+        '🍞', '🥐', '🥖', '🥨', '🥯', '🥞',
+        { type: 'image', src: hayanImg, name: '하얀이' },
+        { type: 'image', src: haneulImg, name: '하늘이' },
+        '🍩', '🧁', '🍰', '🎂'
+    ];
 
     useEffect(() => {
         let interval;
@@ -44,7 +51,14 @@ const MemoryGame = () => {
         const selectedEmojis = BREAD_EMOJIS.slice(0, pairCount);
         const cardPairs = [...selectedEmojis, ...selectedEmojis];
         const shuffled = cardPairs
-            .map((emoji, index) => ({ id: index, emoji, isFlipped: false, isMatched: false }))
+            .map((item, index) => ({
+                id: index,
+                content: typeof item === 'string' ? item : item.name,
+                emoji: typeof item === 'string' ? item : null,
+                image: typeof item === 'object' ? item.src : null,
+                isFlipped: false,
+                isMatched: false
+            }))
             .sort(() => Math.random() - 0.5);
 
         setCards(shuffled);
@@ -58,7 +72,7 @@ const MemoryGame = () => {
     const handleCardClick = (cardId) => {
         if (flippedCards.length === 2) return;
         if (flippedCards.includes(cardId)) return;
-        if (matchedPairs.includes(cards.find(c => c.id === cardId)?.emoji)) return;
+        if (matchedPairs.includes(cards.find(c => c.id === cardId)?.content)) return;
 
         const newFlipped = [...flippedCards, cardId];
         setFlippedCards(newFlipped);
@@ -69,8 +83,8 @@ const MemoryGame = () => {
             const firstCard = cards.find(c => c.id === first);
             const secondCard = cards.find(c => c.id === second);
 
-            if (firstCard.emoji === secondCard.emoji) {
-                setMatchedPairs([...matchedPairs, firstCard.emoji]);
+            if (firstCard.content === secondCard.content) {
+                setMatchedPairs([...matchedPairs, firstCard.content]);
                 setFlippedCards([]);
 
                 const totalPairs = difficulty === 'kids' ? 4 : 8;
@@ -304,18 +318,30 @@ const MemoryGame = () => {
                     <div className="w-full">
                         <div className={`grid ${difficulty === 'kids' ? 'grid-cols-4' : 'grid-cols-4'} gap-2 md:gap-4`}>
                             {cards.map((card) => {
-                                const isFlipped = flippedCards.includes(card.id) || matchedPairs.includes(card.emoji);
+                                const isFlipped = flippedCards.includes(card.id) || matchedPairs.includes(card.content);
                                 return (
                                     <button
                                         key={card.id}
                                         onClick={() => handleCardClick(card.id)}
                                         disabled={isFlipped}
-                                        className={`aspect-square rounded-2xl md:rounded-3xl font-black text-4xl md:text-6xl transition-all duration-300 transform ${isFlipped
-                                            ? 'bg-white shadow-lg scale-100'
-                                            : 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-md hover:scale-105 active:scale-95'
-                                            } ${matchedPairs.includes(card.emoji) ? 'opacity-70' : ''}`}
+                                        className={`aspect-square rounded-2xl md:rounded-3xl font-black text-4xl md:text-6xl transition-all duration-300 transform overflow-hidden ${isFlipped
+                                                ? 'bg-white shadow-lg scale-100'
+                                                : 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-md hover:scale-105 active:scale-95'
+                                            } ${matchedPairs.includes(card.content) ? 'opacity-70' : ''}`}
                                     >
-                                        {isFlipped ? card.emoji : '?'}
+                                        {isFlipped ? (
+                                            card.image ? (
+                                                <img
+                                                    src={card.image}
+                                                    alt={card.content}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                card.emoji
+                                            )
+                                        ) : (
+                                            '?'
+                                        )}
                                     </button>
                                 );
                             })}
