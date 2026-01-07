@@ -28,9 +28,9 @@ const ColorMatchGame = () => {
     const gameRef = useRef({
         fallingItems: [],
         baskets: [
-            { x: 50, color: '#fbbf24', emoji: '🥖' }, // Yellow - Left
-            { x: 200, color: '#f97316', emoji: '🥐' }, // Orange - Center
-            { x: 350, color: '#ec4899', emoji: '🧁' }, // Pink - Right
+            { x: 50, color: '#fbbf24', name: '노란색' }, // Yellow - Left
+            { x: 200, color: '#f97316', name: '주황색' }, // Orange - Center
+            { x: 350, color: '#ec4899', name: '분홍색' }, // Pink - Right
         ],
         selectedBasket: 1,
         speed: 3,
@@ -101,7 +101,6 @@ const ColorMatchGame = () => {
                 x: basket.x + 40,
                 y: 0,
                 color: basket.color,
-                emoji: basket.emoji,
                 targetBasket: randomBasketIndex
             });
         }
@@ -283,12 +282,12 @@ const ColorMatchGame = () => {
                 {gameState === 'START' && (
                     <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-purple-50 w-full">
                         <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-purple-500 uppercase">색깔 맞추기! 🎨</h2>
-                        <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">떨어지는 빵을 같은 색 바구니에 넣으세요!</p>
+                        <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">떨어지는 공을 같은 색 바구니에 넣으세요!</p>
 
                         <div className="mb-6 bg-purple-50 p-4 rounded-2xl">
                             <p className="text-sm font-bold text-purple-700 mb-2">🎮 조작법</p>
                             <p className="text-xs text-slate-600">• 화살표 키 또는 버튼으로 바구니 이동</p>
-                            <p className="text-xs text-slate-600">• 같은 색 빵을 받으면 +10점!</p>
+                            <p className="text-xs text-slate-600">• 같은 색 공을 받으면 +10점!</p>
                             <p className="text-xs text-slate-600">• 틀리면 생명 -1 (총 3개)</p>
                         </div>
 
@@ -327,14 +326,16 @@ const ColorMatchGame = () => {
                             {game.fallingItems.map((item, idx) => (
                                 <div
                                     key={idx}
-                                    className="absolute text-4xl transition-all"
+                                    className="absolute rounded-full transition-all"
                                     style={{
                                         left: `${item.x}px`,
                                         top: `${item.y}px`,
-                                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+                                        width: '50px',
+                                        height: '50px',
+                                        backgroundColor: item.color,
+                                        boxShadow: '0 4px 8px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.3)'
                                     }}
                                 >
-                                    {item.emoji}
                                 </div>
                             ))}
 
@@ -343,13 +344,13 @@ const ColorMatchGame = () => {
                                 {game.baskets.map((basket, idx) => (
                                     <div
                                         key={idx}
-                                        className={`w-24 h-24 rounded-2xl flex items-center justify-center text-4xl transition-all ${game.selectedBasket === idx
+                                        className={`w-28 h-28 rounded-2xl flex flex-col items-center justify-center transition-all ${game.selectedBasket === idx
                                             ? 'scale-110 shadow-2xl ring-4 ring-white'
                                             : 'opacity-50 scale-90'
                                             }`}
                                         style={{ backgroundColor: basket.color }}
                                     >
-                                        {basket.emoji}
+                                        <div className="text-white font-black text-sm">{basket.name}</div>
                                     </div>
                                 ))}
                             </div>
