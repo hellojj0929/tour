@@ -86,153 +86,157 @@ const RunnerGame = () => {
         const ctx = canvas.getContext('2d');
         const game = gameRef.current;
 
-        // Draw magical sky with gradient
+        // Draw bright blue sky
         const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height - 50);
-        skyGradient.addColorStop(0, '#fef3c7'); // Light yellow
-        skyGradient.addColorStop(0.3, '#fed7aa'); // Peach
-        skyGradient.addColorStop(0.7, '#fecaca'); // Light pink
-        skyGradient.addColorStop(1, '#fbcfe8'); // Pink
+        skyGradient.addColorStop(0, '#7dd3fc'); // Bright sky blue
+        skyGradient.addColorStop(1, '#bae6fd'); // Light blue
         ctx.fillStyle = skyGradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height - 50);
 
-        // Draw fluffy candy clouds with shadows
-        for (let i = 0; i < 4; i++) {
-            const cloudX = ((game.frameCount * 0.15 + i * 180) % (canvas.width + 150)) - 50;
-            const cloudY = 40 + i * 25;
+        // Draw fluffy white clouds
+        ctx.fillStyle = '#ffffff';
+        for (let i = 0; i < 5; i++) {
+            const cloudX = ((game.frameCount * 0.1 + i * 150) % (canvas.width + 100)) - 50;
+            const cloudY = 30 + i * 20;
 
-            // Cloud shadow
-            ctx.fillStyle = 'rgba(255, 192, 203, 0.2)';
             ctx.beginPath();
-            ctx.arc(cloudX + 5, cloudY + 5, 22, 0, Math.PI * 2);
-            ctx.arc(cloudX + 30, cloudY + 5, 28, 0, Math.PI * 2);
-            ctx.arc(cloudX + 55, cloudY + 5, 22, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Cloud
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.arc(cloudX, cloudY, 22, 0, Math.PI * 2);
-            ctx.arc(cloudX + 25, cloudY, 28, 0, Math.PI * 2);
-            ctx.arc(cloudX + 50, cloudY, 22, 0, Math.PI * 2);
+            ctx.arc(cloudX, cloudY, 18, 0, Math.PI * 2);
+            ctx.arc(cloudX + 20, cloudY, 22, 0, Math.PI * 2);
+            ctx.arc(cloudX + 40, cloudY, 18, 0, Math.PI * 2);
             ctx.fill();
         }
 
-        // Draw distant candy mountains
-        ctx.fillStyle = '#fda4af';
-        ctx.beginPath();
-        ctx.moveTo(0, canvas.height - 200);
-        ctx.lineTo(150, canvas.height - 280);
-        ctx.lineTo(300, canvas.height - 200);
-        ctx.lineTo(0, canvas.height - 200);
-        ctx.fill();
+        // Draw colorful town buildings
+        const buildings = [
+            { x: 50, width: 80, height: 120, color: '#fbbf24', roofColor: '#f59e0b', windows: 2 }, // Yellow
+            { x: 140, width: 70, height: 100, color: '#fb923c', roofColor: '#ea580c', windows: 2 }, // Orange
+            { x: 220, width: 90, height: 130, color: '#f472b6', roofColor: '#ec4899', windows: 3 }, // Pink
+            { x: 320, width: 75, height: 110, color: '#a78bfa', roofColor: '#8b5cf6', windows: 2 }, // Purple
+            { x: 405, width: 85, height: 125, color: '#60a5fa', roofColor: '#3b82f6', windows: 2 }, // Blue
+            { x: 500, width: 80, height: 105, color: '#34d399', roofColor: '#10b981', windows: 2 }, // Green
+        ];
 
-        ctx.fillStyle = '#f9a8d4';
-        ctx.beginPath();
-        ctx.moveTo(200, canvas.height - 200);
-        ctx.lineTo(350, canvas.height - 300);
-        ctx.lineTo(500, canvas.height - 200);
-        ctx.lineTo(200, canvas.height - 200);
-        ctx.fill();
+        buildings.forEach(building => {
+            const buildingY = canvas.height - 50 - building.height;
 
-        // Draw candy houses with details
-        for (let i = 0; i < 3; i++) {
-            const houseX = 80 + i * 220;
-            const houseY = canvas.height - 180;
+            // Building body
+            ctx.fillStyle = building.color;
+            ctx.fillRect(building.x, buildingY, building.width, building.height);
 
-            // House base (gingerbread)
-            ctx.fillStyle = '#92400e';
-            ctx.fillRect(houseX, houseY, 60, 50);
-
-            // Roof (chocolate)
-            ctx.fillStyle = '#7c2d12';
-            ctx.beginPath();
-            ctx.moveTo(houseX - 5, houseY);
-            ctx.lineTo(houseX + 30, houseY - 30);
-            ctx.lineTo(houseX + 65, houseY);
-            ctx.closePath();
-            ctx.fill();
-
-            // Window (candy)
-            ctx.fillStyle = '#fef08a';
-            ctx.fillRect(houseX + 10, houseY + 15, 15, 15);
-            ctx.fillRect(houseX + 35, houseY + 15, 15, 15);
-
-            // Door
-            ctx.fillStyle = '#dc2626';
-            ctx.fillRect(houseX + 22, houseY + 25, 16, 25);
-
-            // Icing decorations
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(houseX, houseY, 60, 3);
-            for (let j = 0; j < 4; j++) {
-                ctx.beginPath();
-                ctx.arc(houseX + 15 * j + 7, houseY + 3, 3, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        // Draw colorful lollipop trees
-        for (let i = 0; i < 6; i++) {
-            const treeX = 30 + i * 120;
-            const treeY = canvas.height - 120;
-
-            // Stick
-            ctx.strokeStyle = '#a16207';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(treeX, treeY);
-            ctx.lineTo(treeX, treeY - 35);
-            ctx.stroke();
-
-            // Lollipop
-            const colors = ['#ef4444', '#f97316', '#fbbf24', '#a3e635', '#60a5fa', '#c084fc'];
-            ctx.fillStyle = colors[i % colors.length];
-            ctx.beginPath();
-            ctx.arc(treeX, treeY - 35, 15, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Spiral decoration
+            // Building outline
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(treeX, treeY - 35, 10, 0, Math.PI * 1.5);
-            ctx.stroke();
-        }
+            ctx.strokeRect(building.x, buildingY, building.width, building.height);
 
-        // Draw gingerbread path with detailed icing
-        const groundGradient = ctx.createLinearGradient(0, canvas.height - 50, 0, canvas.height);
-        groundGradient.addColorStop(0, '#b45309');
-        groundGradient.addColorStop(0.5, '#92400e');
-        groundGradient.addColorStop(1, '#78350f');
-        ctx.fillStyle = groundGradient;
-        ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
-
-        // Icing pattern on ground
-        ctx.fillStyle = '#ffffff';
-        ctx.globalAlpha = 0.6;
-        for (let i = 0; i < canvas.width; i += 30) {
-            // Wavy icing
+            // Roof
+            ctx.fillStyle = building.roofColor;
             ctx.beginPath();
-            ctx.moveTo(i, canvas.height - 48);
-            ctx.quadraticCurveTo(i + 7, canvas.height - 52, i + 15, canvas.height - 48);
-            ctx.quadraticCurveTo(i + 22, canvas.height - 44, i + 30, canvas.height - 48);
-            ctx.lineWidth = 3;
+            ctx.moveTo(building.x - 5, buildingY);
+            ctx.lineTo(building.x + building.width / 2, buildingY - 20);
+            ctx.lineTo(building.x + building.width + 5, buildingY);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
             ctx.stroke();
 
-            // Sugar dots
+            // Windows
+            ctx.fillStyle = '#fef3c7';
+            const windowWidth = 15;
+            const windowHeight = 20;
+            const windowSpacing = building.width / (building.windows + 1);
+
+            for (let w = 0; w < building.windows; w++) {
+                const windowX = building.x + windowSpacing * (w + 1) - windowWidth / 2;
+                const windowY = buildingY + 25;
+
+                // Window
+                ctx.fillRect(windowX, windowY, windowWidth, windowHeight);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(windowX, windowY, windowWidth, windowHeight);
+
+                // Window cross
+                ctx.beginPath();
+                ctx.moveTo(windowX + windowWidth / 2, windowY);
+                ctx.lineTo(windowX + windowWidth / 2, windowY + windowHeight);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(windowX, windowY + windowHeight / 2);
+                ctx.lineTo(windowX + windowWidth, windowY + windowHeight / 2);
+                ctx.stroke();
+
+                // Second floor window
+                if (building.height > 110) {
+                    ctx.fillRect(windowX, windowY + 50, windowWidth, windowHeight);
+                    ctx.strokeRect(windowX, windowY + 50, windowWidth, windowHeight);
+                }
+            }
+
+            // Door
+            const doorWidth = 20;
+            const doorHeight = 35;
+            const doorX = building.x + building.width / 2 - doorWidth / 2;
+            const doorY = buildingY + building.height - doorHeight;
+
+            ctx.fillStyle = '#7c2d12';
+            ctx.fillRect(doorX, doorY, doorWidth, doorHeight);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(doorX, doorY, doorWidth, doorHeight);
+
+            // Door knob
+            ctx.fillStyle = '#fbbf24';
             ctx.beginPath();
-            ctx.arc(i + 10, canvas.height - 25, 2, 0, Math.PI * 2);
+            ctx.arc(doorX + doorWidth - 5, doorY + doorHeight / 2, 2, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Draw cute trees
+        for (let i = 0; i < 4; i++) {
+            const treeX = 30 + i * 160;
+            const treeY = canvas.height - 90;
+
+            // Tree trunk
+            ctx.fillStyle = '#92400e';
+            ctx.fillRect(treeX - 5, treeY, 10, 30);
+
+            // Tree leaves (3 circles)
+            ctx.fillStyle = '#22c55e';
+            ctx.beginPath();
+            ctx.arc(treeX, treeY - 10, 18, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(treeX - 12, treeY, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(treeX + 12, treeY, 15, 0, Math.PI * 2);
             ctx.fill();
         }
-        ctx.globalAlpha = 1;
 
-        // Candy decorations on ground
-        ctx.font = '16px Arial';
-        for (let i = 0; i < 8; i++) {
-            const candyX = 40 + i * 80;
-            const candies = ['🍬', '🍭', '🍫'];
-            ctx.fillText(candies[i % 3], candyX, canvas.height - 15);
-        }
+        // Draw paved street
+        const streetGradient = ctx.createLinearGradient(0, canvas.height - 50, 0, canvas.height);
+        streetGradient.addColorStop(0, '#71717a');
+        streetGradient.addColorStop(1, '#52525b');
+        ctx.fillStyle = streetGradient;
+        ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+
+        // Street lines
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([20, 15]);
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height - 25);
+        ctx.lineTo(canvas.width, canvas.height - 25);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Sidewalk edge
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height - 50);
+        ctx.lineTo(canvas.width, canvas.height - 50);
+        ctx.stroke();
 
         // Update player
         game.player.velocity += game.gravity;
