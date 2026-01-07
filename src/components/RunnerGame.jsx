@@ -115,33 +115,58 @@ const RunnerGame = () => {
         const playerY = game.player.y;
         const size = game.player.size;
 
-        // Draw cute body
-        ctx.fillStyle = '#fbbf24'; // Yellow body
+        // Draw cute dress/skirt
+        ctx.fillStyle = '#ec4899'; // Pink dress
         ctx.beginPath();
-        ctx.ellipse(playerX + size / 2, playerY + size * 0.8, size * 0.4, size * 0.5, 0, 0, Math.PI * 2);
+        // Trapezoid shape for dress
+        ctx.moveTo(playerX + size * 0.3, playerY + size * 0.6);
+        ctx.lineTo(playerX + size * 0.7, playerY + size * 0.6);
+        ctx.lineTo(playerX + size * 0.85, playerY + size * 1.1);
+        ctx.lineTo(playerX + size * 0.15, playerY + size * 1.1);
+        ctx.closePath();
         ctx.fill();
 
-        // Draw arms
-        ctx.strokeStyle = '#fbbf24';
-        ctx.lineWidth = 4;
+        // Dress decoration (white trim)
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(playerX + size * 0.2, playerY + size * 0.7);
-        ctx.lineTo(playerX, playerY + size * 0.9);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(playerX + size * 0.8, playerY + size * 0.7);
-        ctx.lineTo(playerX + size, playerY + size * 0.9);
+        ctx.arc(playerX + size * 0.5, playerY + size * 1.1, size * 0.35, 0, Math.PI, true);
         ctx.stroke();
 
-        // Draw legs
+        // Draw cute arms
+        ctx.fillStyle = '#fbbf24'; // Skin tone
+        // Left arm
         ctx.beginPath();
-        ctx.moveTo(playerX + size * 0.35, playerY + size * 1.2);
-        ctx.lineTo(playerX + size * 0.25, playerY + size * 1.5);
-        ctx.stroke();
+        ctx.arc(playerX + size * 0.2, playerY + size * 0.75, size * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+        // Right arm
         ctx.beginPath();
-        ctx.moveTo(playerX + size * 0.65, playerY + size * 1.2);
-        ctx.lineTo(playerX + size * 0.75, playerY + size * 1.5);
+        ctx.arc(playerX + size * 0.8, playerY + size * 0.75, size * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw cute legs with shoes
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        // Left leg
+        ctx.beginPath();
+        ctx.moveTo(playerX + size * 0.35, playerY + size * 1.1);
+        ctx.lineTo(playerX + size * 0.3, playerY + size * 1.35);
         ctx.stroke();
+        // Right leg
+        ctx.beginPath();
+        ctx.moveTo(playerX + size * 0.65, playerY + size * 1.1);
+        ctx.lineTo(playerX + size * 0.7, playerY + size * 1.35);
+        ctx.stroke();
+
+        // Draw shoes
+        ctx.fillStyle = '#ef4444'; // Red shoes
+        ctx.beginPath();
+        ctx.ellipse(playerX + size * 0.3, playerY + size * 1.38, size * 0.1, size * 0.06, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(playerX + size * 0.7, playerY + size * 1.38, size * 0.1, size * 0.06, 0, 0, Math.PI * 2);
+        ctx.fill();
 
         // Draw Hayan's face
         if (hayanImgRef.current.complete) {
