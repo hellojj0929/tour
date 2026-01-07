@@ -294,7 +294,7 @@ const RunnerGame = () => {
         game.frameCount++;
         if (game.frameCount - game.lastObstacle > game.obstacleGap) {
             const obstacleHeight = 60 + Math.random() * 40; // Random height between 60-100
-            const obstacleX = game.player.x + 400 + Math.random() * 100; // Spawn ahead of player
+            const obstacleX = game.player.x + 300; // Spawn 300px ahead of player
             game.obstacles.push({
                 x: obstacleX,
                 height: obstacleHeight,
