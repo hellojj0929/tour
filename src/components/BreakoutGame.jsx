@@ -32,28 +32,30 @@ const BreakoutGame = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [dbStatus, setDbStatus] = useState('checking'); // checking, online, offline, error
     const [dbError, setDbError] = useState('');
+    const [difficulty, setDifficulty] = useState('adult'); // 'kids' or 'adult'
     const resetClickCountRef = useRef(0);
 
     const startTimeRef = useRef(0);
     const finalTimeRef = useRef(0);
 
-    // Game constants
+    // Game constants (dynamic based on difficulty)
     const PADDLE_HEIGHT = 70;
-    const PADDLE_WIDTH = 160;
+    const PADDLE_WIDTH = difficulty === 'kids' ? 220 : 160;
     const BALL_RADIUS = 10;
-    const BRICK_ROW_COUNT = 3;
+    const BRICK_ROW_COUNT = difficulty === 'kids' ? 2 : 3;
     const BRICK_COLUMN_COUNT = 10;
     const BRICK_WIDTH = 60;
     const BRICK_HEIGHT = 60;
     const BRICK_PADDING = 4;
     const BRICK_OFFSET_TOP = 30;
     const BRICK_OFFSET_LEFT = 10;
+    const BALL_SPEED = difficulty === 'kids' ? 2.0 : 2.5;
 
     const BREAD_EMOJIS = ['🍞', '🥐', '🥖', '🥨', '🥯', '🥞', '🍩', '🧁', '🍰'];
 
     const requestRef = useRef();
     const paddleRef = useRef({ x: 0 });
-    const ballRef = useRef({ x: 0, y: 0, dx: 2.5, dy: -2.5 });
+    const ballRef = useRef({ x: 0, y: 0, dx: BALL_SPEED, dy: -BALL_SPEED });
     const bricksRef = useRef([]);
 
     // Load assets and process transparency
@@ -102,9 +104,9 @@ const BreakoutGame = () => {
         paddleRef.current.x = (canvas.width - PADDLE_WIDTH) / 2;
         ballRef.current = {
             x: canvas.width / 2,
-            y: canvas.height - 40 - PADDLE_HEIGHT,
-            dx: 2.5 * (Math.random() > 0.5 ? 1 : -1),
-            dy: -2.5
+            y: canvas.height - PADDLE_HEIGHT - 30,
+            dx: BALL_SPEED,
+            dy: -BALL_SPEED
         };
         bricksRef.current = initBricks();
         setScore(0);
@@ -551,6 +553,36 @@ const BreakoutGame = () => {
                             <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-50 max-w-[90%] w-full">
                                 <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-pink-500 uppercase">하얀늘이 도넛 숲의 모험! 🍩</h2>
                                 <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">신비로운 도넛 숲에서 빵 친구들을 구해주세여! ✨</p>
+
+                                {/* Difficulty Selection */}
+                                <div className="mb-6">
+                                    <p className="text-orange-500 text-[10px] uppercase tracking-widest font-black mb-3">난이도 선택</p>
+                                    <div className="flex gap-3 justify-center">
+                                        <button
+                                            onClick={() => setDifficulty('kids')}
+                                            className={`flex-1 px-6 py-4 rounded-2xl font-black text-sm transition-all ${difficulty === 'kids'
+                                                    ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-lg scale-105'
+                                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                }`}
+                                        >
+                                            <div className="text-2xl mb-1">👶</div>
+                                            <div>아이 모드</div>
+                                            <div className="text-[9px] opacity-70 mt-1">쉬워요!</div>
+                                        </button>
+                                        <button
+                                            onClick={() => setDifficulty('adult')}
+                                            className={`flex-1 px-6 py-4 rounded-2xl font-black text-sm transition-all ${difficulty === 'adult'
+                                                    ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-lg scale-105'
+                                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                }`}
+                                        >
+                                            <div className="text-2xl mb-1">🔥</div>
+                                            <div>어른 모드</div>
+                                            <div className="text-[9px] opacity-70 mt-1">도전!</div>
+                                        </button>
+                                    </div>
+                                </div>
+
                                 <div className="mb-6 w-full max-w-[280px] mx-auto">
                                     <p className="text-orange-500 text-[10px] uppercase tracking-widest font-black mb-2">Player Nickname</p>
                                     <input
