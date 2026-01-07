@@ -47,7 +47,7 @@ const MemoryGame = () => {
     }, [gameState]);
 
     const initGame = () => {
-        const pairCount = difficulty === 'kids' ? 4 : 8;
+        const pairCount = difficulty === 'kids' ? 6 : 8;
         const selectedEmojis = BREAD_EMOJIS.slice(0, pairCount);
         const cardPairs = [...selectedEmojis, ...selectedEmojis];
         const shuffled = cardPairs
@@ -87,7 +87,7 @@ const MemoryGame = () => {
                 setMatchedPairs([...matchedPairs, firstCard.content]);
                 setFlippedCards([]);
 
-                const totalPairs = difficulty === 'kids' ? 4 : 8;
+                const totalPairs = difficulty === 'kids' ? 6 : 8;
                 if (matchedPairs.length + 1 === totalPairs) {
                     setTimeout(() => {
                         setGameState('WON');
@@ -261,7 +261,7 @@ const MemoryGame = () => {
                                 >
                                     <div className="text-2xl mb-1">👶</div>
                                     <div>아이 모드</div>
-                                    <div className="text-[9px] opacity-70 mt-1">8장 (4쌍)</div>
+                                    <div className="text-[9px] opacity-70 mt-1">12장 (6쌍)</div>
                                 </button>
                                 <button
                                     onClick={() => setDifficulty('adult')}
@@ -325,8 +325,8 @@ const MemoryGame = () => {
                                         onClick={() => handleCardClick(card.id)}
                                         disabled={isFlipped}
                                         className={`aspect-square rounded-2xl md:rounded-3xl font-black text-4xl md:text-6xl transition-all duration-300 transform overflow-hidden ${isFlipped
-                                                ? 'bg-white shadow-lg scale-100'
-                                                : 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-md hover:scale-105 active:scale-95'
+                                            ? 'bg-white shadow-lg scale-100'
+                                            : 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-md hover:scale-105 active:scale-95'
                                             } ${matchedPairs.includes(card.content) ? 'opacity-70' : ''}`}
                                     >
                                         {isFlipped ? (
