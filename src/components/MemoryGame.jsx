@@ -30,9 +30,9 @@ const MemoryGame = () => {
     const [dbError, setDbError] = useState('');
 
     const BREAD_EMOJIS = [
-        '🍞', '🥐', '🥖', '🥨', '🥯', '🥞',
         { type: 'image', src: hayanImg, name: '하얀이' },
         { type: 'image', src: haneulImg, name: '하늘이' },
+        '🍞', '🥐', '🥖', '🥨', '🥯', '🥞',
         '🍩', '🧁', '🍰', '🎂'
     ];
 
