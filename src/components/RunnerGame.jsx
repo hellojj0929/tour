@@ -208,13 +208,9 @@ const RunnerGame = () => {
         game.player.velocity += game.gravity;
         game.player.y += game.player.velocity;
 
+
         // Player walks forward
         game.player.x += game.walkSpeed;
-
-        // Keep player on screen
-        if (game.player.x > canvas.width - game.player.size) {
-            game.player.x = canvas.width - game.player.size;
-        }
 
         // Ground collision
         if (game.player.y > canvas.height - 50 - game.player.size) {
