@@ -513,7 +513,7 @@ const BreakoutGame = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#fffbeb] text-slate-800 flex flex-col items-center p-4 md:p-8 font-sans overflow-x-hidden">
+        <div className="min-h-screen bg-[#fffbeb] text-slate-800 flex flex-col items-center p-2 md:p-8 font-sans overflow-x-hidden">
             <div className="max-w-3xl w-full flex justify-between items-center mb-6 md:mb-8 relative z-10">
                 <Link to="/game" className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-orange-100 shadow-sm font-bold text-sm md:text-base">
                     <ArrowLeft size={18} className="md:w-5 md:h-5" />
@@ -534,12 +534,12 @@ const BreakoutGame = () => {
                 </div>
             </div>
 
-            <div className="relative group w-full max-w-[640px] flex justify-center">
+            <div className="relative group w-full max-w-[95vw] md:max-w-[640px] flex justify-center">
                 <canvas
                     ref={canvasRef}
                     width={640}
                     height={480}
-                    className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] border-4 md:border-8 border-white shadow-2xl cursor-none overflow-hidden touch-none w-full h-auto max-h-[70vh] object-contain"
+                    className="bg-white rounded-[1rem] md:rounded-[2.5rem] border-2 md:border-8 border-white shadow-2xl cursor-none overflow-hidden touch-none w-full h-auto max-h-[75vh] md:max-h-[70vh] object-contain"
                     onMouseMove={handleMouseMove}
                     onTouchMove={handleTouchMove}
                     onTouchStart={handleTouchMove}
