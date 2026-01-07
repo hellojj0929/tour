@@ -86,109 +86,69 @@ const RunnerGame = () => {
         const ctx = canvas.getContext('2d');
         const game = gameRef.current;
 
-        // Draw bright blue sky
+        // Draw soft pastel sky
         const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height - 50);
-        skyGradient.addColorStop(0, '#7dd3fc'); // Bright sky blue
-        skyGradient.addColorStop(1, '#bae6fd'); // Light blue
+        skyGradient.addColorStop(0, '#e0f2fe'); // Very light blue
+        skyGradient.addColorStop(0.5, '#fae8ff'); // Very light purple
+        skyGradient.addColorStop(1, '#fef3c7'); // Very light yellow
         ctx.fillStyle = skyGradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height - 50);
 
-        // Draw fluffy white clouds
-        ctx.fillStyle = '#ffffff';
-        for (let i = 0; i < 5; i++) {
-            const cloudX = ((game.frameCount * 0.1 + i * 150) % (canvas.width + 100)) - 50;
+        // Draw soft clouds
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        for (let i = 0; i < 4; i++) {
+            const cloudX = ((game.frameCount * 0.08 + i * 160) % (canvas.width + 120)) - 60;
             const cloudY = 30 + i * 20;
 
             ctx.beginPath();
-            ctx.arc(cloudX, cloudY, 18, 0, Math.PI * 2);
-            ctx.arc(cloudX + 20, cloudY, 22, 0, Math.PI * 2);
-            ctx.arc(cloudX + 40, cloudY, 18, 0, Math.PI * 2);
+            ctx.arc(cloudX, cloudY, 20, 0, Math.PI * 2);
+            ctx.arc(cloudX + 25, cloudY, 25, 0, Math.PI * 2);
+            ctx.arc(cloudX + 50, cloudY, 20, 0, Math.PI * 2);
             ctx.fill();
         }
 
-        // Draw colorful town buildings
+        // Draw simple pastel buildings
         const buildings = [
-            { x: 50, width: 80, height: 120, color: '#fbbf24', roofColor: '#f59e0b', windows: 2 }, // Yellow
-            { x: 140, width: 70, height: 100, color: '#fb923c', roofColor: '#ea580c', windows: 2 }, // Orange
-            { x: 220, width: 90, height: 130, color: '#f472b6', roofColor: '#ec4899', windows: 3 }, // Pink
-            { x: 320, width: 75, height: 110, color: '#a78bfa', roofColor: '#8b5cf6', windows: 2 }, // Purple
-            { x: 405, width: 85, height: 125, color: '#60a5fa', roofColor: '#3b82f6', windows: 2 }, // Blue
-            { x: 500, width: 80, height: 105, color: '#34d399', roofColor: '#10b981', windows: 2 }, // Green
+            { x: 60, width: 70, height: 100, color: '#fecaca' }, // Light pink
+            { x: 150, width: 80, height: 120, color: '#fed7aa' }, // Light peach
+            { x: 250, width: 75, height: 90, color: '#fde68a' }, // Light yellow
+            { x: 345, width: 85, height: 110, color: '#d9f99d' }, // Light green
+            { x: 450, width: 70, height: 95, color: '#bfdbfe' }, // Light blue
+            { x: 540, width: 80, height: 105, color: '#e9d5ff' }, // Light purple
         ];
+
 
         buildings.forEach(building => {
             const buildingY = canvas.height - 50 - building.height;
 
-            // Building body
+            // Building body with soft shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(building.x + 3, buildingY + 3, building.width, building.height);
+
             ctx.fillStyle = building.color;
             ctx.fillRect(building.x, buildingY, building.width, building.height);
 
-            // Building outline
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(building.x, buildingY, building.width, building.height);
-
-            // Roof
-            ctx.fillStyle = building.roofColor;
+            // Simple roof
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.beginPath();
-            ctx.moveTo(building.x - 5, buildingY);
-            ctx.lineTo(building.x + building.width / 2, buildingY - 20);
-            ctx.lineTo(building.x + building.width + 5, buildingY);
+            ctx.moveTo(building.x, buildingY);
+            ctx.lineTo(building.x + building.width / 2, buildingY - 15);
+            ctx.lineTo(building.x + building.width, buildingY);
             ctx.closePath();
             ctx.fill();
-            ctx.strokeStyle = '#ffffff';
-            ctx.stroke();
 
-            // Windows
-            ctx.fillStyle = '#fef3c7';
-            const windowWidth = 15;
-            const windowHeight = 20;
-            const windowSpacing = building.width / (building.windows + 1);
+            // Simple windows
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            const windowSize = 12;
+            const windowY = buildingY + 30;
 
-            for (let w = 0; w < building.windows; w++) {
-                const windowX = building.x + windowSpacing * (w + 1) - windowWidth / 2;
-                const windowY = buildingY + 25;
-
-                // Window
-                ctx.fillRect(windowX, windowY, windowWidth, windowHeight);
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(windowX, windowY, windowWidth, windowHeight);
-
-                // Window cross
-                ctx.beginPath();
-                ctx.moveTo(windowX + windowWidth / 2, windowY);
-                ctx.lineTo(windowX + windowWidth / 2, windowY + windowHeight);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(windowX, windowY + windowHeight / 2);
-                ctx.lineTo(windowX + windowWidth, windowY + windowHeight / 2);
-                ctx.stroke();
-
-                // Second floor window
-                if (building.height > 110) {
-                    ctx.fillRect(windowX, windowY + 50, windowWidth, windowHeight);
-                    ctx.strokeRect(windowX, windowY + 50, windowWidth, windowHeight);
+            for (let w = 0; w < 2; w++) {
+                const windowX = building.x + building.width / 3 * (w + 0.5) - windowSize / 2;
+                ctx.fillRect(windowX, windowY, windowSize, windowSize);
+                if (building.height > 100) {
+                    ctx.fillRect(windowX, windowY + 40, windowSize, windowSize);
                 }
             }
-
-            // Door
-            const doorWidth = 20;
-            const doorHeight = 35;
-            const doorX = building.x + building.width / 2 - doorWidth / 2;
-            const doorY = buildingY + building.height - doorHeight;
-
-            ctx.fillStyle = '#7c2d12';
-            ctx.fillRect(doorX, doorY, doorWidth, doorHeight);
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(doorX, doorY, doorWidth, doorHeight);
-
-            // Door knob
-            ctx.fillStyle = '#fbbf24';
-            ctx.beginPath();
-            ctx.arc(doorX + doorWidth - 5, doorY + doorHeight / 2, 2, 0, Math.PI * 2);
-            ctx.fill();
         });
 
         // Draw cute trees
