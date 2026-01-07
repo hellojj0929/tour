@@ -332,19 +332,22 @@ const RunnerGame = () => {
             const obs = game.obstacles[i];
             obs.x -= game.obstacleSpeed;
 
-            // Draw top obstacle (stacked donuts)
-            const donutSize = 35;
-            ctx.font = `${donutSize}px Arial`;
-            const topDonutCount = Math.ceil(obs.topHeight / donutSize);
-            for (let d = 0; d < topDonutCount; d++) {
-                ctx.fillText('🍩', obs.x + 7, (d + 1) * donutSize);
+            // Draw top obstacle (stacked breads)
+            const breadSize = 35;
+            ctx.font = `${breadSize}px Arial`;
+            const breads = ['🍩', '🥐', '🥖', '🥨', '🥯', '🧁', '🍰', '🎂', '🍪', '🧇'];
+            const breadType = breads[i % breads.length]; // Different bread for each obstacle
+
+            const topBreadCount = Math.ceil(obs.topHeight / breadSize);
+            for (let d = 0; d < topBreadCount; d++) {
+                ctx.fillText(breadType, obs.x + 7, (d + 1) * breadSize);
             }
 
-            // Draw bottom obstacle (stacked donuts)
+            // Draw bottom obstacle (stacked breads)
             const bottomHeight = canvas.height - 50 - obs.bottomY;
-            const bottomDonutCount = Math.ceil(bottomHeight / donutSize);
-            for (let d = 0; d < bottomDonutCount; d++) {
-                ctx.fillText('🍩', obs.x + 7, obs.bottomY + (d + 1) * donutSize);
+            const bottomBreadCount = Math.ceil(bottomHeight / breadSize);
+            for (let d = 0; d < bottomBreadCount; d++) {
+                ctx.fillText(breadType, obs.x + 7, obs.bottomY + (d + 1) * breadSize);
             }
 
             // Check collision
