@@ -427,8 +427,23 @@ const BreakoutGame = () => {
             if (ballRef.current.x > paddleRef.current.x - 5 && ballRef.current.x < paddleRef.current.x + PADDLE_WIDTH + 5) {
                 if (ballRef.current.dy > 0 && ballRef.current.y <= canvas.height - PADDLE_HEIGHT - 10) {
                     ballRef.current.dy = -Math.abs(ballRef.current.dy);
-                    const deltaX = (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
-                    ballRef.current.dx = Math.max(-8, Math.min(8, ballRef.current.dx + deltaX));
+
+                    if (difficulty === 'kids') {
+                        // Kids mode: Simple, consistent bounce
+                        const deltaX = (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.08;
+                        ballRef.current.dx = deltaX;
+
+                        // Normalize speed to keep it constant
+                        const currentSpeed = Math.sqrt(ballRef.current.dx ** 2 + ballRef.current.dy ** 2);
+                        const targetSpeed = BALL_SPEED;
+                        ballRef.current.dx = (ballRef.current.dx / currentSpeed) * targetSpeed;
+                        ballRef.current.dy = (ballRef.current.dy / currentSpeed) * targetSpeed;
+                    } else {
+                        // Adult mode: Variable speed based on hit position
+                        const deltaX = (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;
+                        ballRef.current.dx = Math.max(-8, Math.min(8, ballRef.current.dx + deltaX));
+                    }
+
                     hitTimerRef.current = 45;
                 }
             } else if (ballRef.current.y + ballRef.current.dy > canvas.height) {
@@ -561,8 +576,8 @@ const BreakoutGame = () => {
                                         <button
                                             onClick={() => setDifficulty('kids')}
                                             className={`flex-1 px-6 py-4 rounded-2xl font-black text-sm transition-all ${difficulty === 'kids'
-                                                    ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-lg scale-105'
-                                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-lg scale-105'
+                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                                 }`}
                                         >
                                             <div className="text-2xl mb-1">👶</div>
@@ -572,8 +587,8 @@ const BreakoutGame = () => {
                                         <button
                                             onClick={() => setDifficulty('adult')}
                                             className={`flex-1 px-6 py-4 rounded-2xl font-black text-sm transition-all ${difficulty === 'adult'
-                                                    ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-lg scale-105'
-                                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-lg scale-105'
+                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                                 }`}
                                         >
                                             <div className="text-2xl mb-1">🔥</div>
