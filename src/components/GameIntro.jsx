@@ -30,7 +30,7 @@ const GameIntro = () => {
                     </p>
                 </section>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Brick Breaker Card */}
                     <Link to="/game/breakout" className="group">
                         <div className="relative overflow-hidden bg-slate-800/40 rounded-[2.5rem] border border-slate-700/50 hover:border-indigo-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/20 active:scale-95">
@@ -86,6 +86,33 @@ const GameIntro = () => {
                                 <div className="flex items-center gap-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
                                     <span className="flex items-center gap-1"><Trophy size={14} /> Best: 12 moves</span>
                                     <span className="px-2 py-0.5 rounded bg-purple-700 text-purple-300">New</span>
+                                </div>
+                            </div>
+                        </div>
+                    </Link>
+
+                    {/* Runner Game */}
+                    <Link to="/game/runner" className="group">
+                        <div className="relative overflow-hidden bg-slate-800/40 rounded-[2.5rem] border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-cyan-500/20 active:scale-95">
+                            <div className="aspect-video bg-gradient-to-br from-cyan-600/20 to-blue-600/20 flex items-center justify-center p-8 overflow-hidden">
+                                <div className="text-6xl opacity-40 group-hover:opacity-70 transition-opacity duration-500">
+                                    🏃💨
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                            </div>
+                            <div className="p-8">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 className="text-2xl font-black tracking-tight mb-1 text-white">RUNNER GAME</h3>
+                                        <p className="text-slate-400 text-sm font-medium">장애물 피하기 게임</p>
+                                    </div>
+                                    <div className="p-3 bg-cyan-500 rounded-2xl shadow-lg shadow-cyan-500/30">
+                                        <Play size={20} fill="white" />
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                    <span className="flex items-center gap-1"><Trophy size={14} /> High: 50</span>
+                                    <span className="px-2 py-0.5 rounded bg-cyan-700 text-cyan-300">New</span>
                                 </div>
                             </div>
                         </div>
