@@ -34,7 +34,8 @@ const RunnerGame = () => {
         jumpStrength: -12,
         obstacleSpeed: 2,
         obstacleGap: 300,
-        lastObstacle: 0
+        lastObstacle: 0,
+        bgScroll: 0
     });
 
     const requestRef = useRef();
@@ -107,7 +108,8 @@ const RunnerGame = () => {
             ctx.fill();
         }
 
-        // Draw simple pastel buildings
+        // Draw simple pastel buildings (with scrolling)
+        game.bgScroll += 0.5; // Scroll speed
         const buildings = [
             { x: 60, width: 70, height: 100, color: '#fecaca' }, // Light pink
             { x: 150, width: 80, height: 120, color: '#fed7aa' }, // Light peach
@@ -117,8 +119,9 @@ const RunnerGame = () => {
             { x: 540, width: 80, height: 105, color: '#e9d5ff' }, // Light purple
         ];
 
-
         buildings.forEach(building => {
+            const scrolledX = (building.x - game.bgScroll % 640) % 640;
+            if (scrolledX < -building.width) return;
             const buildingY = canvas.height - 50 - building.height;
 
             // Building body with soft shadow
@@ -131,9 +134,9 @@ const RunnerGame = () => {
             // Simple roof
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.beginPath();
-            ctx.moveTo(building.x, buildingY);
-            ctx.lineTo(building.x + building.width / 2, buildingY - 15);
-            ctx.lineTo(building.x + building.width, buildingY);
+            ctx.moveTo(scrolledX, buildingY);
+            ctx.lineTo(scrolledX + building.width / 2, buildingY - 15);
+            ctx.lineTo(scrolledX + building.width, buildingY);
             ctx.closePath();
             ctx.fill();
 
@@ -143,7 +146,7 @@ const RunnerGame = () => {
             const windowY = buildingY + 30;
 
             for (let w = 0; w < 2; w++) {
-                const windowX = building.x + building.width / 3 * (w + 0.5) - windowSize / 2;
+                const windowX = scrolledX + building.width / 3 * (w + 0.5) - windowSize / 2;
                 ctx.fillRect(windowX, windowY, windowSize, windowSize);
                 if (building.height > 100) {
                     ctx.fillRect(windowX, windowY + 40, windowSize, windowSize);
@@ -151,10 +154,12 @@ const RunnerGame = () => {
             }
         });
 
-        // Draw cute trees
-        for (let i = 0; i < 4; i++) {
-            const treeX = 30 + i * 160;
-            const treeY = canvas.height - 90;
+        // Draw simple trees (with scrolling)
+        for (let i = 0; i < 3; i++) {
+            const baseTreeX = 40 + i * 200;
+            const treeX = (baseTreeX - game.bgScroll % 600) % 600;
+            if (treeX < -40) continue;
+            const treeY = canvas.height - 80;
 
             // Tree trunk
             ctx.fillStyle = '#92400e';
