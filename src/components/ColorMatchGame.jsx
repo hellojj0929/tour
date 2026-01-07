@@ -8,6 +8,7 @@ const ColorMatchGame = () => {
     const [gameState, setGameState] = useState('START');
     const [score, setScore] = useState(0);
     const [lives, setLives] = useState(3);
+    const [, forceUpdate] = useState(0);
     const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('colorMatchHighScore') || '0'));
     const [playerName, setPlayerName] = useState(() => localStorage.getItem('colorMatchPlayerName') || "");
     const [showNameInput, setShowNameInput] = useState(false);
@@ -71,8 +72,10 @@ const ColorMatchGame = () => {
         const game = gameRef.current;
         if (direction === 'left' && game.selectedBasket > 0) {
             game.selectedBasket--;
+            forceUpdate(n => n + 1);
         } else if (direction === 'right' && game.selectedBasket < 2) {
             game.selectedBasket++;
+            forceUpdate(n => n + 1);
         }
     };
 
@@ -142,6 +145,9 @@ const ColorMatchGame = () => {
                 game.fallingItems.splice(i, 1);
             }
         }
+
+        // Force re-render to show falling items
+        forceUpdate(n => n + 1);
     };
 
     const fetchLeaderboard = async () => {
