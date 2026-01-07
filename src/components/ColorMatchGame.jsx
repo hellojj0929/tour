@@ -27,14 +27,14 @@ const ColorMatchGame = () => {
     const [dbError, setDbError] = useState('');
 
     const colors = [
-        { name: '빨강', color: '#ef4444' },
-        { name: '파랑', color: '#3b82f6' },
-        { name: '노랑', color: '#eab308' },
-        { name: '초록', color: '#22c55e' },
-        { name: '보라', color: '#a855f7' },
-        { name: '주황', color: '#f97316' },
-        { name: '분홍', color: '#ec4899' },
-        { name: '하늘', color: '#06b6d4' },
+        { name: '빨강', english: 'Red', color: '#ef4444' },
+        { name: '파랑', english: 'Blue', color: '#3b82f6' },
+        { name: '노랑', english: 'Yellow', color: '#eab308' },
+        { name: '초록', english: 'Green', color: '#22c55e' },
+        { name: '보라', english: 'Purple', color: '#a855f7' },
+        { name: '주황', english: 'Orange', color: '#f97316' },
+        { name: '분홍', english: 'Pink', color: '#ec4899' },
+        { name: '하늘', english: 'Sky Blue', color: '#06b6d4' },
     ];
 
     useEffect(() => {
@@ -262,9 +262,13 @@ const ColorMatchGame = () => {
                                 <button
                                     key={idx}
                                     onClick={() => handleAnswer(option)}
-                                    className="aspect-square rounded-3xl shadow-xl transition-all active:scale-95 hover:scale-105 border-4 border-white"
+                                    className="aspect-square rounded-3xl shadow-xl transition-all active:scale-95 hover:scale-105 border-4 border-white flex items-center justify-center"
                                     style={{ backgroundColor: option.color }}
-                                />
+                                >
+                                    <span className="text-white font-black text-2xl md:text-3xl drop-shadow-lg">
+                                        {option.english}
+                                    </span>
+                                </button>
                             ))}
                         </div>
                     </div>
