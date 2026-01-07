@@ -73,6 +73,18 @@ const ColorMatchGame = () => {
         const shuffled = [...wrongColors].sort(() => Math.random() - 0.5);
         const selectedOptions = [correctColor, ...shuffled.slice(0, 3)];
         setOptions(selectedOptions.sort(() => Math.random() - 0.5));
+
+        // Speak the color name in English
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(correctColor.english);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            utterance.pitch = 1.1;
+            window.speechSynthesis.cancel(); // Cancel any ongoing speech
+            setTimeout(() => {
+                window.speechSynthesis.speak(utterance);
+            }, 100);
+        }
     };
 
     const handleAnswer = (selectedColor) => {
@@ -218,9 +230,10 @@ const ColorMatchGame = () => {
 
                         <div className="mb-6 bg-purple-50 p-4 rounded-2xl">
                             <p className="text-sm font-bold text-purple-700 mb-2">🎮 게임 방법</p>
+                            <p className="text-xs text-slate-600">• 색깔 이름을 듣고 맞는 색을 선택하세요!</p>
                             <p className="text-xs text-slate-600">• 30초 안에 최대한 많이 맞추세요!</p>
-                            <p className="text-xs text-slate-600">• 정답: +1점</p>
-                            <p className="text-xs text-slate-600">• 오답: -2초</p>
+                            <p className="text-xs text-slate-600">• 정답: +1점 / 오답: -2초</p>
+                            <p className="text-xs text-slate-600">• 🔊 버튼을 누르면 다시 들을 수 있어요!</p>
                         </div>
 
                         <div className="mb-6 w-full max-w-[280px] mx-auto">
@@ -253,9 +266,29 @@ const ColorMatchGame = () => {
 
                 {gameState === 'PLAYING' && currentColor && (
                     <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-purple-50 w-full">
-                        <h2 className="text-3xl md:text-5xl font-black mb-8 md:mb-12 text-center tracking-tighter" style={{ color: currentColor.color }}>
-                            {currentColor.name}
-                        </h2>
+                        <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
+                            <h2 className="text-3xl md:text-5xl font-black text-center tracking-tighter" style={{ color: currentColor.color }}>
+                                {currentColor.name}
+                            </h2>
+                            <button
+                                onClick={() => {
+                                    if ('speechSynthesis' in window) {
+                                        const utterance = new SpeechSynthesisUtterance(currentColor.english);
+                                        utterance.lang = 'en-US';
+                                        utterance.rate = 0.9;
+                                        utterance.pitch = 1.1;
+                                        window.speechSynthesis.cancel();
+                                        setTimeout(() => {
+                                            window.speechSynthesis.speak(utterance);
+                                        }, 100);
+                                    }
+                                }}
+                                className="bg-purple-100 hover:bg-purple-200 text-purple-600 p-3 rounded-full transition-all active:scale-95"
+                                title="다시 듣기"
+                            >
+                                🔊
+                            </button>
+                        </div>
 
                         <div className="grid grid-cols-2 gap-4 md:gap-6">
                             {options.map((option, idx) => (
