@@ -28,13 +28,13 @@ const ColorMatchGame = () => {
     const gameRef = useRef({
         fallingItems: [],
         baskets: [
-            { x: 100, color: '#fbbf24', emoji: '🥖' }, // Yellow
-            { x: 270, color: '#f97316', emoji: '🥐' }, // Orange
-            { x: 440, color: '#ec4899', emoji: '🧁' }, // Pink
+            { x: 50, color: '#fbbf24', emoji: '🥖' }, // Yellow - Left
+            { x: 200, color: '#f97316', emoji: '🥐' }, // Orange - Center
+            { x: 350, color: '#ec4899', emoji: '🧁' }, // Pink - Right
         ],
         selectedBasket: 1,
-        speed: 2,
-        spawnRate: 60,
+        speed: 3,
+        spawnRate: 30,
         frameCount: 0
     });
 
@@ -60,7 +60,8 @@ const ColorMatchGame = () => {
         const game = gameRef.current;
         game.fallingItems = [];
         game.selectedBasket = 1;
-        game.speed = 2;
+        game.speed = 3;
+        game.spawnRate = 30;
         game.frameCount = 0;
         setScore(0);
         setLives(3);
@@ -343,8 +344,8 @@ const ColorMatchGame = () => {
                                     <div
                                         key={idx}
                                         className={`w-24 h-24 rounded-2xl flex items-center justify-center text-4xl transition-all ${game.selectedBasket === idx
-                                                ? 'scale-110 shadow-2xl ring-4 ring-white'
-                                                : 'opacity-50 scale-90'
+                                            ? 'scale-110 shadow-2xl ring-4 ring-white'
+                                            : 'opacity-50 scale-90'
                                             }`}
                                         style={{ backgroundColor: basket.color }}
                                     >
