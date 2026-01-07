@@ -60,16 +60,36 @@ const GameIntro = () => {
                         </div>
                     </Link>
 
-                    {/* Locked/Placeholder Card */}
-                    <div className="relative overflow-hidden bg-slate-800/10 rounded-[2.5rem] border border-slate-700/30 opacity-50 cursor-not-allowed">
-                        <div className="aspect-video bg-slate-900 flex items-center justify-center">
-                            <Gamepad2 size={40} className="text-slate-700" />
+                    {/* Memory Card Game */}
+                    <Link to="/game/memory" className="group">
+                        <div className="relative overflow-hidden bg-slate-800/40 rounded-[2.5rem] border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 active:scale-95">
+                            <div className="aspect-video bg-gradient-to-br from-purple-600/20 to-pink-600/20 flex items-center justify-center p-8 overflow-hidden">
+                                <div className="grid grid-cols-4 gap-2 opacity-30 group-hover:opacity-60 transition-opacity duration-500">
+                                    {['🍞', '🥐', '🥖', '🥨', '🥯', '🥞', '🍩', '🧁'].map((emoji, i) => (
+                                        <div key={i} className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-2xl">
+                                            {emoji}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                            </div>
+                            <div className="p-8">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 className="text-2xl font-black tracking-tight mb-1 text-white">MEMORY GAME</h3>
+                                        <p className="text-slate-400 text-sm font-medium">같은 카드 찾기 게임</p>
+                                    </div>
+                                    <div className="p-3 bg-purple-500 rounded-2xl shadow-lg shadow-purple-500/30">
+                                        <Play size={20} fill="white" />
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                    <span className="flex items-center gap-1"><Trophy size={14} /> Best: 12 moves</span>
+                                    <span className="px-2 py-0.5 rounded bg-purple-700 text-purple-300">New</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="p-8">
-                            <h3 className="text-2xl font-black tracking-tight mb-1 text-slate-600">COMING SOON</h3>
-                            <p className="text-slate-700 text-sm font-medium">새로운 게임이 준비 중입니다</p>
-                        </div>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Decorative elements */}

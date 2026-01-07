@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import TourApp from './pages/TourApp';
 import GameIntro from './components/GameIntro';
 import BreakoutGame from './components/BreakoutGame';
+import MemoryGame from './components/MemoryGame';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         {/* Game Section */}
         <Route path="/game" element={<GameIntro />} />
         <Route path="/game/breakout" element={<BreakoutGame />} />
+        <Route path="/game/memory" element={<MemoryGame />} />
       </Routes>
     </Router>
   );
