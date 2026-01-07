@@ -86,56 +86,152 @@ const RunnerGame = () => {
         const ctx = canvas.getContext('2d');
         const game = gameRef.current;
 
-        // Draw sky with gradient (fairy tale sky)
-        const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        // Draw magical sky with gradient
+        const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height - 50);
         skyGradient.addColorStop(0, '#fef3c7'); // Light yellow
-        skyGradient.addColorStop(0.5, '#fed7aa'); // Peach
-        skyGradient.addColorStop(1, '#fecaca'); // Light pink
+        skyGradient.addColorStop(0.3, '#fed7aa'); // Peach
+        skyGradient.addColorStop(0.7, '#fecaca'); // Light pink
+        skyGradient.addColorStop(1, '#fbcfe8'); // Pink
         ctx.fillStyle = skyGradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, canvas.width, canvas.height - 50);
 
-        // Draw candy clouds
-        ctx.fillStyle = '#ffffff';
-        ctx.globalAlpha = 0.7;
-        for (let i = 0; i < 3; i++) {
-            const cloudX = (game.frameCount * 0.2 + i * 200) % (canvas.width + 100);
+        // Draw fluffy candy clouds with shadows
+        for (let i = 0; i < 4; i++) {
+            const cloudX = ((game.frameCount * 0.15 + i * 180) % (canvas.width + 150)) - 50;
+            const cloudY = 40 + i * 25;
+
+            // Cloud shadow
+            ctx.fillStyle = 'rgba(255, 192, 203, 0.2)';
             ctx.beginPath();
-            ctx.arc(cloudX, 50 + i * 30, 20, 0, Math.PI * 2);
-            ctx.arc(cloudX + 25, 50 + i * 30, 25, 0, Math.PI * 2);
-            ctx.arc(cloudX + 50, 50 + i * 30, 20, 0, Math.PI * 2);
+            ctx.arc(cloudX + 5, cloudY + 5, 22, 0, Math.PI * 2);
+            ctx.arc(cloudX + 30, cloudY + 5, 28, 0, Math.PI * 2);
+            ctx.arc(cloudX + 55, cloudY + 5, 22, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cloud
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(cloudX, cloudY, 22, 0, Math.PI * 2);
+            ctx.arc(cloudX + 25, cloudY, 28, 0, Math.PI * 2);
+            ctx.arc(cloudX + 50, cloudY, 22, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Draw distant candy mountains
+        ctx.fillStyle = '#fda4af';
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height - 200);
+        ctx.lineTo(150, canvas.height - 280);
+        ctx.lineTo(300, canvas.height - 200);
+        ctx.lineTo(0, canvas.height - 200);
+        ctx.fill();
+
+        ctx.fillStyle = '#f9a8d4';
+        ctx.beginPath();
+        ctx.moveTo(200, canvas.height - 200);
+        ctx.lineTo(350, canvas.height - 300);
+        ctx.lineTo(500, canvas.height - 200);
+        ctx.lineTo(200, canvas.height - 200);
+        ctx.fill();
+
+        // Draw candy houses with details
+        for (let i = 0; i < 3; i++) {
+            const houseX = 80 + i * 220;
+            const houseY = canvas.height - 180;
+
+            // House base (gingerbread)
+            ctx.fillStyle = '#92400e';
+            ctx.fillRect(houseX, houseY, 60, 50);
+
+            // Roof (chocolate)
+            ctx.fillStyle = '#7c2d12';
+            ctx.beginPath();
+            ctx.moveTo(houseX - 5, houseY);
+            ctx.lineTo(houseX + 30, houseY - 30);
+            ctx.lineTo(houseX + 65, houseY);
+            ctx.closePath();
+            ctx.fill();
+
+            // Window (candy)
+            ctx.fillStyle = '#fef08a';
+            ctx.fillRect(houseX + 10, houseY + 15, 15, 15);
+            ctx.fillRect(houseX + 35, houseY + 15, 15, 15);
+
+            // Door
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(houseX + 22, houseY + 25, 16, 25);
+
+            // Icing decorations
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(houseX, houseY, 60, 3);
+            for (let j = 0; j < 4; j++) {
+                ctx.beginPath();
+                ctx.arc(houseX + 15 * j + 7, houseY + 3, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Draw colorful lollipop trees
+        for (let i = 0; i < 6; i++) {
+            const treeX = 30 + i * 120;
+            const treeY = canvas.height - 120;
+
+            // Stick
+            ctx.strokeStyle = '#a16207';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(treeX, treeY);
+            ctx.lineTo(treeX, treeY - 35);
+            ctx.stroke();
+
+            // Lollipop
+            const colors = ['#ef4444', '#f97316', '#fbbf24', '#a3e635', '#60a5fa', '#c084fc'];
+            ctx.fillStyle = colors[i % colors.length];
+            ctx.beginPath();
+            ctx.arc(treeX, treeY - 35, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Spiral decoration
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(treeX, treeY - 35, 10, 0, Math.PI * 1.5);
+            ctx.stroke();
+        }
+
+        // Draw gingerbread path with detailed icing
+        const groundGradient = ctx.createLinearGradient(0, canvas.height - 50, 0, canvas.height);
+        groundGradient.addColorStop(0, '#b45309');
+        groundGradient.addColorStop(0.5, '#92400e');
+        groundGradient.addColorStop(1, '#78350f');
+        ctx.fillStyle = groundGradient;
+        ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+
+        // Icing pattern on ground
+        ctx.fillStyle = '#ffffff';
+        ctx.globalAlpha = 0.6;
+        for (let i = 0; i < canvas.width; i += 30) {
+            // Wavy icing
+            ctx.beginPath();
+            ctx.moveTo(i, canvas.height - 48);
+            ctx.quadraticCurveTo(i + 7, canvas.height - 52, i + 15, canvas.height - 48);
+            ctx.quadraticCurveTo(i + 22, canvas.height - 44, i + 30, canvas.height - 48);
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Sugar dots
+            ctx.beginPath();
+            ctx.arc(i + 10, canvas.height - 25, 2, 0, Math.PI * 2);
             ctx.fill();
         }
         ctx.globalAlpha = 1;
 
-        // Draw candy houses in background
-        ctx.font = '40px Arial';
-        for (let i = 0; i < 3; i++) {
-            const houseX = 100 + i * 250;
-            const houseY = canvas.height - 150;
-            ctx.fillText('🏠', houseX, houseY);
-        }
-
-        // Draw lollipop trees
-        ctx.font = '30px Arial';
-        for (let i = 0; i < 5; i++) {
-            const treeX = 50 + i * 150;
-            const treeY = canvas.height - 100;
-            ctx.fillText('🍭', treeX, treeY);
-        }
-
-        // Draw gingerbread path (ground)
-        const groundGradient = ctx.createLinearGradient(0, canvas.height - 50, 0, canvas.height);
-        groundGradient.addColorStop(0, '#d97706'); // Brown
-        groundGradient.addColorStop(1, '#92400e'); // Dark brown
-        ctx.fillStyle = groundGradient;
-        ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
-
-        // Add candy decorations on ground
-        ctx.fillStyle = '#ffffff';
-        for (let i = 0; i < canvas.width; i += 40) {
-            ctx.beginPath();
-            ctx.arc(i + 10, canvas.height - 25, 3, 0, Math.PI * 2);
-            ctx.fill();
+        // Candy decorations on ground
+        ctx.font = '16px Arial';
+        for (let i = 0; i < 8; i++) {
+            const candyX = 40 + i * 80;
+            const candies = ['🍬', '🍭', '🍫'];
+            ctx.fillText(candies[i % 3], candyX, canvas.height - 15);
         }
 
         // Update player
