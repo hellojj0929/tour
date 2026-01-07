@@ -277,15 +277,13 @@ const RunnerGame = () => {
             ctx.drawImage(hayanImgRef.current, playerX, playerY, size, size);
         }
 
-        // Generate obstacles
+        // Generate obstacles (bottom only for kids)
         game.frameCount++;
         if (game.frameCount - game.lastObstacle > game.obstacleGap) {
-            const gapSize = 200;
-            const gapY = Math.random() * (canvas.height - 50 - gapSize - 100) + 50;
+            const obstacleHeight = 60 + Math.random() * 40; // Random height between 60-100
             game.obstacles.push({
                 x: canvas.width,
-                topHeight: gapY,
-                bottomY: gapY + gapSize,
+                height: obstacleHeight,
                 passed: false
             });
             game.lastObstacle = game.frameCount;
@@ -296,22 +294,16 @@ const RunnerGame = () => {
             const obs = game.obstacles[i];
             obs.x -= game.obstacleSpeed;
 
-            // Draw top obstacle (stacked breads)
+            // Draw bottom obstacle only (stacked breads)
             const breadSize = 35;
             ctx.font = `${breadSize}px Arial`;
             const breads = ['🍩', '🥐', '🥖', '🥨', '🥯', '🧁', '🍰', '🎂', '🍪', '🧇'];
-            const breadType = breads[i % breads.length]; // Different bread for each obstacle
+            const breadType = breads[i % breads.length];
 
-            const topBreadCount = Math.ceil(obs.topHeight / breadSize);
-            for (let d = 0; d < topBreadCount; d++) {
-                ctx.fillText(breadType, obs.x + 7, (d + 1) * breadSize);
-            }
-
-            // Draw bottom obstacle (stacked breads)
-            const bottomHeight = canvas.height - 50 - obs.bottomY;
-            const bottomBreadCount = Math.ceil(bottomHeight / breadSize);
-            for (let d = 0; d < bottomBreadCount; d++) {
-                ctx.fillText(breadType, obs.x + 7, obs.bottomY + (d + 1) * breadSize);
+            const breadCount = Math.ceil(obs.height / breadSize);
+            const startY = canvas.height - 50 - obs.height;
+            for (let d = 0; d < breadCount; d++) {
+                ctx.fillText(breadType, obs.x + 7, startY + (d + 1) * breadSize);
             }
 
             // Check collision
@@ -324,7 +316,8 @@ const RunnerGame = () => {
             const obsRight = obs.x + 50;
 
             if (playerRight > obsLeft && playerLeft < obsRight) {
-                if (playerTop < obs.topHeight || playerBottom > obs.bottomY) {
+                const obstacleTop = canvas.height - 50 - obs.height;
+                if (playerBottom > obstacleTop) {
                     // Game Over
                     setGameState('GAMEOVER');
                     if (game.score > highScore) {
