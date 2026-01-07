@@ -549,7 +549,7 @@ const BreakoutGame = () => {
                     <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center p-4 md:p-8 text-center animate-in fade-in zoom-in duration-300">
                         {gameState === 'START' && (
                             <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-orange-50 max-w-[90%] w-full">
-                                <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-pink-500 uppercase">도넛 숲의 모험! 🍩</h2>
+                                <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-pink-500 uppercase">하얀늘이 도넛 숲의 모험! 🍩</h2>
                                 <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">신비로운 도넛 숲에서 빵 친구들을 구해주세여! ✨</p>
                                 <div className="mb-6 w-full max-w-[280px] mx-auto">
                                     <p className="text-orange-500 text-[10px] uppercase tracking-widest font-black mb-2">Player Nickname</p>
