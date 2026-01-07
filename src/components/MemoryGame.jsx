@@ -232,7 +232,7 @@ const MemoryGame = () => {
             <div className="relative w-full max-w-[95vw] md:max-w-[640px] flex justify-center">
                 {gameState === 'START' && (
                     <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-purple-50 w-full">
-                        <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-purple-500 uppercase">🧩 메모리 카드 게임!</h2>
+                        <h2 className="text-2xl md:text-4xl font-black mb-2 md:mb-4 tracking-tighter text-purple-500 uppercase">하얀하늘이 메모리 카드 게임! 🧩</h2>
                         <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8 font-medium">같은 빵 친구를 찾아보세요! ✨</p>
 
                         <div className="mb-6">
@@ -241,8 +241,8 @@ const MemoryGame = () => {
                                 <button
                                     onClick={() => setDifficulty('kids')}
                                     className={`flex-1 px-6 py-4 rounded-2xl font-black text-sm transition-all ${difficulty === 'kids'
-                                            ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-lg scale-105'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                        ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-lg scale-105'
+                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                         }`}
                                 >
                                     <div className="text-2xl mb-1">👶</div>
@@ -252,8 +252,8 @@ const MemoryGame = () => {
                                 <button
                                     onClick={() => setDifficulty('adult')}
                                     className={`flex-1 px-6 py-4 rounded-2xl font-black text-sm transition-all ${difficulty === 'adult'
-                                            ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-lg scale-105'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                        ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-lg scale-105'
+                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                         }`}
                                 >
                                     <div className="text-2xl mb-1">🔥</div>
@@ -311,8 +311,8 @@ const MemoryGame = () => {
                                         onClick={() => handleCardClick(card.id)}
                                         disabled={isFlipped}
                                         className={`aspect-square rounded-2xl md:rounded-3xl font-black text-4xl md:text-6xl transition-all duration-300 transform ${isFlipped
-                                                ? 'bg-white shadow-lg scale-100'
-                                                : 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-md hover:scale-105 active:scale-95'
+                                            ? 'bg-white shadow-lg scale-100'
+                                            : 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-md hover:scale-105 active:scale-95'
                                             } ${matchedPairs.includes(card.emoji) ? 'opacity-70' : ''}`}
                                     >
                                         {isFlipped ? card.emoji : '?'}
