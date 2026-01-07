@@ -31,8 +31,8 @@ const RunnerGame = () => {
         frameCount: 0,
         gravity: 0.6,
         jumpStrength: -12,
-        obstacleSpeed: 4,
-        obstacleGap: 200,
+        obstacleSpeed: 3,
+        obstacleGap: 250,
         lastObstacle: 0
     });
 
@@ -111,7 +111,7 @@ const RunnerGame = () => {
         // Generate obstacles
         game.frameCount++;
         if (game.frameCount - game.lastObstacle > game.obstacleGap) {
-            const gapSize = 150;
+            const gapSize = 200;
             const gapY = Math.random() * (canvas.height - 50 - gapSize - 100) + 50;
             game.obstacles.push({
                 x: canvas.width,
