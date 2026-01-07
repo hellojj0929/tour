@@ -3,6 +3,7 @@ import { ArrowLeft, RefreshCw, Trophy, Medal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "firebase/firestore";
 import { db, isFirebaseConfigured } from '../lib/firebase';
+import hayanFace from '../assets/hayan-face.png';
 
 const RunnerGame = () => {
     const canvasRef = useRef(null);
@@ -37,6 +38,7 @@ const RunnerGame = () => {
     });
 
     const requestRef = useRef();
+    const hayanImgRef = useRef(new Image());
 
     useEffect(() => {
         if (gameState === 'PLAYING') {
@@ -56,6 +58,10 @@ const RunnerGame = () => {
             };
         }
     }, [gameState]);
+
+    useEffect(() => {
+        hayanImgRef.current.src = hayanFace;
+    }, []);
 
     const startGame = () => {
         const game = gameRef.current;
@@ -104,9 +110,43 @@ const RunnerGame = () => {
             game.player.velocity = 0;
         }
 
-        // Draw player (bread emoji)
-        ctx.font = `${game.player.size}px Arial`;
-        ctx.fillText('🍞', 80, game.player.y + game.player.size);
+        // Draw player (Hayan character)
+        const playerX = 80;
+        const playerY = game.player.y;
+        const size = game.player.size;
+
+        // Draw cute body
+        ctx.fillStyle = '#fbbf24'; // Yellow body
+        ctx.beginPath();
+        ctx.ellipse(playerX + size / 2, playerY + size * 0.8, size * 0.4, size * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw arms
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(playerX + size * 0.2, playerY + size * 0.7);
+        ctx.lineTo(playerX, playerY + size * 0.9);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(playerX + size * 0.8, playerY + size * 0.7);
+        ctx.lineTo(playerX + size, playerY + size * 0.9);
+        ctx.stroke();
+
+        // Draw legs
+        ctx.beginPath();
+        ctx.moveTo(playerX + size * 0.35, playerY + size * 1.2);
+        ctx.lineTo(playerX + size * 0.25, playerY + size * 1.5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(playerX + size * 0.65, playerY + size * 1.2);
+        ctx.lineTo(playerX + size * 0.75, playerY + size * 1.5);
+        ctx.stroke();
+
+        // Draw Hayan's face
+        if (hayanImgRef.current.complete) {
+            ctx.drawImage(hayanImgRef.current, playerX, playerY, size, size);
+        }
 
         // Generate obstacles
         game.frameCount++;
