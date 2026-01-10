@@ -13,6 +13,7 @@ const MemoryGame = () => {
     const [matchedPairs, setMatchedPairs] = useState([]);
     const [moves, setMoves] = useState(0);
     const [time, setTime] = useState(0);
+    const [showingPreview, setShowingPreview] = useState(false);
     const [difficulty, setDifficulty] = useState('kids'); // 'kids' (8 cards) or 'adult' (16 cards)
     const [playerName, setPlayerName] = useState(() => localStorage.getItem('memoryPlayerName') || "");
     const [showNameInput, setShowNameInput] = useState(false);
@@ -67,9 +68,16 @@ const MemoryGame = () => {
         setMoves(0);
         setTime(0);
         setGameState('PLAYING');
+
+        // Show all cards for 2 seconds
+        setShowingPreview(true);
+        setTimeout(() => {
+            setShowingPreview(false);
+        }, 2000);
     };
 
     const handleCardClick = (cardId) => {
+        if (showingPreview) return; // Don't allow clicks during preview
         if (flippedCards.length === 2) return;
         if (flippedCards.includes(cardId)) return;
         if (matchedPairs.includes(cards.find(c => c.id === cardId)?.content)) return;
@@ -231,14 +239,23 @@ const MemoryGame = () => {
                 </Link>
                 {gameState === 'PLAYING' && (
                     <div className="flex gap-2 md:gap-4 items-center">
-                        <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-purple-100 shadow-sm font-black text-sm md:text-base flex items-center gap-2">
-                            <Star className="text-yellow-500" size={16} />
-                            <span>{moves} moves</span>
-                        </div>
-                        <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-purple-100 shadow-sm font-black text-sm md:text-base flex items-center gap-2">
-                            <Clock className="text-blue-500" size={16} />
-                            <span>{formatTime(time)}</span>
-                        </div>
+                        {showingPreview && (
+                            <div className="bg-purple-500 px-4 py-2 rounded-xl shadow-lg font-black text-white text-sm md:text-base animate-pulse">
+                                👀 카드를 기억하세요!
+                            </div>
+                        )}
+                        {!showingPreview && (
+                            <>
+                                <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-purple-100 shadow-sm font-black text-sm md:text-base flex items-center gap-2">
+                                    <Star className="text-yellow-500" size={16} />
+                                    <span>{moves} moves</span>
+                                </div>
+                                <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-purple-100 shadow-sm font-black text-sm md:text-base flex items-center gap-2">
+                                    <Clock className="text-blue-500" size={16} />
+                                    <span>{formatTime(time)}</span>
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
             </div>
@@ -318,7 +335,7 @@ const MemoryGame = () => {
                     <div className="w-full">
                         <div className={`grid ${difficulty === 'kids' ? 'grid-cols-4' : 'grid-cols-4'} gap-2 md:gap-4`}>
                             {cards.map((card) => {
-                                const isFlipped = flippedCards.includes(card.id) || matchedPairs.includes(card.content);
+                                const isFlipped = showingPreview || flippedCards.includes(card.id) || matchedPairs.includes(card.content);
                                 return (
                                     <button
                                         key={card.id}
