@@ -298,7 +298,7 @@ const ColorMatchGame = () => {
                 {gameState === 'PLAYING' && currentColor && (
                     <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-purple-50 w-full">
                         <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
-                            <h2 className="text-3xl md:text-5xl font-black text-center tracking-tighter" style={{ color: currentColor.color }}>
+                            <h2 className="text-3xl md:text-5xl font-black text-center tracking-tighter text-slate-800">
                                 {currentColor.name}
                             </h2>
                             <button
