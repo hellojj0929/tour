@@ -187,9 +187,9 @@ const ColorMatchGame = () => {
                         names.add(entry.name);
                     }
                 });
-                const top5 = uniqueData.slice(0, 5);
-                setLeaderboard(top5);
-                localStorage.setItem('colorMatchLeaderboard', JSON.stringify(top5));
+                const top10 = uniqueData.slice(0, 10);
+                setLeaderboard(top10);
+                localStorage.setItem('colorMatchLeaderboard', JSON.stringify(top10));
             }
         } catch (e) {
             setDbStatus('error');
@@ -236,7 +236,7 @@ const ColorMatchGame = () => {
                 ? localList.map((e, i) => i === existingIdx ? newEntry : e)
                 : [...localList, newEntry];
 
-            const sortedLocal = updatedList.sort((a, b) => b.score - a.score).slice(0, 5);
+            const sortedLocal = updatedList.sort((a, b) => b.score - a.score).slice(0, 10);
 
             setLeaderboard(sortedLocal);
             localStorage.setItem('colorMatchLeaderboard', JSON.stringify(sortedLocal));
