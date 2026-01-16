@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, RefreshCw, Trophy, Medal } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp, deleteDoc } from "firebase/firestore";
 import { db, isFirebaseConfigured } from '../lib/firebase';
 
 const ColorMatchGame = () => {
@@ -263,31 +263,49 @@ const ColorMatchGame = () => {
         setIsSaving(false);
     };
 
-    const resetLeaderboard = () => {
+    const resetLeaderboard = async () => {
         const password = prompt('관리자 비밀번호를 입력하세요:');
 
         // 비밀번호: hayan2026
         if (password === 'hayan2026') {
-            const confirmReset = confirm('정말로 모든 랭킹을 삭제하시겠습니까?');
+            const confirmReset = confirm('정말로 모든 랭킹을 삭제하시겠습니까? (Firebase 포함)');
             if (confirmReset) {
-                // 로컬 스토리지 초기화
-                localStorage.removeItem('colorMatchLeaderboard');
-                localStorage.removeItem('colorMatchHighScore');
-                localStorage.removeItem('colorMatchPlayerName');
+                try {
+                    // Firebase 데이터 삭제
+                    if (isFirebaseConfigured) {
+                        const q = query(collection(db, "colormatch_leaderboard"));
+                        const querySnapshot = await getDocs(q);
 
-                // 세션 스토리지 초기화
-                sessionStorage.removeItem('adminClicks');
+                        const deletePromises = querySnapshot.docs.map(doc =>
+                            deleteDoc(doc.ref)
+                        );
 
-                // 상태 초기화
-                setLeaderboard([]);
-                setHighScore(0);
-                setPlayerName('');
-                setShowAdminReset(false);
+                        await Promise.all(deletePromises);
+                        console.log('Firebase 데이터 삭제 완료');
+                    }
 
-                alert('랭킹이 초기화되었습니다! ✅');
+                    // 로컬 스토리지 초기화
+                    localStorage.removeItem('colorMatchLeaderboard');
+                    localStorage.removeItem('colorMatchHighScore');
+                    localStorage.removeItem('colorMatchPlayerName');
 
-                // 메인 화면으로 이동
-                setGameState('START');
+                    // 세션 스토리지 초기화
+                    sessionStorage.removeItem('adminClicks');
+
+                    // 상태 초기화
+                    setLeaderboard([]);
+                    setHighScore(0);
+                    setPlayerName('');
+                    setShowAdminReset(false);
+
+                    alert('모든 랭킹이 완전히 초기화되었습니다! ✅');
+
+                    // 메인 화면으로 이동
+                    setGameState('START');
+                } catch (error) {
+                    console.error('리셋 에러:', error);
+                    alert('리셋 중 오류가 발생했습니다: ' + error.message);
+                }
             }
         } else if (password !== null) {
             alert('비밀번호가 틀렸습니다! ❌');
