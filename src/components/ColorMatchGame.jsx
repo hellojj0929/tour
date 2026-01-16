@@ -65,6 +65,44 @@ const ColorMatchGame = () => {
         generateQuestion();
     };
 
+    const speakColor = (colorText) => {
+        if (!('speechSynthesis' in window)) return;
+
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+
+        // Create utterance
+        const utterance = new SpeechSynthesisUtterance(colorText);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
+        utterance.volume = 1;
+
+        // For Android compatibility - wait for voices to load
+        const speak = () => {
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                // Try to find an English voice
+                const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+            }
+            window.speechSynthesis.speak(utterance);
+        };
+
+        // Check if voices are already loaded
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            speak();
+        } else {
+            // Wait for voices to load (needed on some Android browsers)
+            window.speechSynthesis.onvoiceschanged = () => {
+                speak();
+            };
+        }
+    };
+
     const generateQuestion = () => {
         const correctColor = colors[Math.floor(Math.random() * colors.length)];
         setCurrentColor(correctColor);
@@ -75,16 +113,9 @@ const ColorMatchGame = () => {
         setOptions(selectedOptions.sort(() => Math.random() - 0.5));
 
         // Speak the color name in English
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(correctColor.english);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            utterance.pitch = 1.1;
-            window.speechSynthesis.cancel(); // Cancel any ongoing speech
-            setTimeout(() => {
-                window.speechSynthesis.speak(utterance);
-            }, 100);
-        }
+        setTimeout(() => {
+            speakColor(correctColor.english);
+        }, 200);
     };
 
     const handleAnswer = (selectedColor) => {
@@ -271,18 +302,7 @@ const ColorMatchGame = () => {
                                 {currentColor.name}
                             </h2>
                             <button
-                                onClick={() => {
-                                    if ('speechSynthesis' in window) {
-                                        const utterance = new SpeechSynthesisUtterance(currentColor.english);
-                                        utterance.lang = 'en-US';
-                                        utterance.rate = 0.9;
-                                        utterance.pitch = 1.1;
-                                        window.speechSynthesis.cancel();
-                                        setTimeout(() => {
-                                            window.speechSynthesis.speak(utterance);
-                                        }, 100);
-                                    }
-                                }}
+                                onClick={() => speakColor(currentColor.english)}
                                 className="bg-purple-100 hover:bg-purple-200 text-purple-600 p-3 rounded-full transition-all active:scale-95"
                                 title="다시 듣기"
                             >
