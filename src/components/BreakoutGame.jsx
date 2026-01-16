@@ -381,26 +381,38 @@ const BreakoutGame = () => {
 
         if (currentImg && currentImg.complete) {
             const img = currentImg;
-            const imgWidth = img.naturalWidth;
-            const imgHeight = img.naturalHeight;
-
-            // Calculate center square crop
-            const cropSize = Math.min(imgWidth, imgHeight);
-            const cropX = (imgWidth - cropSize) / 2;
-            const cropY = (imgHeight - cropSize) / 2;
+            const imgWidth = img.naturalWidth || img.width;
+            const imgHeight = img.naturalHeight || img.height;
 
             ctx.shadowBlur = 15;
             ctx.shadowColor = 'rgba(0,0,0,0.1)';
 
-            // Draw cropped center square
-            ctx.drawImage(
-                img,
-                cropX, cropY, cropSize, cropSize,  // Source rectangle (center square)
-                paddleRef.current.x,
-                canvas.height - PADDLE_HEIGHT - 10,
-                PADDLE_WIDTH,
-                PADDLE_HEIGHT
-            );
+            // Only crop if we have valid dimensions
+            if (imgWidth > 0 && imgHeight > 0) {
+                // Calculate center square crop
+                const cropSize = Math.min(imgWidth, imgHeight);
+                const cropX = (imgWidth - cropSize) / 2;
+                const cropY = (imgHeight - cropSize) / 2;
+
+                // Draw cropped center square
+                ctx.drawImage(
+                    img,
+                    cropX, cropY, cropSize, cropSize,  // Source rectangle (center square)
+                    paddleRef.current.x,
+                    canvas.height - PADDLE_HEIGHT - 10,
+                    PADDLE_WIDTH,
+                    PADDLE_HEIGHT
+                );
+            } else {
+                // Fallback: draw without cropping
+                ctx.drawImage(
+                    img,
+                    paddleRef.current.x,
+                    canvas.height - PADDLE_HEIGHT - 10,
+                    PADDLE_WIDTH,
+                    PADDLE_HEIGHT
+                );
+            }
 
             ctx.shadowBlur = 0;
             if (hitTimerRef.current > 0) hitTimerRef.current--;

@@ -279,22 +279,28 @@ const RunnerGame = () => {
         ctx.fill();
 
         // Draw Hayan's face (cropped to center square for better face visibility)
-        if (hayanImgRef.current.complete) {
+        if (hayanImgRef.current && hayanImgRef.current.complete) {
             const img = hayanImgRef.current;
-            const imgWidth = img.naturalWidth;
-            const imgHeight = img.naturalHeight;
+            const imgWidth = img.naturalWidth || img.width;
+            const imgHeight = img.naturalHeight || img.height;
 
-            // Calculate center square crop
-            const cropSize = Math.min(imgWidth, imgHeight);
-            const cropX = (imgWidth - cropSize) / 2;
-            const cropY = (imgHeight - cropSize) / 2;
+            // Only crop if we have valid dimensions
+            if (imgWidth > 0 && imgHeight > 0) {
+                // Calculate center square crop
+                const cropSize = Math.min(imgWidth, imgHeight);
+                const cropX = (imgWidth - cropSize) / 2;
+                const cropY = (imgHeight - cropSize) / 2;
 
-            // Draw cropped center square
-            ctx.drawImage(
-                img,
-                cropX, cropY, cropSize, cropSize,  // Source rectangle (center square)
-                playerX, playerY, size, size        // Destination rectangle
-            );
+                // Draw cropped center square
+                ctx.drawImage(
+                    img,
+                    cropX, cropY, cropSize, cropSize,  // Source rectangle (center square)
+                    playerX, playerY, size, size        // Destination rectangle
+                );
+            } else {
+                // Fallback: draw without cropping
+                ctx.drawImage(img, playerX, playerY, size, size);
+            }
         }
 
         // Generate obstacles (bottom only for kids)
