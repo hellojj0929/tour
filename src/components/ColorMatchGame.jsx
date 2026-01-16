@@ -273,10 +273,21 @@ const ColorMatchGame = () => {
                 // 로컬 스토리지 초기화
                 localStorage.removeItem('colorMatchLeaderboard');
                 localStorage.removeItem('colorMatchHighScore');
+                localStorage.removeItem('colorMatchPlayerName');
+
+                // 세션 스토리지 초기화
+                sessionStorage.removeItem('adminClicks');
+
+                // 상태 초기화
                 setLeaderboard([]);
                 setHighScore(0);
-                alert('랭킹이 초기화되었습니다! ✅');
+                setPlayerName('');
                 setShowAdminReset(false);
+
+                alert('랭킹이 초기화되었습니다! ✅');
+
+                // 메인 화면으로 이동
+                setGameState('START');
             }
         } else if (password !== null) {
             alert('비밀번호가 틀렸습니다! ❌');
