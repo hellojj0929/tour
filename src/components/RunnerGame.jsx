@@ -278,9 +278,23 @@ const RunnerGame = () => {
         ctx.ellipse(playerX + size * 0.7, playerY + size * 1.38, size * 0.1, size * 0.06, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw Hayan's face
+        // Draw Hayan's face (cropped to center square for better face visibility)
         if (hayanImgRef.current.complete) {
-            ctx.drawImage(hayanImgRef.current, playerX, playerY, size, size);
+            const img = hayanImgRef.current;
+            const imgWidth = img.naturalWidth;
+            const imgHeight = img.naturalHeight;
+
+            // Calculate center square crop
+            const cropSize = Math.min(imgWidth, imgHeight);
+            const cropX = (imgWidth - cropSize) / 2;
+            const cropY = (imgHeight - cropSize) / 2;
+
+            // Draw cropped center square
+            ctx.drawImage(
+                img,
+                cropX, cropY, cropSize, cropSize,  // Source rectangle (center square)
+                playerX, playerY, size, size        // Destination rectangle
+            );
         }
 
         // Generate obstacles (bottom only for kids)
