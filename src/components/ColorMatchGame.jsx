@@ -426,7 +426,26 @@ const ColorMatchGame = () => {
                     <div className="bg-white p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-purple-100 w-full max-h-[85vh] overflow-hidden flex flex-col">
                         <div className="flex items-center gap-3 mb-4 px-2">
                             <Medal className="text-yellow-500" size={28} />
-                            <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-800 uppercase leading-none">명예의 전당</h2>
+                            <h2
+                                className="text-2xl md:text-3xl font-black tracking-tighter text-slate-800 uppercase leading-none cursor-pointer select-none"
+                                onClick={() => {
+                                    setShowAdminReset(prev => {
+                                        const newCount = prev ? 0 : 1;
+                                        if (newCount === 0) return false;
+
+                                        // 3번 클릭하면 활성화
+                                        const clicks = (parseInt(sessionStorage.getItem('adminClicks') || '0') + 1) % 4;
+                                        sessionStorage.setItem('adminClicks', clicks.toString());
+
+                                        if (clicks === 3) {
+                                            return true;
+                                        }
+                                        return false;
+                                    });
+                                }}
+                            >
+                                명예의 전당
+                            </h2>
 
                             <div className="flex items-center ml-auto gap-2">
                                 {dbStatus === 'online' ? (
@@ -482,13 +501,15 @@ const ColorMatchGame = () => {
                             )}
                         </div>
                         <div className="flex gap-2">
-                            <button
-                                onClick={resetLeaderboard}
-                                className="flex-shrink-0 bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
-                                title="관리자 전용"
-                            >
-                                🔐 리셋
-                            </button>
+                            {showAdminReset && (
+                                <button
+                                    onClick={resetLeaderboard}
+                                    className="flex-shrink-0 bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
+                                    title="관리자 전용"
+                                >
+                                    🔐 리셋
+                                </button>
+                            )}
                             <button
                                 onClick={() => setGameState('START')}
                                 className="flex-1 bg-slate-800 hover:bg-slate-900 text-white py-4 md:py-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
