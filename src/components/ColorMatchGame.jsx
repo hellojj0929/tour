@@ -66,42 +66,71 @@ const ColorMatchGame = () => {
     };
 
     const speakColor = (colorText) => {
-        if (!('speechSynthesis' in window)) return;
+        if (!('speechSynthesis' in window)) {
+            console.log('Speech synthesis not supported');
+            return;
+        }
 
-        // Cancel any ongoing speech
-        window.speechSynthesis.cancel();
+        try {
+            // Cancel any ongoing speech
+            window.speechSynthesis.cancel();
 
-        // Create utterance
-        const utterance = new SpeechSynthesisUtterance(colorText);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.9;
-        utterance.pitch = 1.1;
-        utterance.volume = 1;
+            // Small delay to ensure cancel completes
+            setTimeout(() => {
+                // Create utterance
+                const utterance = new SpeechSynthesisUtterance(colorText);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                utterance.volume = 1;
 
-        // For Android compatibility - wait for voices to load
-        const speak = () => {
-            const voices = window.speechSynthesis.getVoices();
-            if (voices.length > 0) {
-                // Try to find an English voice
-                const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
-                if (englishVoice) {
-                    utterance.voice = englishVoice;
+                // Error handling
+                utterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event);
+                };
+
+                utterance.onstart = () => {
+                    console.log('Speech started:', colorText);
+                };
+
+                // Get voices and speak
+                const voices = window.speechSynthesis.getVoices();
+                console.log('Available voices:', voices.length);
+
+                if (voices.length > 0) {
+                    // Try to find an English voice
+                    const englishVoice = voices.find(voice =>
+                        voice.lang.includes('en-US') || voice.lang.includes('en_US')
+                    ) || voices.find(voice => voice.lang.startsWith('en'));
+
+                    if (englishVoice) {
+                        utterance.voice = englishVoice;
+                        console.log('Using voice:', englishVoice.name);
+                    }
                 }
-            }
-            window.speechSynthesis.speak(utterance);
-        };
 
-        // Check if voices are already loaded
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) {
-            speak();
-        } else {
-            // Wait for voices to load (needed on some Android browsers)
-            window.speechSynthesis.onvoiceschanged = () => {
-                speak();
-            };
+                window.speechSynthesis.speak(utterance);
+            }, 100);
+        } catch (error) {
+            console.error('Speech error:', error);
         }
     };
+
+    // Initialize voices on component mount
+    useEffect(() => {
+        if ('speechSynthesis' in window) {
+            // Load voices
+            window.speechSynthesis.getVoices();
+
+            // Some browsers need this event
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    const voices = window.speechSynthesis.getVoices();
+                    console.log('Voices loaded:', voices.length);
+                };
+            }
+        }
+    }, []);
 
     const generateQuestion = () => {
         const correctColor = colors[Math.floor(Math.random() * colors.length)];
