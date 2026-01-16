@@ -465,15 +465,14 @@ const BreakoutGame = () => {
                     ballRef.current.dy = -Math.abs(ballRef.current.dy);
 
                     if (difficulty === 'kids') {
-                        // Kids mode: Simple, consistent bounce
-                        const deltaX = (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.08;
-                        ballRef.current.dx = deltaX;
+                        // Kids mode: Simple, consistent bounce with better speed
+                        const hitPosition = (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) / (PADDLE_WIDTH / 2);
+                        const angle = hitPosition * (Math.PI / 3); // Max 60 degrees
 
-                        // Normalize speed to keep it constant
-                        const currentSpeed = Math.sqrt(ballRef.current.dx ** 2 + ballRef.current.dy ** 2);
+                        // Set speed components based on angle
                         const targetSpeed = BALL_SPEED;
-                        ballRef.current.dx = (ballRef.current.dx / currentSpeed) * targetSpeed;
-                        ballRef.current.dy = (ballRef.current.dy / currentSpeed) * targetSpeed;
+                        ballRef.current.dx = Math.sin(angle) * targetSpeed;
+                        ballRef.current.dy = -Math.abs(Math.cos(angle) * targetSpeed);
                     } else {
                         // Adult mode: Variable speed based on hit position
                         const deltaX = (ballRef.current.x - (paddleRef.current.x + PADDLE_WIDTH / 2)) * 0.15;

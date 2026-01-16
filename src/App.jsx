@@ -6,6 +6,7 @@ import BreakoutGame from './components/BreakoutGame';
 import MemoryGame from './components/MemoryGame';
 import RunnerGame from './components/RunnerGame';
 import ColorMatchGame from './components/ColorMatchGame';
+import ConstellationGame from './components/ConstellationGame';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/game/memory" element={<MemoryGame />} />
         <Route path="/game/runner" element={<RunnerGame />} />
         <Route path="/game/colormatch" element={<ColorMatchGame />} />
+        <Route path="/game/constellation" element={<ConstellationGame />} />
       </Routes>
     </Router>
   );

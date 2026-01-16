@@ -31,9 +31,9 @@ const RunnerGame = () => {
         score: 0,
         frameCount: 0,
         gravity: 0.6,
-        jumpStrength: -12,
-        obstacleSpeed: 2,
-        obstacleGap: 150,
+        jumpStrength: -13,
+        obstacleSpeed: 3.5,
+        obstacleGap: 120,
         lastObstacle: 0,
         bgScroll: 0
     });
@@ -303,13 +303,15 @@ const RunnerGame = () => {
             }
         }
 
-        // Generate obstacles (bottom only for kids)
+        // Generate obstacles (both top and bottom)
         game.frameCount++;
         if (game.frameCount - game.lastObstacle > game.obstacleGap) {
-            const obstacleHeight = 60 + Math.random() * 40;
+            const obstacleHeight = 70 + Math.random() * 50;
+            const isTopObstacle = Math.random() > 0.5; // 50% chance for top or bottom
             game.obstacles.push({
                 x: canvas.width,
                 height: obstacleHeight,
+                type: isTopObstacle ? 'top' : 'bottom',
                 passed: false
             });
             game.lastObstacle = game.frameCount;
@@ -320,16 +322,26 @@ const RunnerGame = () => {
             const obs = game.obstacles[i];
             obs.x -= game.obstacleSpeed;
 
-            // Draw bottom obstacle only (stacked breads)
+            // Draw obstacles (stacked breads)
             const breadSize = 35;
             ctx.font = `${breadSize}px Arial`;
             const breads = ['🍩', '🥐', '🥖', '🥨', '🥯', '🧁', '🍰', '🎂', '🍪', '🧇'];
             const breadType = breads[i % breads.length];
 
             const breadCount = Math.ceil(obs.height / breadSize);
-            const startY = canvas.height - 50 - obs.height;
-            for (let d = 0; d < breadCount; d++) {
-                ctx.fillText(breadType, obs.x + 7, startY + (d + 1) * breadSize);
+
+            if (obs.type === 'bottom') {
+                // Bottom obstacle
+                const startY = canvas.height - 50 - obs.height;
+                for (let d = 0; d < breadCount; d++) {
+                    ctx.fillText(breadType, obs.x + 7, startY + (d + 1) * breadSize);
+                }
+            } else {
+                // Top obstacle
+                const startY = 0;
+                for (let d = 0; d < breadCount; d++) {
+                    ctx.fillText(breadType, obs.x + 7, startY + (d + 1) * breadSize);
+                }
             }
 
             // Check collision
@@ -342,8 +354,22 @@ const RunnerGame = () => {
             const obsRight = obs.x + 50;
 
             if (playerRight > obsLeft && playerLeft < obsRight) {
-                const obstacleTop = canvas.height - 50 - obs.height;
-                if (playerBottom > obstacleTop) {
+                let collision = false;
+
+                if (obs.type === 'bottom') {
+                    const obstacleTop = canvas.height - 50 - obs.height;
+                    if (playerBottom > obstacleTop) {
+                        collision = true;
+                    }
+                } else {
+                    // Top obstacle
+                    const obstacleBottom = obs.height;
+                    if (playerTop < obstacleBottom) {
+                        collision = true;
+                    }
+                }
+
+                if (collision) {
                     // Game Over
                     setGameState('GAMEOVER');
                     if (game.score > highScore) {
