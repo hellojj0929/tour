@@ -83,8 +83,19 @@ const BreakoutGame = () => {
 
         const loadPaddle = (src, ref) => {
             const img = new Image();
+            img.crossOrigin = 'anonymous';
             img.onload = () => {
-                ref.current = removeWhiteBackground(img);
+                try {
+                    ref.current = removeWhiteBackground(img);
+                    console.log('Paddle image loaded successfully:', src);
+                } catch (e) {
+                    console.error('Error processing paddle image:', e);
+                    // Fallback to original image if processing fails
+                    ref.current = img;
+                }
+            };
+            img.onerror = (e) => {
+                console.error('Failed to load paddle image:', src, e);
             };
             img.src = src;
         };
@@ -383,18 +394,39 @@ const BreakoutGame = () => {
             ? paddleHitImgRef.current
             : paddleImgRef.current;
 
-        if (currentImg && currentImg.complete) {
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = 'rgba(0,0,0,0.1)';
-            ctx.drawImage(
-                currentImg,
+        if (currentImg) {
+            try {
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                ctx.drawImage(
+                    currentImg,
+                    paddleRef.current.x,
+                    canvas.height - PADDLE_HEIGHT - 10,
+                    PADDLE_WIDTH,
+                    PADDLE_HEIGHT
+                );
+                ctx.shadowBlur = 0;
+                if (hitTimerRef.current > 0) hitTimerRef.current--;
+            } catch (e) {
+                console.error('Error drawing paddle:', e);
+                // Fallback: draw a simple rectangle
+                ctx.fillStyle = '#fb923c';
+                ctx.fillRect(
+                    paddleRef.current.x,
+                    canvas.height - PADDLE_HEIGHT - 10,
+                    PADDLE_WIDTH,
+                    PADDLE_HEIGHT
+                );
+            }
+        } else {
+            // Fallback: draw a simple rectangle if image not loaded
+            ctx.fillStyle = '#fb923c';
+            ctx.fillRect(
                 paddleRef.current.x,
                 canvas.height - PADDLE_HEIGHT - 10,
                 PADDLE_WIDTH,
                 PADDLE_HEIGHT
             );
-            ctx.shadowBlur = 0;
-            if (hitTimerRef.current > 0) hitTimerRef.current--;
         }
 
         // Collision detection
