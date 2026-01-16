@@ -25,6 +25,7 @@ const ColorMatchGame = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [dbStatus, setDbStatus] = useState('checking');
     const [dbError, setDbError] = useState('');
+    const [showAdminReset, setShowAdminReset] = useState(false);
 
     const colors = [
         { name: '빨강', english: 'Red', color: '#ef4444' },
@@ -262,6 +263,26 @@ const ColorMatchGame = () => {
         setIsSaving(false);
     };
 
+    const resetLeaderboard = () => {
+        const password = prompt('관리자 비밀번호를 입력하세요:');
+
+        // 비밀번호: hayan2026
+        if (password === 'hayan2026') {
+            const confirmReset = confirm('정말로 모든 랭킹을 삭제하시겠습니까?');
+            if (confirmReset) {
+                // 로컬 스토리지 초기화
+                localStorage.removeItem('colorMatchLeaderboard');
+                localStorage.removeItem('colorMatchHighScore');
+                setLeaderboard([]);
+                setHighScore(0);
+                alert('랭킹이 초기화되었습니다! ✅');
+                setShowAdminReset(false);
+            }
+        } else if (password !== null) {
+            alert('비밀번호가 틀렸습니다! ❌');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 text-slate-800 flex flex-col items-center p-2 md:p-8 font-sans overflow-x-hidden">
             <div className="max-w-3xl w-full flex justify-between items-center mb-4 md:mb-8 relative z-10">
@@ -460,12 +481,21 @@ const ColorMatchGame = () => {
                                 </div>
                             )}
                         </div>
-                        <button
-                            onClick={() => setGameState('START')}
-                            className="flex-shrink-0 bg-slate-800 hover:bg-slate-900 text-white py-4 md:py-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
-                        >
-                            메인으로 돌아가기
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={resetLeaderboard}
+                                className="flex-shrink-0 bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
+                                title="관리자 전용"
+                            >
+                                🔐 리셋
+                            </button>
+                            <button
+                                onClick={() => setGameState('START')}
+                                className="flex-1 bg-slate-800 hover:bg-slate-900 text-white py-4 md:py-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
+                            >
+                                메인으로 돌아가기
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
