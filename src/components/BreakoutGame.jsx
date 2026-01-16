@@ -62,11 +62,15 @@ const BreakoutGame = () => {
     useEffect(() => {
         const removeWhiteBackground = (img) => {
             const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
+            const width = img.naturalWidth || img.width;
+            const height = img.naturalHeight || img.height;
+
+            canvas.width = width;
+            canvas.height = height;
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const imageData = ctx.getImageData(0, 0, width, height);
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
                 if (data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235) {
@@ -79,10 +83,10 @@ const BreakoutGame = () => {
 
         const loadPaddle = (src, ref) => {
             const img = new Image();
-            img.src = src;
             img.onload = () => {
                 ref.current = removeWhiteBackground(img);
             };
+            img.src = src;
         };
 
         loadPaddle(paddleImage, paddleImgRef);
