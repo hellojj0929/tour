@@ -116,7 +116,7 @@ const TourApp = () => {
     const budgetItems = [
         { category: "숙박 (Stay)", detail: "총 ¥98,258 ÷ 3명 (3박)", cost: "¥32,753", icon: <Building size={20} />, color: "bg-[#f0f9f6] text-[#2d6a4f]" },
         { category: "골프 (Golf)", detail: "가스토니안 + 로코(10,540엔)", cost: "¥32,000", icon: <Flag size={20} />, color: "bg-[#fffcf0] text-[#b08d49]" },
-        { category: "기타 (Misc)", detail: "식비 및 교통비 (예비비 포함)", cost: "¥30,000", icon: <PiggyBank size={20} />, color: "bg-gray-50 text-gray-600" },
+        { category: "기타 (Misc)", detail: "렌트카(1/3) + 식비 + 주유비", cost: "¥44,300", icon: <PiggyBank size={20} />, color: "bg-gray-50 text-gray-600" },
     ];
 
     const activeItinerary = itinerary;
@@ -311,7 +311,7 @@ const TourApp = () => {
                             <div className={`${colors.primary} p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden`}>
                                 <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-24 -mt-24"></div>
                                 <div className="flex justify-between items-center mb-4 opacity-80 text-[10px] font-black tracking-[0.4em]"><span>TOTAL ESTIMATION</span><Wallet size={16} /></div>
-                                <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥94,753</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 850,000원</span></div>
+                                <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥109,053</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 1,000,000원</span></div>
                             </div>
                         </div>
                     </div>
@@ -361,6 +361,48 @@ const TourApp = () => {
                                             <p className="text-[10px] text-gray-400 mt-1">VAT 포함, Booking.com 할인 적용됨</p>
                                             <p className="text-[10px] text-gray-400">2026.03.17 자동 결제 예정</p>
                                             <p className="mt-1 text-red-400 font-bold">취소기한: 3.18 23:59까지 무료</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
+                                    <Car className={colors.accentText} size={22} /> 렌트카 예약 정보
+                                </h2>
+                                <div className="space-y-4">
+                                    <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
+                                        <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
+                                            <MapPin size={16} /> 1. 대여 장소 & 차량
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <p><span className="font-bold text-[#198754]">업체:</span> 토요타 렌터카 (고베공항점)</p>
+                                            <p><span className="font-bold text-[#198754]">차종:</span> 시엔타 / 프리우스α (미니밴 랜덤)</p>
+                                            <p className="text-[10px] text-gray-400">최대 6인승 (골프백 + 캐리어 적재 가능)</p>
+                                            <p className="text-[10px] text-gray-400">네비게이션(한국어 지원) + ETC 포함 / AT</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
+                                        <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
+                                            <Info size={16} /> 2. 비용 & 혜택
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <div className="flex justify-between font-bold text-[#1a202c]">
+                                                <span>총 요금 (3박 4일)</span>
+                                                <span className="text-[#d4af37]">¥42,900</span>
+                                            </div>
+                                            <p className="text-[10px] text-gray-400 mt-1">현지 결제 또는 사전 결제 확인 필요</p>
+                                            <p className="text-[10px] text-gray-400">포인트 858P 적립 예정</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
+                                        <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
+                                            <AlertCircle size={16} /> 3. 주의사항
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <p className="text-red-400 font-bold">• 취소기한: 3월 13일까지 무료 취소</p>
+                                            <p>• 면책 보상 옵션 현장 추가 가능</p>
+                                            <p>• 공항 데스크에서 픽업 절차 진행</p>
                                         </div>
                                     </div>
                                 </div>
