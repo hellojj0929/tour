@@ -34,6 +34,7 @@ import {
     PiggyBank,
     Globe,
     AlertCircle,
+    Car,
     Gamepad2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -67,8 +68,9 @@ const TourApp = () => {
             day: 1, date: "3월 20일 (금)", title: "고베공항 입국 & 시내 맛집", route: "고베공항 ➔ 산노미야 ➔ 이진칸",
             mainQuery: "Candeo Hotels Kobe Tor Road",
             items: [
-                { time: "10:30", icon: <Navigation size={16} />, activity: "고베 공항(UKB) 도착", desc: "포트라이너 또는 택시 이동", mapQuery: "Kobe Airport" },
-                { time: "15:00", icon: <Hotel size={16} />, activity: "호텔 체크인", desc: "칸데오 호텔 고베 토르 로드", mapQuery: "Candeo Hotels Kobe Tor Road" },
+                { time: "10:30", icon: <Car size={16} />, activity: "고베 공항(UKB) 도착", desc: "렌트카 픽업 & 이동 (공항 데스크)", mapQuery: "Kobe Airport" },
+                { time: "12:00", icon: <Utensils size={16} />, activity: "점심 식사 (스테이크랜드 고베)", desc: "가성비 좋은 고베규 런치 (1인 약 3,500엔~)", mapQuery: "Steakland Kobe" },
+                { time: "15:00", icon: <Hotel size={16} />, activity: "호텔 체크인", desc: "칸데오 호텔 고베 토르 로드 (주차 불포함/인근이용)", mapQuery: "Candeo Hotels Kobe Tor Road" },
                 { time: "19:00", icon: <Utensils size={16} />, activity: "디너: 고베규 이자카야", desc: "현지인 가성비 맛집", mapQuery: "Steakland Kobe" },
             ]
         },
@@ -77,7 +79,7 @@ const TourApp = () => {
             mainQuery: "Kobe Gastonian Golf Club",
             items: [
                 {
-                    time: "08:30", icon: <Flag size={16} />, activity: "제1라운드 (18홀)", desc: "고베 가스토니안 GC",
+                    time: "08:30", icon: <Flag size={16} />, activity: "제1라운드 (18홀)", desc: "고베 가스토니안 GC (자차 이동 약 40분)",
                     mapQuery: "Kobe Gastonian Golf Club",
                     bookingUrl: "https://booking.gora.golf.rakuten.co.jp/guide/obj/id/280036"
                 },
@@ -98,12 +100,12 @@ const TourApp = () => {
             mainQuery: "Rokko Country Club",
             items: [
                 {
-                    time: "07:00", icon: <Flag size={16} />, activity: "제2라운드 (18H 스루)", desc: "로코 CC (OUT코스 / 3B / 총액 10,540엔)",
+                    time: "07:00", icon: <Flag size={16} />, activity: "제2라운드 (18H 스루)", desc: "로코 CC (자차 이동 / OUT코스 / 3B)",
                     mapQuery: "Rokko Country Club",
                     bookingUrl: ""
                 },
-                { time: "11:00", icon: <Utensils size={16} />, activity: "점심 식사 & 샤워", desc: "라운드 후 식사 (1,210엔 보조권 / 락커비 별도 +440엔)", mapQuery: "Rokko Country Club" },
-                { time: "12:50", icon: <ShoppingBag size={16} />, activity: "공항 도착 & 쇼핑", desc: "체크인 후 면세점 및 쇼핑 (여유시간 충분)", mapQuery: "Kobe Airport" },
+                { time: "11:00", icon: <Utensils size={16} />, activity: "점심 식사 & 샤워", desc: "라운드 후 식사 & 렌트카 반납 준비", mapQuery: "Rokko Country Club" },
+                { time: "12:50", icon: <Car size={16} />, activity: "렌트카 반납 & 공항 도착", desc: "차량 반납 후 체크인 및 면세점 쇼핑", mapQuery: "Kobe Airport" },
                 { time: "18:40", icon: <Plane size={16} />, activity: "고베 공항(T2) 출국", desc: "18:40 귀국편 탑승 (KE2174 A321-neo)", mapQuery: "Kobe Airport" },
             ]
         }
