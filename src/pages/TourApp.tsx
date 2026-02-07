@@ -189,7 +189,7 @@ const TourApp = () => {
                         </div>
                     </div>
 
-                    <div className="bg-[#f8fafc] rounded-[2.5rem] p-8 flex items-center justify-between border border-[#e2e8f0]">
+                    <div className="bg-[#f8fafc] rounded-[1.5rem] p-8 flex items-center justify-between border border-[#e2e8f0]">
                         <div className="text-center">
                             <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
                             <p className="text-xl font-black text-[#1a202c]">출국</p>
@@ -224,7 +224,7 @@ const TourApp = () => {
                                 ))}
                             </div>
 
-                            <div className={`${colors.card} rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]`}>
+                            <div className={`${colors.card} rounded-[1.5rem] p-8 shadow-xl border border-[#f1f5f9]`}>
                                 <div className="mb-8">
                                     <h2 className="text-2xl font-black text-[#1a202c] leading-tight mb-1">{activeItinerary[selectedDay - 1].title}</h2>
                                     <p className={`${colors.primaryText} font-bold text-xs uppercase tracking-widest`}>{activeItinerary[selectedDay - 1].date}</p>
@@ -263,7 +263,7 @@ const TourApp = () => {
 
                     {activeTab === 'map' && (
                         <div className="p-6 animate-in fade-in duration-700">
-                            <div className={`${colors.card} rounded-[2.5rem] p-4 shadow-xl border border-[#f1f5f9] min-h-[500px] flex flex-col`}>
+                            <div className={`${colors.card} rounded-[1.5rem] p-4 shadow-xl border border-[#f1f5f9] min-h-[500px] flex flex-col`}>
                                 <div className="flex items-center justify-between mb-4 px-2">
                                     <h3 className="font-black text-xs uppercase tracking-widest text-gray-400">Day {selectedDay} Map</h3>
                                     <div className="flex bg-gray-100 p-1 rounded-full">
@@ -293,7 +293,7 @@ const TourApp = () => {
 
                     {activeTab === 'budget' && (
                         <div className="p-6 animate-in fade-in duration-700">
-                            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                            <div className="bg-white rounded-[1.5rem] p-8 shadow-xl border border-[#f1f5f9]">
                                 <div className="mb-8 text-center">
                                     <div className="inline-flex items-center gap-1.5 mb-2 px-4 py-1.5 bg-[#f8fafc] rounded-full">
                                         <Users size={12} className={colors.accentText} />
@@ -323,7 +323,7 @@ const TourApp = () => {
                         <div className="p-6 space-y-6 animate-in slide-in-from-bottom duration-700">
 
                             <div className="space-y-6">
-                                <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                <section className="bg-white rounded-[1.5rem] p-8 shadow-xl border border-[#f1f5f9]">
                                     <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
                                         <Hotel className={colors.accentText} size={22} /> 숙소 예약 정보
                                     </h2>
@@ -368,7 +368,7 @@ const TourApp = () => {
                                     </div>
                                 </section>
 
-                                <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                <section className="bg-white rounded-[1.5rem] p-8 shadow-xl border border-[#f1f5f9]">
                                     <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
                                         <Car className={colors.accentText} size={22} /> 렌트카 예약 정보
                                     </h2>
@@ -410,7 +410,7 @@ const TourApp = () => {
                                     </div>
                                 </section>
 
-                                <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                <section className="bg-white rounded-[1.5rem] p-8 shadow-xl border border-[#f1f5f9]">
                                     <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
                                         <Flag className={colors.accentText} size={22} /> 로코 CC 골프 예약
                                     </h2>
@@ -446,7 +446,7 @@ const TourApp = () => {
                                         </div>
                                     </div>
                                 </section>
-                                <div className="p-6 bg-emerald-600 rounded-[2.5rem] text-white flex items-start gap-4">
+                                <div className="p-6 bg-emerald-600 rounded-[1.5rem] text-white flex items-start gap-4">
                                     <CheckCircle2 className="text-white shrink-0" size={24} />
                                     <div>
                                         <h4 className="font-black text-sm mb-1">식사 팁</h4>
@@ -460,7 +460,7 @@ const TourApp = () => {
             </div>
 
             {/* Navigation Tab Bar */}
-            <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-[#1a365d]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] h-22 shadow-2xl flex items-center justify-around px-4 z-50">
+            <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-[#1a365d]/95 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] h-22 shadow-2xl flex items-center justify-around px-4 z-50">
                 <TabButton active={activeTab === 'itinerary'} onClick={() => setActiveTab('itinerary')} icon={<Calendar size={24} />} label="일정" />
                 <TabButton active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={<MapPin size={24} />} label="지도" />
                 <TabButton active={activeTab === 'info'} onClick={() => setActiveTab('info')} icon={<Info size={24} />} label="정보" />
