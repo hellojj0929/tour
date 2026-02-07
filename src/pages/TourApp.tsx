@@ -107,7 +107,8 @@ const TourApp = () => {
                 },
                 { time: "11:00", icon: <Utensils size={16} />, activity: "점심 식사 & 샤워", desc: "라운드 후 식사 & 렌트카 반납 준비", mapQuery: "Rokko Country Club" },
                 { time: "12:50", icon: <Car size={16} />, activity: "렌트카 반납 & 공항 도착", desc: "차량 반납 후 체크인 및 면세점 쇼핑", mapQuery: "Kobe Airport" },
-                { time: "18:40", icon: <Plane size={16} />, activity: "고베 공항(T2) 출국", desc: "18:40 귀국편 탑승 (KE2174 A321-neo)", mapQuery: "Kobe Airport" },
+                { time: "18:40", icon: <Plane size={16} />, activity: "고베 공항(UKB) T2 출발", desc: "KE2174 A321-neo", mapQuery: "Kobe Airport" },
+                { time: "20:40", icon: <Navigation size={16} />, activity: "인천공항(ICN) T2 도착", desc: "입국 수속 및 귀가", mapQuery: "Incheon International Airport Terminal 2" },
             ]
         }
     ];
