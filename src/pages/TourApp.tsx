@@ -163,297 +163,300 @@ const TourApp = () => {
     const currentPlanName = '시내 실속형';
 
     return (
-        <div className={`w-full h-full ${colors.bg} flex flex-col font-sans text-[#1a202c] relative overflow-hidden`}>
+        <div className={`w-full h-full ${colors.bg} font-sans text-[#1a202c] relative`}>
 
-            {/* Header */}
-            <div className="bg-white pt-16 pb-12 px-8 rounded-b-[4.5rem] shadow-2xl shadow-gray-200/40 z-10">
-                <div className="flex justify-between items-start mb-6">
-                    <div className="flex-1">
-                        <div className="flex items-center gap-1.5 mb-2">
-                            <Award size={14} className={colors.accentText} />
-                            <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${colors.accentText}`}>Kober Edition</span>
-                        </div>
-                        <h1 className="text-3xl font-black tracking-tighter text-[#1a202c] leading-none mb-2">KOBE TOUR</h1>
-                        <div className="flex items-center gap-1.5">
-                            <Link to="/game" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-                                <Gamepad2 size={14} className={colors.accentText} />
-                                <p className={`${colors.accentText} text-sm font-black tracking-tight`}>미니 게임하러 가기! 🕹️</p>
-                            </Link>
-                        </div>
-                    </div>
-                    <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl`}>
-                        <PiggyBank size={24} />
-                    </div>
-                </div>
+            {/* Main Scrollable Area */}
+            <div className="w-full h-full overflow-y-auto pb-40 no-scrollbar">
 
-
-
-                <div className="bg-[#f8fafc] rounded-[2.5rem] p-8 flex items-center justify-between border border-[#e2e8f0]">
-                    <div className="text-center">
-                        <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
-                        <p className="text-xl font-black text-[#1a202c]">출국</p>
-                        <p className={`text-xs font-black ${colors.primaryText}`}>08:25</p>
-                    </div>
-                    <div className="flex-1 px-4 flex flex-col items-center">
-                        <div className="w-full flex items-center gap-2">
-                            <div className="flex-1 h-[1px] bg-[#cbd5e1]"></div>
-                            <Plane className={colors.primaryText} size={16} />
-                            <div className="flex-1 h-[1px] bg-[#cbd5e1]"></div>
-                        </div>
-                        <p className="text-[10px] text-gray-400 mt-2 font-black tracking-widest uppercase">Kobe Airport</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
-                        <p className="text-xl font-black text-[#1a202c]">귀국</p>
-                        <p className={`text-xs font-black ${colors.primaryText}`}>18:40</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto z-0">
-                {activeTab === 'itinerary' && (
-                    <div className="p-6 animate-in fade-in duration-700 pb-64">
-                        <div className="flex justify-center space-x-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
-                            {[1, 2, 3, 4].map((d) => (
-                                <button key={d} onClick={() => setSelectedDay(d)} className={`flex-shrink-0 w-16 h-20 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 ${selectedDay === d ? `${colors.primary} text-white shadow-xl scale-105` : 'bg-white text-gray-400 border border-[#e2e8f0]'}`}>
-                                    <span className="text-[10px] font-black mb-1 opacity-60">DAY</span>
-                                    <span className="text-xl font-black">{d}</span>
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className={`${colors.card} rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]`}>
-                            <div className="mb-8">
-                                <h2 className="text-2xl font-black text-[#1a202c] leading-tight mb-1">{activeItinerary[selectedDay - 1].title}</h2>
-                                <p className={`${colors.primaryText} font-bold text-xs uppercase tracking-widest`}>{activeItinerary[selectedDay - 1].date}</p>
-
+                {/* Header */}
+                <div className="bg-white pt-16 pb-12 px-8 rounded-b-[4.5rem] shadow-2xl shadow-gray-200/40 relative z-10">
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-1.5 mb-2">
+                                <Award size={14} className={colors.accentText} />
+                                <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${colors.accentText}`}>Kober Edition</span>
                             </div>
-                            <div className="space-y-10 relative">
-                                <div className="absolute left-[9px] top-3 bottom-3 w-[1px] bg-[#e2e8f0]"></div>
-                                {activeItinerary[selectedDay - 1].items.map((item, idx) => (
-                                    <div key={idx} className="flex items-start relative pl-8">
-                                        <div className={`absolute left-0 w-[18px] h-[18px] rounded-full border-[3px] border-white flex items-center justify-center z-10 shadow-sm ${colors.primary}`}><div className="w-1 h-1 bg-white rounded-full"></div></div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center justify-between mb-1">
-                                                <span className={`text-xs font-black tracking-wider flex items-center gap-1 ${colors.primaryText}`}><Clock size={12} /> {item.time}</span>
-                                                <div className="flex gap-1">
-                                                    {item.bookingUrl && (
-                                                        <button onClick={() => openUrl(item.bookingUrl)} className="text-[9px] font-black text-white bg-[#d4af37] px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                                                            <ExternalLink size={10} /> 예약하기
-                                                        </button>
-                                                    )}
-                                                    {item.mapQuery && (
-                                                        <button onClick={() => openInGoogleMaps(item.mapQuery)} className="text-[9px] font-black text-[#d4af37] bg-[#fffcf0] px-2 py-1 rounded-full border border-[#f3eee0] flex items-center gap-1">
-                                                            <MapIcon size={10} /> 위치보기
-                                                        </button>
-                                                    )}
+                            <h1 className="text-3xl font-black tracking-tighter text-[#1a202c] leading-none mb-2">KOBE TOUR</h1>
+                            <div className="flex items-center gap-1.5">
+                                <Link to="/game" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                                    <Gamepad2 size={14} className={colors.accentText} />
+                                    <p className={`${colors.accentText} text-sm font-black tracking-tight`}>미니 게임하러 가기! 🕹️</p>
+                                </Link>
+                            </div>
+                        </div>
+                        <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl`}>
+                            <PiggyBank size={24} />
+                        </div>
+                    </div>
+
+                    <div className="bg-[#f8fafc] rounded-[2.5rem] p-8 flex items-center justify-between border border-[#e2e8f0]">
+                        <div className="text-center">
+                            <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
+                            <p className="text-xl font-black text-[#1a202c]">출국</p>
+                            <p className={`text-xs font-black ${colors.primaryText}`}>08:25</p>
+                        </div>
+                        <div className="flex-1 px-4 flex flex-col items-center">
+                            <div className="w-full flex items-center gap-2">
+                                <div className="flex-1 h-[1px] bg-[#cbd5e1]"></div>
+                                <Plane className={colors.primaryText} size={16} />
+                                <div className="flex-1 h-[1px] bg-[#cbd5e1]"></div>
+                            </div>
+                            <p className="text-[10px] text-gray-400 mt-2 font-black tracking-widest uppercase">Kobe Airport</p>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
+                            <p className="text-xl font-black text-[#1a202c]">귀국</p>
+                            <p className={`text-xs font-black ${colors.primaryText}`}>18:40</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content */}
+                <div className="z-0 pb-32">
+                    {activeTab === 'itinerary' && (
+                        <div className="p-6 animate-in fade-in duration-700">
+                            <div className="flex justify-center space-x-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+                                {[1, 2, 3, 4].map((d) => (
+                                    <button key={d} onClick={() => setSelectedDay(d)} className={`flex-shrink-0 w-16 h-20 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 ${selectedDay === d ? `${colors.primary} text-white shadow-xl scale-105` : 'bg-white text-gray-400 border border-[#e2e8f0]'}`}>
+                                        <span className="text-[10px] font-black mb-1 opacity-60">DAY</span>
+                                        <span className="text-xl font-black">{d}</span>
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className={`${colors.card} rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]`}>
+                                <div className="mb-8">
+                                    <h2 className="text-2xl font-black text-[#1a202c] leading-tight mb-1">{activeItinerary[selectedDay - 1].title}</h2>
+                                    <p className={`${colors.primaryText} font-bold text-xs uppercase tracking-widest`}>{activeItinerary[selectedDay - 1].date}</p>
+
+                                </div>
+                                <div className="space-y-10 relative">
+                                    <div className="absolute left-[9px] top-3 bottom-3 w-[1px] bg-[#e2e8f0]"></div>
+                                    {activeItinerary[selectedDay - 1].items.map((item, idx) => (
+                                        <div key={idx} className="flex items-start relative pl-8">
+                                            <div className={`absolute left-0 w-[18px] h-[18px] rounded-full border-[3px] border-white flex items-center justify-center z-10 shadow-sm ${colors.primary}`}><div className="w-1 h-1 bg-white rounded-full"></div></div>
+                                            <div className="flex-1">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <span className={`text-xs font-black tracking-wider flex items-center gap-1 ${colors.primaryText}`}><Clock size={12} /> {item.time}</span>
+                                                    <div className="flex gap-1">
+                                                        {item.bookingUrl && (
+                                                            <button onClick={() => openUrl(item.bookingUrl)} className="text-[9px] font-black text-white bg-[#d4af37] px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                                                                <ExternalLink size={10} /> 예약하기
+                                                            </button>
+                                                        )}
+                                                        {item.mapQuery && (
+                                                            <button onClick={() => openInGoogleMaps(item.mapQuery)} className="text-[9px] font-black text-[#d4af37] bg-[#fffcf0] px-2 py-1 rounded-full border border border-[#f3eee0] flex items-center gap-1">
+                                                                <MapIcon size={10} /> 위치보기
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2 mb-1 text-[#1a202c]">{item.icon}<h3 className="font-black text-lg leading-none">{item.activity}</h3></div>
+                                                <p className="text-sm text-gray-500 font-medium">{item.desc}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'map' && (
+                        <div className="p-6 animate-in fade-in duration-700">
+                            <div className={`${colors.card} rounded-[2.5rem] p-4 shadow-xl border border-[#f1f5f9] min-h-[500px] flex flex-col`}>
+                                <div className="flex items-center justify-between mb-4 px-2">
+                                    <h3 className="font-black text-xs uppercase tracking-widest text-gray-400">Day {selectedDay} Map</h3>
+                                    <div className="flex bg-gray-100 p-1 rounded-full">
+                                        <button onClick={() => setShowRealMap(true)} className={`px-3 py-1 text-[10px] font-black rounded-full transition-all ${showRealMap ? `${colors.primary} text-white shadow-md` : 'text-gray-400'}`}>구글 지도</button>
+                                        <button onClick={() => setShowRealMap(false)} className={`px-3 py-1 text-[10px] font-black rounded-full transition-all ${!showRealMap ? `${colors.primary} text-white shadow-md` : 'text-gray-400'}`}>일러스트</button>
+                                    </div>
+                                </div>
+                                {showRealMap ? (
+                                    <div className="flex-1 w-full rounded-[2rem] overflow-hidden border border-[#e2e8f0] bg-gray-50 h-[350px]">
+                                        <iframe width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen src={`https://www.google.com/maps/embed/v1/place?key=&q=${encodeURIComponent(activeItinerary[selectedDay - 1].mainQuery)}`} title="Google Maps"></iframe>
+                                    </div>
+                                ) : (
+                                    <div className="flex-1 flex flex-col items-center justify-center text-center">
+                                        {isGenerating ? <Loader2 className="animate-spin text-[#1a365d] mb-4" size={40} /> : mapImage ? <img src={mapImage} className="rounded-3xl shadow-2xl" alt="Map Illustration" /> : <p className="text-gray-400">지도를 로드 중...</p>}
+                                    </div>
+                                )}
+                                <div className="mt-6 p-6 bg-[#f8fafc] rounded-[2rem] border border-[#e2e8f0]">
+                                    <h4 className="font-black text-[#1a202c] mb-1 flex items-center gap-2"><Compass size={18} className={colors.accentText} /> {currentPlanName} 경로</h4>
+                                    <p className="text-xs font-bold text-gray-500">{activeItinerary[selectedDay - 1].route}</p>
+                                    <button onClick={() => openInGoogleMaps(activeItinerary[selectedDay - 1].mainQuery)} className={`mt-4 w-full py-3.5 rounded-2xl ${colors.primary} text-white text-[11px] font-black flex items-center justify-center gap-2 shadow-lg`}>
+                                        <MapIcon size={14} /> 구글 지도 앱에서 크게 보기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'budget' && (
+                        <div className="p-6 animate-in fade-in duration-700">
+                            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                <div className="mb-8 text-center">
+                                    <div className="inline-flex items-center gap-1.5 mb-2 px-4 py-1.5 bg-[#f8fafc] rounded-full">
+                                        <Users size={12} className={colors.accentText} />
+                                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${colors.accentText}`}>Value Plan</span>
+                                    </div>
+                                    <h2 className="text-2xl font-black text-[#1a202c]">3인 그룹 1인 경비</h2>
+                                    <p className="text-xs text-gray-400 font-bold mt-1 uppercase">토요일 오후 티 특가 반영</p>
+                                </div>
+                                <div className="space-y-4 mb-10">
+                                    {activeBudget.map((item, i) => (
+                                        <div key={i} className="flex items-center justify-between p-5 rounded-3xl bg-white border border-[#f1f5f9] shadow-sm">
+                                            <div className="flex items-center gap-4"><div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${item.color.split(' ')[0]}`}>{item.icon}</div><div><p className="text-sm font-black text-[#1a202c]">{item.category}</p><p className="text-[10px] text-gray-400 font-black uppercase">{item.detail}</p></div></div>
+                                            <p className={`font-black text-lg ${item.color.split(' ')[1]}`}>{item.cost}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className={`${colors.primary} p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden`}>
+                                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-24 -mt-24"></div>
+                                    <div className="flex justify-between items-center mb-4 opacity-80 text-[10px] font-black tracking-[0.4em]"><span>TOTAL ESTIMATION</span><Wallet size={16} /></div>
+                                    <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥109,053</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 1,000,000원</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'info' && (
+                        <div className="p-6 space-y-6 animate-in slide-in-from-bottom duration-700">
+
+                            <div className="space-y-6">
+                                <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                    <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
+                                        <Hotel className={colors.accentText} size={22} /> 숙소 예약 정보
+                                    </h2>
+                                    <div className="space-y-4">
+                                        <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
+                                            <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
+                                                <MapPin size={16} /> 1. 장소 & 일정
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p><span className="font-bold text-[#198754]">호텔:</span> 칸데오 호텔 고베 토르 로드</p>
+                                                <p className="text-[10px] text-gray-400">Candeo Hotels Kobe Tor Road</p>
+                                                <p className="text-[10px] text-gray-400">Chuo-ku Sannomiya-cho 3-8-8</p>
+                                                <div className="mt-2 pt-2 border-t border-dashed border-[#198754]/30">
+                                                    <p><span className="font-bold text-[#198754]">체크인:</span> 3.20(금) 15:00~</p>
+                                                    <p><span className="font-bold text-[#198754]">체크아웃:</span> 3.23(월) ~11:00</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2 mb-1 text-[#1a202c]">{item.icon}<h3 className="font-black text-lg leading-none">{item.activity}</h3></div>
-                                            <p className="text-sm text-gray-500 font-medium">{item.desc}</p>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {activeTab === 'map' && (
-                    <div className="p-6 animate-in fade-in duration-700 pb-64">
-                        <div className={`${colors.card} rounded-[2.5rem] p-4 shadow-xl border border-[#f1f5f9] min-h-[500px] flex flex-col`}>
-                            <div className="flex items-center justify-between mb-4 px-2">
-                                <h3 className="font-black text-xs uppercase tracking-widest text-gray-400">Day {selectedDay} Map</h3>
-                                <div className="flex bg-gray-100 p-1 rounded-full">
-                                    <button onClick={() => setShowRealMap(true)} className={`px-3 py-1 text-[10px] font-black rounded-full transition-all ${showRealMap ? `${colors.primary} text-white shadow-md` : 'text-gray-400'}`}>구글 지도</button>
-                                    <button onClick={() => setShowRealMap(false)} className={`px-3 py-1 text-[10px] font-black rounded-full transition-all ${!showRealMap ? `${colors.primary} text-white shadow-md` : 'text-gray-400'}`}>일러스트</button>
-                                </div>
-                            </div>
-                            {showRealMap ? (
-                                <div className="flex-1 w-full rounded-[2rem] overflow-hidden border border-[#e2e8f0] bg-gray-50 h-[350px]">
-                                    <iframe width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen src={`https://www.google.com/maps/embed/v1/place?key=&q=${encodeURIComponent(activeItinerary[selectedDay - 1].mainQuery)}`} title="Google Maps"></iframe>
-                                </div>
-                            ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center text-center">
-                                    {isGenerating ? <Loader2 className="animate-spin text-[#1a365d] mb-4" size={40} /> : mapImage ? <img src={mapImage} className="rounded-3xl shadow-2xl" alt="Map Illustration" /> : <p className="text-gray-400">지도를 로드 중...</p>}
-                                </div>
-                            )}
-                            <div className="mt-6 p-6 bg-[#f8fafc] rounded-[2rem] border border-[#e2e8f0]">
-                                <h4 className="font-black text-[#1a202c] mb-1 flex items-center gap-2"><Compass size={18} className={colors.accentText} /> {currentPlanName} 경로</h4>
-                                <p className="text-xs font-bold text-gray-500">{activeItinerary[selectedDay - 1].route}</p>
-                                <button onClick={() => openInGoogleMaps(activeItinerary[selectedDay - 1].mainQuery)} className={`mt-4 w-full py-3.5 rounded-2xl ${colors.primary} text-white text-[11px] font-black flex items-center justify-center gap-2 shadow-lg`}>
-                                    <MapIcon size={14} /> 구글 지도 앱에서 크게 보기
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {activeTab === 'budget' && (
-                    <div className="p-6 animate-in fade-in duration-700 pb-64">
-                        <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
-                            <div className="mb-8 text-center">
-                                <div className="inline-flex items-center gap-1.5 mb-2 px-4 py-1.5 bg-[#f8fafc] rounded-full">
-                                    <Users size={12} className={colors.accentText} />
-                                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${colors.accentText}`}>Value Plan</span>
-                                </div>
-                                <h2 className="text-2xl font-black text-[#1a202c]">3인 그룹 1인 경비</h2>
-                                <p className="text-xs text-gray-400 font-bold mt-1 uppercase">토요일 오후 티 특가 반영</p>
-                            </div>
-                            <div className="space-y-4 mb-10">
-                                {activeBudget.map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between p-5 rounded-3xl bg-white border border-[#f1f5f9] shadow-sm">
-                                        <div className="flex items-center gap-4"><div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${item.color.split(' ')[0]}`}>{item.icon}</div><div><p className="text-sm font-black text-[#1a202c]">{item.category}</p><p className="text-[10px] text-gray-400 font-black uppercase">{item.detail}</p></div></div>
-                                        <p className={`font-black text-lg ${item.color.split(' ')[1]}`}>{item.cost}</p>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className={`${colors.primary} p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden`}>
-                                <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-24 -mt-24"></div>
-                                <div className="flex justify-between items-center mb-4 opacity-80 text-[10px] font-black tracking-[0.4em]"><span>TOTAL ESTIMATION</span><Wallet size={16} /></div>
-                                <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥109,053</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 1,000,000원</span></div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {activeTab === 'info' && (
-                    <div className="p-6 space-y-6 animate-in slide-in-from-bottom duration-700 pb-64">
-
-                        <div className="space-y-6">
-                            <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
-                                <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
-                                    <Hotel className={colors.accentText} size={22} /> 숙소 예약 정보
-                                </h2>
-                                <div className="space-y-4">
-                                    <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
-                                        <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
-                                            <MapPin size={16} /> 1. 장소 & 일정
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <p><span className="font-bold text-[#198754]">호텔:</span> 칸데오 호텔 고베 토르 로드</p>
-                                            <p className="text-[10px] text-gray-400">Candeo Hotels Kobe Tor Road</p>
-                                            <p className="text-[10px] text-gray-400">Chuo-ku Sannomiya-cho 3-8-8</p>
-                                            <div className="mt-2 pt-2 border-t border-dashed border-[#198754]/30">
-                                                <p><span className="font-bold text-[#198754]">체크인:</span> 3.20(금) 15:00~</p>
-                                                <p><span className="font-bold text-[#198754]">체크아웃:</span> 3.23(월) ~11:00</p>
+                                        <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
+                                            <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
+                                                <Info size={16} /> 2. 객실 & 인원
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p><span className="font-bold text-[#1a365d]">객실:</span> 디럭스 트윈룸 (금연)</p>
+                                                <p><span className="font-bold text-[#1a365d]">인원:</span> 성인 3명 (3박)</p>
+                                            </div>
+                                        </div>
+                                        <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
+                                            <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
+                                                <CreditCard size={16} /> 3. 결제 정보
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <div className="flex justify-between font-bold text-[#1a202c]">
+                                                    <span>총 합계</span>
+                                                    <span className="text-[#d4af37]">¥98,258</span>
+                                                </div>
+                                                <p className="text-[10px] text-gray-400 mt-1">VAT 포함, Booking.com 할인 적용됨</p>
+                                                <p className="text-[10px] text-gray-400">2026.03.17 자동 결제 예정</p>
+                                                <p className="mt-1 text-red-400 font-bold">취소기한: 3.18 23:59까지 무료</p>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
-                                        <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
-                                            <Info size={16} /> 2. 객실 & 인원
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <p><span className="font-bold text-[#1a365d]">객실:</span> 디럭스 트윈룸 (금연)</p>
-                                            <p><span className="font-bold text-[#1a365d]">인원:</span> 성인 3명 (3박)</p>
-                                        </div>
-                                    </div>
-                                    <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
-                                        <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
-                                            <CreditCard size={16} /> 3. 결제 정보
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <div className="flex justify-between font-bold text-[#1a202c]">
-                                                <span>총 합계</span>
-                                                <span className="text-[#d4af37]">¥98,258</span>
-                                            </div>
-                                            <p className="text-[10px] text-gray-400 mt-1">VAT 포함, Booking.com 할인 적용됨</p>
-                                            <p className="text-[10px] text-gray-400">2026.03.17 자동 결제 예정</p>
-                                            <p className="mt-1 text-red-400 font-bold">취소기한: 3.18 23:59까지 무료</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
+                                </section>
 
-                            <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
-                                <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
-                                    <Car className={colors.accentText} size={22} /> 렌트카 예약 정보
-                                </h2>
-                                <div className="space-y-4">
-                                    <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
-                                        <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
-                                            <MapPin size={16} /> 1. 대여 장소 & 차량
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <p><span className="font-bold text-[#198754]">업체:</span> 토요타 렌터카 (고베공항점)</p>
-                                            <p><span className="font-bold text-[#198754]">차종:</span> 시엔타 / 프리우스α (미니밴 랜덤)</p>
-                                            <p className="text-[10px] text-gray-400">최대 6인승 (골프백 + 캐리어 적재 가능)</p>
-                                            <p className="text-[10px] text-gray-400">네비게이션(한국어 지원) + ETC 포함 / AT</p>
-                                        </div>
-                                    </div>
-                                    <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
-                                        <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
-                                            <Info size={16} /> 2. 비용 & 혜택
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <div className="flex justify-between font-bold text-[#1a202c]">
-                                                <span>총 요금 (3박 4일)</span>
-                                                <span className="text-[#d4af37]">¥42,900</span>
+                                <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                    <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
+                                        <Car className={colors.accentText} size={22} /> 렌트카 예약 정보
+                                    </h2>
+                                    <div className="space-y-4">
+                                        <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
+                                            <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
+                                                <MapPin size={16} /> 1. 대여 장소 & 차량
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p><span className="font-bold text-[#198754]">업체:</span> 토요타 렌터카 (고베공항점)</p>
+                                                <p><span className="font-bold text-[#198754]">차종:</span> 시엔타 / 프리우스α (미니밴 랜덤)</p>
+                                                <p className="text-[10px] text-gray-400">최대 6인승 (골프백 + 캐리어 적재 가능)</p>
+                                                <p className="text-[10px] text-gray-400">네비게이션(한국어 지원) + ETC 포함 / AT</p>
                                             </div>
-                                            <p className="text-[10px] text-gray-400 mt-1">현지 결제 또는 사전 결제 확인 필요</p>
-                                            <p className="text-[10px] text-gray-400">포인트 858P 적립 예정</p>
+                                        </div>
+                                        <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
+                                            <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
+                                                <Info size={16} /> 2. 비용 & 혜택
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <div className="flex justify-between font-bold text-[#1a202c]">
+                                                    <span>총 요금 (3박 4일)</span>
+                                                    <span className="text-[#d4af37]">¥42,900</span>
+                                                </div>
+                                                <p className="text-[10px] text-gray-400 mt-1">현지 결제 또는 사전 결제 확인 필요</p>
+                                                <p className="text-[10px] text-gray-400">포인트 858P 적립 예정</p>
+                                            </div>
+                                        </div>
+                                        <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
+                                            <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
+                                                <AlertCircle size={16} /> 3. 주의사항
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p className="text-red-400 font-bold">• 취소기한: 3월 13일까지 무료 취소</p>
+                                                <p>• 면책 보상 옵션 현장 추가 가능</p>
+                                                <p>• 공항 데스크에서 픽업 절차 진행</p>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
-                                        <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
-                                            <AlertCircle size={16} /> 3. 주의사항
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <p className="text-red-400 font-bold">• 취소기한: 3월 13일까지 무료 취소</p>
-                                            <p>• 면책 보상 옵션 현장 추가 가능</p>
-                                            <p>• 공항 데스크에서 픽업 절차 진행</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
+                                </section>
 
-                            <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
-                                <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
-                                    <Flag className={colors.accentText} size={22} /> 로코 CC 골프 예약
-                                </h2>
-                                <div className="space-y-4">
-                                    <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
-                                        <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
-                                            <MapPin size={16} /> 1. 장소 & 일시
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <p><span className="font-bold text-[#198754]">장소:</span> 六甲カントリー倶楽部 (로코 CC)</p>
-                                            <p className="text-[10px] text-gray-400">兵庫県西宮市山口町金仙寺1659-1</p>
-                                            <p className="mt-1"><span className="font-bold text-[#198754]">일시:</span> 2026년 3월 23일 (월) 07:00</p>
+                                <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                    <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
+                                        <Flag className={colors.accentText} size={22} /> 로코 CC 골프 예약
+                                    </h2>
+                                    <div className="space-y-4">
+                                        <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
+                                            <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
+                                                <MapPin size={16} /> 1. 장소 & 일시
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p><span className="font-bold text-[#198754]">장소:</span> 六甲カントリー倶楽部 (로코 CC)</p>
+                                                <p className="text-[10px] text-gray-400">兵庫県西宮市山口町金仙寺1659-1</p>
+                                                <p className="mt-1"><span className="font-bold text-[#198754]">일시:</span> 2026년 3월 23일 (월) 07:00</p>
+                                            </div>
+                                        </div>
+                                        <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
+                                            <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
+                                                <Flag size={16} /> 2. 코스 & 비용
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p><span className="font-bold text-[#1a365d]">코스:</span> OUT코스 / 1팀 3명</p>
+                                                <p><span className="font-bold text-[#1a365d]">비용:</span> 1인 10,540엔 (기본 9,990 + 3B할증 550 / 락커 별도)</p>
+                                            </div>
+                                        </div>
+                                        <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
+                                            <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
+                                                <AlertCircle size={16} /> 3. 주의사항
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p>• 2주 전까지 동반자 이름 입력 필수</p>
+                                                <p>• 취소 시 3일 전부터 3,000엔/1인 수수료 발생</p>
+                                                <p className="mt-1 text-[#d4af37] font-bold">대표자: 이경진 (Lee Kyungjin)</p>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
-                                        <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
-                                            <Flag size={16} /> 2. 코스 & 비용
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <p><span className="font-bold text-[#1a365d]">코스:</span> OUT코스 / 1팀 3명</p>
-                                            <p><span className="font-bold text-[#1a365d]">비용:</span> 1인 10,540엔 (기본 9,990 + 3B할증 550 / 락커 별도)</p>
-                                        </div>
+                                </section>
+                                <div className="p-6 bg-emerald-600 rounded-[2.5rem] text-white flex items-start gap-4">
+                                    <CheckCircle2 className="text-white shrink-0" size={24} />
+                                    <div>
+                                        <h4 className="font-black text-sm mb-1">식사 팁</h4>
+                                        <p className="text-[11px] opacity-90 leading-relaxed">실속형 플랜은 고가의 정식보다는 '스테이크랜드'와 같은 시내 가성비 고베규 맛집이나 현지인 이자카야를 활용하면 만족도가 높습니다.</p>
                                     </div>
-                                    <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
-                                        <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
-                                            <AlertCircle size={16} /> 3. 주의사항
-                                        </h3>
-                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
-                                            <p>• 2주 전까지 동반자 이름 입력 필수</p>
-                                            <p>• 취소 시 3일 전부터 3,000엔/1인 수수료 발생</p>
-                                            <p className="mt-1 text-[#d4af37] font-bold">대표자: 이경진 (Lee Kyungjin)</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                            <div className="p-6 bg-emerald-600 rounded-[2.5rem] text-white flex items-start gap-4">
-                                <CheckCircle2 className="text-white shrink-0" size={24} />
-                                <div>
-                                    <h4 className="font-black text-sm mb-1">식사 팁</h4>
-                                    <p className="text-[11px] opacity-90 leading-relaxed">실속형 플랜은 고가의 정식보다는 '스테이크랜드'와 같은 시내 가성비 고베규 맛집이나 현지인 이자카야를 활용하면 만족도가 높습니다.</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             {/* Navigation Tab Bar */}
