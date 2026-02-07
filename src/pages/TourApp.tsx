@@ -163,7 +163,7 @@ const TourApp = () => {
     const currentPlanName = '시내 실속형';
 
     return (
-        <div className={`max-w-md mx-auto ${colors.bg} min-h-screen flex flex-col font-sans text-[#1a202c] shadow-2xl relative overflow-hidden`}>
+        <div className={`w-full h-full ${colors.bg} flex flex-col font-sans text-[#1a202c] relative overflow-hidden`}>
 
             {/* Header */}
             <div className="bg-white pt-16 pb-12 px-8 rounded-b-[4.5rem] shadow-2xl shadow-gray-200/40 z-10">
