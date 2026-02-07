@@ -212,7 +212,7 @@ const TourApp = () => {
 
             <div className="flex-1 overflow-y-auto z-0">
                 {activeTab === 'itinerary' && (
-                    <div className="p-6 animate-in fade-in duration-700 pb-48">
+                    <div className="p-6 animate-in fade-in duration-700 pb-64">
                         <div className="flex justify-center space-x-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
                             {[1, 2, 3, 4].map((d) => (
                                 <button key={d} onClick={() => setSelectedDay(d)} className={`flex-shrink-0 w-16 h-20 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 ${selectedDay === d ? `${colors.primary} text-white shadow-xl scale-105` : 'bg-white text-gray-400 border border-[#e2e8f0]'}`}>
@@ -260,7 +260,7 @@ const TourApp = () => {
                 )}
 
                 {activeTab === 'map' && (
-                    <div className="p-6 animate-in fade-in duration-700 pb-48">
+                    <div className="p-6 animate-in fade-in duration-700 pb-64">
                         <div className={`${colors.card} rounded-[2.5rem] p-4 shadow-xl border border-[#f1f5f9] min-h-[500px] flex flex-col`}>
                             <div className="flex items-center justify-between mb-4 px-2">
                                 <h3 className="font-black text-xs uppercase tracking-widest text-gray-400">Day {selectedDay} Map</h3>
@@ -290,7 +290,7 @@ const TourApp = () => {
                 )}
 
                 {activeTab === 'budget' && (
-                    <div className="p-6 animate-in fade-in duration-700 pb-48">
+                    <div className="p-6 animate-in fade-in duration-700 pb-64">
                         <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
                             <div className="mb-8 text-center">
                                 <div className="inline-flex items-center gap-1.5 mb-2 px-4 py-1.5 bg-[#f8fafc] rounded-full">
@@ -318,7 +318,7 @@ const TourApp = () => {
                 )}
 
                 {activeTab === 'info' && (
-                    <div className="p-6 space-y-6 animate-in slide-in-from-bottom duration-700 pb-48">
+                    <div className="p-6 space-y-6 animate-in slide-in-from-bottom duration-700 pb-64">
 
                         <div className="space-y-6">
                             <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
@@ -457,7 +457,7 @@ const TourApp = () => {
             </div>
 
             {/* Navigation Tab Bar */}
-            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-[#1a365d]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] h-22 shadow-2xl flex items-center justify-around px-4 z-50">
+            <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-[#1a365d]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] h-22 shadow-2xl flex items-center justify-around px-4 z-50">
                 <TabButton active={activeTab === 'itinerary'} onClick={() => setActiveTab('itinerary')} icon={<Calendar size={24} />} label="일정" />
                 <TabButton active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={<MapPin size={24} />} label="지도" />
                 <TabButton active={activeTab === 'info'} onClick={() => setActiveTab('info')} icon={<Info size={24} />} label="정보" />
