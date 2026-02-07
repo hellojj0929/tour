@@ -42,12 +42,12 @@ import mapImageStatic from '../assets/kobe_map_custom.jpg';
 
 const TourApp = () => {
     const [activeTab, setActiveTab] = useState('itinerary');
-    const [selectedPlan, setSelectedPlan] = useState('A'); // 'A' or 'B'
+
     const [selectedDay, setSelectedDay] = useState(1);
-    const [mapImage, setMapImage] = useState(mapImageStatic);
+    const [mapImage, setMapImage] = useState<string | null>(mapImageStatic);
     const [isGenerating, setIsGenerating] = useState(false);
     const [showRealMap, setShowRealMap] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     const apiKey = "";
 
@@ -61,63 +61,14 @@ const TourApp = () => {
         border: 'border-[#e2e8f0]'
     };
 
-    // 온천 프리미엄 (Plan A)
-    const itineraryA = [
-        {
-            day: 1, date: "3월 20일 (금)", title: "고베 입국 및 제1라운드", route: "고베공항 ➔ 아리마 로열 GC ➔ 료칸",
-            mainQuery: "Arima Onsen",
-            items: [
-                { time: "10:30", icon: <Navigation size={16} />, activity: "고베 공항(UKB) 도착", desc: "전용 차량 픽업 및 골프장 이동", mapQuery: "Kobe Airport" },
-                {
-                    time: "12:30", icon: <Flag size={16} />, activity: "제1라운드 (18홀)", desc: "아리마 로열 GC (금요일 라운딩)",
-                    mapQuery: "Arima Royal Golf Club",
-                    bookingUrl: "https://experiences.myrealtrip.com/products/4963367"
-                },
-                { time: "18:30", icon: <Hotel size={16} />, activity: "료칸 체크인/석식", desc: "아리마 부티크 료칸 (가성비 프리미엄)", mapQuery: "Arima Onsen Hotel" },
-            ]
-        },
-        {
-            day: 2, date: "3월 21일 (토)", title: "오전 휴식 & 오후 라운딩", route: "료칸 ➔ 롯코 국제 GC (오후 티) ➔ 아리마",
-            mainQuery: "The Rokko Kokusai Golf Club",
-            items: [
-                { time: "10:00", icon: <Coffee size={16} />, activity: "여유로운 오전 휴식", desc: "료칸 조식 후 온천욕 및 휴식", mapQuery: "Arima Onsen" },
-                {
-                    time: "13:00", icon: <Flag size={16} />, activity: "제2라운드 (18홀)", desc: "롯코 국제 GC (토요일 오후 티 특가)",
-                    mapQuery: "The Rokko Kokusai Golf Club",
-                    bookingUrl: "https://www.rokko-kokusai-yokawa.com/"
-                },
-                { time: "18:00", icon: <Waves size={16} />, activity: "나이트 온천 힐링", desc: "라운딩 후 조용한 밤 온천 체험", mapQuery: "Arima Onsen" },
-                { time: "20:00", icon: <Utensils size={16} />, activity: "아리마 마을 디너", desc: "온천 마을 로컬 맛집 탐방", mapQuery: "Arima Onsen Town" },
-            ]
-        },
-        {
-            day: 3, date: "3월 22일 (일)", title: "롯코산 투어 및 시내 이동", route: "아리마 ➔ 롯코산 ➔ 산노미야",
-            mainQuery: "Mount Rokko",
-            items: [
-                { time: "11:00", icon: <Coffee size={16} />, activity: "여유로운 조식", desc: "료칸 체크아웃 및 여유로운 오전", mapQuery: "Arima Onsen" },
-                { time: "14:00", icon: <MapPin size={16} />, activity: "롯코산 전망대", desc: "케이블카 탑승 및 전경 감상", mapQuery: "Mt. Rokko Tenran Observatory" },
-                { time: "18:00", icon: <Hotel size={16} />, activity: "시내 호텔 체크인", desc: "산노미야 부티크 호텔", mapQuery: "Remm Plus Kobe Sannomiya" },
-                { time: "20:00", icon: <Utensils size={16} />, activity: "고베항 야경 디너", desc: "하버랜드 야경과 함께하는 파이닝", mapQuery: "Kobe Harborland" },
-            ]
-        },
-        {
-            day: 4, date: "3월 23일 (월)", title: "시내 쇼핑 및 귀국", route: "산노미야 ➔ 다이마루 ➔ 고베공항",
-            mainQuery: "Kobe Airport",
-            items: [
-                { time: "11:00", icon: <ShoppingBag size={16} />, activity: "고베 집중 쇼핑", desc: "다이마루 백화점 및 센터가이", mapQuery: "Daimaru Kobe" },
-                { time: "18:40", icon: <Plane size={16} />, activity: "고베 공항(T2) 출국", desc: "18:40 귀국편 탑승 (고베 2터미널)", mapQuery: "Kobe Airport" },
-            ]
-        }
-    ];
-
-    // 시내 실속형 (Plan B)
-    const itineraryB = [
+    // 시내 실속형
+    const itinerary = [
         {
             day: 1, date: "3월 20일 (금)", title: "고베공항 입국 & 시내 맛집", route: "고베공항 ➔ 산노미야 ➔ 이진칸",
-            mainQuery: "Remm Plus Kobe Sannomiya",
+            mainQuery: "Candeo Hotels Kobe Tor Road",
             items: [
                 { time: "10:30", icon: <Navigation size={16} />, activity: "고베 공항(UKB) 도착", desc: "포트라이너 또는 택시 이동", mapQuery: "Kobe Airport" },
-                { time: "15:00", icon: <Hotel size={16} />, activity: "호텔 체크인", desc: "렘 플러스 고베 산노미야", mapQuery: "Remm Plus Kobe Sannomiya" },
+                { time: "15:00", icon: <Hotel size={16} />, activity: "호텔 체크인", desc: "칸데오 호텔 고베 토르 로드", mapQuery: "Candeo Hotels Kobe Tor Road" },
                 { time: "19:00", icon: <Utensils size={16} />, activity: "디너: 고베규 이자카야", desc: "현지인 가성비 맛집", mapQuery: "Steakland Kobe" },
             ]
         },
@@ -143,34 +94,29 @@ const TourApp = () => {
             ]
         },
         {
-            day: 4, date: "3월 23일 (월)", title: "월요일 실속 라운딩 & 귀국", route: "호텔 ➔ 아리마 CC ➔ 고베공항",
-            mainQuery: "Arima Country Club",
+            day: 4, date: "3월 23일 (월)", title: "로코 CC 스루플레이 & 귀국", route: "호텔 ➔ 로코 CC ➔ 고베공항",
+            mainQuery: "Rokko Country Club",
             items: [
                 {
-                    time: "08:00", icon: <Flag size={16} />, activity: "제2라운드 (18홀)", desc: "아리마 컨트리클럽 (평일 실속)",
-                    mapQuery: "Arima Country Club",
-                    bookingUrl: "https://www.arimacc.jp/"
+                    time: "07:00", icon: <Flag size={16} />, activity: "제2라운드 (18H 스루)", desc: "로코 CC (OUT코스 / 3B / 총액 10,540엔)",
+                    mapQuery: "Rokko Country Club",
+                    bookingUrl: ""
                 },
-                { time: "14:30", icon: <Navigation size={16} />, activity: "라운딩 종료 후 이동", desc: "클럽하우스 중식 후 공항 이동", mapQuery: "Arima Country Club" },
-                { time: "18:40", icon: <Plane size={16} />, activity: "고베 공항(T2) 출국", desc: "18:40 귀국편 탑승 (고베 2터미널)", mapQuery: "Kobe Airport" },
+                { time: "11:00", icon: <Utensils size={16} />, activity: "점심 식사 & 샤워", desc: "라운드 후 식사 (1,210엔 보조권 / 락커비 별도 +440엔)", mapQuery: "Rokko Country Club" },
+                { time: "12:50", icon: <ShoppingBag size={16} />, activity: "공항 도착 & 쇼핑", desc: "체크인 후 면세점 및 쇼핑 (여유시간 충분)", mapQuery: "Kobe Airport" },
+                { time: "18:40", icon: <Plane size={16} />, activity: "고베 공항(T2) 출국", desc: "18:40 귀국편 탑승 (KE2174 A321-neo)", mapQuery: "Kobe Airport" },
             ]
         }
     ];
 
-    const budgetItemsA = [
-        { category: "숙박 (Stay)", detail: "3인 1실 (실속형 프리미엄 료칸/호텔)", cost: "¥85,000", icon: <Hotel size={20} />, color: "bg-[#f4f7fa] text-[#1a365d]" },
-        { category: "골프 (Golf)", detail: "금요일 및 토요일 오후 티(할인)", cost: "¥53,000", icon: <Flag size={20} />, color: "bg-[#fffcf0] text-[#b08d49]" },
-        { category: "기타 (Misc)", detail: "가이세키 및 3인 전용 이동비", cost: "¥40,000", icon: <TrendingUp size={20} />, color: "bg-gray-50 text-gray-600" },
+    const budgetItems = [
+        { category: "숙박 (Stay)", detail: "총 ¥98,258 ÷ 3명 (3박)", cost: "¥32,753", icon: <Building size={20} />, color: "bg-[#f0f9f6] text-[#2d6a4f]" },
+        { category: "골프 (Golf)", detail: "가스토니안 + 로코(10,540엔)", cost: "¥32,000", icon: <Flag size={20} />, color: "bg-[#fffcf0] text-[#b08d49]" },
+        { category: "기타 (Misc)", detail: "식비 및 교통비 (예비비 포함)", cost: "¥30,000", icon: <PiggyBank size={20} />, color: "bg-gray-50 text-gray-600" },
     ];
 
-    const budgetItemsB = [
-        { category: "숙박 (Stay)", detail: "시내 부티크 호텔 트리플룸 3박", cost: "¥60,000", icon: <Building size={20} />, color: "bg-[#f0f9f6] text-[#2d6a4f]" },
-        { category: "골프 (Golf)", detail: "월요일 라운딩 적용 (할인)", cost: "¥35,000", icon: <Flag size={20} />, color: "bg-[#fffcf0] text-[#b08d49]" },
-        { category: "기타 (Misc)", detail: "로컬 다이닝 및 공항 이동비", cost: "¥35,000", icon: <PiggyBank size={20} />, color: "bg-gray-50 text-gray-600" },
-    ];
-
-    const activeItinerary = selectedPlan === 'A' ? itineraryA : itineraryB;
-    const activeBudget = selectedPlan === 'A' ? budgetItemsA : budgetItemsB;
+    const activeItinerary = itinerary;
+    const activeBudget = budgetItems;
 
     const generateMap = async () => {
         if (!apiKey) {
@@ -179,7 +125,7 @@ const TourApp = () => {
         }
         setIsGenerating(true);
         setMapImage(null);
-        const prompt = `A luxury travel map of Kobe Japan starting from Kobe Airport. Plan ${selectedPlan}. Navy and gold colors.`;
+        const prompt = `A luxury travel map of Kobe Japan starting from Kobe Airport. Plan Value. Navy and gold colors.`;
         try {
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
                 method: 'POST',
@@ -208,9 +154,9 @@ const TourApp = () => {
 
     useEffect(() => {
         if (activeTab === 'map') generateMap();
-    }, [activeTab, selectedPlan]);
+    }, [activeTab]);
 
-    const currentPlanName = selectedPlan === 'A' ? '온천 프리미엄' : '시내 실속형';
+    const currentPlanName = '시내 실속형';
 
     return (
         <div className={`max-w-md mx-auto ${colors.bg} min-h-screen flex flex-col font-sans text-[#1a202c] shadow-2xl relative overflow-hidden`}>
@@ -232,25 +178,11 @@ const TourApp = () => {
                         </div>
                     </div>
                     <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl`}>
-                        {selectedPlan === 'A' ? <Layout size={24} /> : <PiggyBank size={24} />}
+                        <PiggyBank size={24} />
                     </div>
                 </div>
 
-                {/* Plan Switcher Menu */}
-                <div className="flex bg-gray-100 p-1.5 rounded-3xl mb-8">
-                    <button
-                        onClick={() => { setSelectedPlan('A'); setSelectedDay(1); }}
-                        className={`flex-1 py-3 rounded-[1.5rem] text-[11px] font-black transition-all ${selectedPlan === 'A' ? `${colors.primary} text-white shadow-lg` : 'text-gray-400'}`}
-                    >
-                        온천 프리미엄
-                    </button>
-                    <button
-                        onClick={() => { setSelectedPlan('B'); setSelectedDay(1); }}
-                        className={`flex-1 py-3 rounded-[1.5rem] text-[11px] font-black transition-all ${selectedPlan === 'B' ? `${colors.primary} text-white shadow-lg` : 'text-gray-400'}`}
-                    >
-                        시내 실속형
-                    </button>
-                </div>
+
 
                 <div className="bg-[#f8fafc] rounded-[2.5rem] p-8 flex items-center justify-between border border-[#e2e8f0]">
                     <div className="text-center">
@@ -277,7 +209,7 @@ const TourApp = () => {
             <div className="flex-1 overflow-y-auto z-0">
                 {activeTab === 'itinerary' && (
                     <div className="p-6 animate-in fade-in duration-700 pb-32">
-                        <div className="flex space-x-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+                        <div className="flex justify-center space-x-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
                             {[1, 2, 3, 4].map((d) => (
                                 <button key={d} onClick={() => setSelectedDay(d)} className={`flex-shrink-0 w-16 h-20 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 ${selectedDay === d ? `${colors.primary} text-white shadow-xl scale-105` : 'bg-white text-gray-400 border border-[#e2e8f0]'}`}>
                                     <span className="text-[10px] font-black mb-1 opacity-60">DAY</span>
@@ -290,9 +222,7 @@ const TourApp = () => {
                             <div className="mb-8">
                                 <h2 className="text-2xl font-black text-[#1a202c] leading-tight mb-1">{activeItinerary[selectedDay - 1].title}</h2>
                                 <p className={`${colors.primaryText} font-bold text-xs uppercase tracking-widest`}>{activeItinerary[selectedDay - 1].date}</p>
-                                {selectedPlan === 'A' && selectedDay === 2 && (
-                                    <div className="mt-2 inline-block px-2 py-0.5 bg-orange-100 text-orange-700 text-[10px] font-black rounded-md">토요일 오후 티 특가 적용</div>
-                                )}
+
                             </div>
                             <div className="space-y-10 relative">
                                 <div className="absolute left-[9px] top-3 bottom-3 w-[1px] bg-[#e2e8f0]"></div>
@@ -361,7 +291,7 @@ const TourApp = () => {
                             <div className="mb-8 text-center">
                                 <div className="inline-flex items-center gap-1.5 mb-2 px-4 py-1.5 bg-[#f8fafc] rounded-full">
                                     <Users size={12} className={colors.accentText} />
-                                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${colors.accentText}`}>{selectedPlan === 'A' ? 'Premium Value' : 'Value'} Plan</span>
+                                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${colors.accentText}`}>Value Plan</span>
                                 </div>
                                 <h2 className="text-2xl font-black text-[#1a202c]">3인 그룹 1인 경비</h2>
                                 <p className="text-xs text-gray-400 font-bold mt-1 uppercase">토요일 오후 티 특가 반영</p>
@@ -377,7 +307,7 @@ const TourApp = () => {
                             <div className={`${colors.primary} p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden`}>
                                 <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-24 -mt-24"></div>
                                 <div className="flex justify-between items-center mb-4 opacity-80 text-[10px] font-black tracking-[0.4em]"><span>TOTAL ESTIMATION</span><Wallet size={16} /></div>
-                                <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">{selectedPlan === 'A' ? '¥178,000' : '¥130,000'}</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 {selectedPlan === 'A' ? '1,602,000' : '1,170,000'}원</span></div>
+                                <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥94,753</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 850,000원</span></div>
                             </div>
                         </div>
                     </div>
@@ -385,91 +315,97 @@ const TourApp = () => {
 
                 {activeTab === 'info' && (
                     <div className="p-6 space-y-6 animate-in slide-in-from-bottom duration-700 pb-32">
-                        {selectedPlan === 'A' ? (
-                            // 온천 프리미엄 중요 정보
-                            <div className="space-y-6">
-                                <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
-                                    <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
-                                        <Sparkles className={colors.accentText} size={22} /> 프리미엄 투어 핵심 안내
-                                    </h2>
-                                    <div className="space-y-4">
-                                        <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
-                                            <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
-                                                <Clock size={16} /> 1. 라운딩 시간 및 진행
-                                            </h3>
-                                            <p className="text-[11px] text-gray-500 leading-relaxed">
-                                                금요일(12:30), 토요일(13:00 오후 티) 시작입니다. 특히 주말 오후 티는 일몰 전 종료를 위해 '스루 라운드(식사 없이 18홀)'로 진행될 수 있으니 사전에 간식을 준비하는 것이 좋습니다.
-                                            </p>
-                                        </div>
-                                        <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
-                                            <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
-                                                <Utensils size={16} /> 2. 료칸 가이세키 석식 시간
-                                            </h3>
-                                            <p className="text-[11px] text-gray-500 leading-relaxed">
-                                                아리마 료칸의 전통 석식은 보통 19:30이 마지막 입장입니다. 토요일 오후 라운딩 후 복귀 시간을 고려하여 미리 료칸 측에 도착 예정 시간을 고지해야 합니다.
-                                            </p>
-                                        </div>
-                                        <div className="p-5 bg-[#f0f4f8] rounded-3xl border border-[#d1dce5]">
-                                            <h3 className={`font-black text-gray-700 text-sm mb-2 flex items-center gap-2`}>
-                                                <Award size={16} /> 3. 명문 코스 복장 규정
-                                            </h3>
-                                            <p className="text-[11px] text-gray-500 leading-relaxed">
-                                                아리마 로열과 롯코 국제는 엄격한 복장 규정을 적용합니다. 클럽하우스 입장 시 **재킷(자켓) 착용**이 필수이며, 라운드 시에도 깃 있는 셔츠를 착용해야 합니다.
-                                            </p>
+
+                        <div className="space-y-6">
+                            <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
+                                    <Hotel className={colors.accentText} size={22} /> 숙소 예약 정보
+                                </h2>
+                                <div className="space-y-4">
+                                    <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
+                                        <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
+                                            <MapPin size={16} /> 1. 장소 & 일정
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <p><span className="font-bold text-[#198754]">호텔:</span> 칸데오 호텔 고베 토르 로드</p>
+                                            <p className="text-[10px] text-gray-400">Candeo Hotels Kobe Tor Road</p>
+                                            <p className="text-[10px] text-gray-400">Chuo-ku Sannomiya-cho 3-8-8</p>
+                                            <div className="mt-2 pt-2 border-t border-dashed border-[#198754]/30">
+                                                <p><span className="font-bold text-[#198754]">체크인:</span> 3.20(금) 15:00~</p>
+                                                <p><span className="font-bold text-[#198754]">체크아웃:</span> 3.23(월) ~11:00</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </section>
-                                <div className="p-6 bg-[#1a365d] rounded-[2.5rem] text-white flex items-start gap-4">
-                                    <AlertCircle className="text-[#d4af37] shrink-0" size={24} />
-                                    <div>
-                                        <h4 className="font-black text-sm mb-1 text-[#d4af37]">차량 팁</h4>
-                                        <p className="text-[11px] opacity-80 leading-relaxed">3인의 골프백 3개와 캐리어를 동시에 적재하려면 미니밴(알파드 등) 또는 대형 SUV 차량 렌트가 필수입니다.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            // 시내 실속형 중요 정보
-                            <div className="space-y-6">
-                                <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
-                                    <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
-                                        <PiggyBank className={colors.accentText} size={22} /> 실속형 투어 핵심 안내
-                                    </h2>
-                                    <div className="space-y-4">
-                                        <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
-                                            <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
-                                                <TrendingUp size={16} /> 1. 월요일 평일 라운딩 메리트
-                                            </h3>
-                                            <p className="text-[11px] text-gray-500 leading-relaxed">
-                                                월요일 라운딩은 주말 대비 약 30~50% 저렴한 그린피로 이용 가능합니다. 또한 예약이 비교적 수월하여 원하는 티타임을 확보하기 좋습니다.
-                                            </p>
-                                        </div>
-                                        <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
-                                            <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
-                                                <Building size={16} /> 2. 시내 숙박 및 야경 투어
-                                            </h3>
-                                            <p className="text-[11px] text-gray-500 leading-relaxed">
-                                                산노미야 시내 호텔은 고베항 하버랜드와 모토마치 쇼핑가 접근성이 매우 뛰어납니다. 주말 저녁에는 하버랜드에서 포트 타워 야경을 감상하며 자유로운 디너를 즐기세요.
-                                            </p>
-                                        </div>
-                                        <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
-                                            <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
-                                                <Navigation size={16} /> 3. 고베 공항 이동 (18:40 편)
-                                            </h3>
-                                            <p className="text-[11px] text-gray-500 leading-relaxed">
-                                                고베 시내에서 공항까지 포트라이너로 단 18분 소요됩니다. 18:40 귀국편 기준, 면세 구역 이용 및 수속을 위해 17:00까지는 공항에 도착하는 동선을 추천합니다.
-                                            </p>
+                                    <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
+                                        <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
+                                            <Info size={16} /> 2. 객실 & 인원
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <p><span className="font-bold text-[#1a365d]">객실:</span> 디럭스 트윈룸 (금연)</p>
+                                            <p><span className="font-bold text-[#1a365d]">인원:</span> 성인 3명 (3박)</p>
                                         </div>
                                     </div>
-                                </section>
-                                <div className="p-6 bg-emerald-600 rounded-[2.5rem] text-white flex items-start gap-4">
-                                    <CheckCircle2 className="text-white shrink-0" size={24} />
-                                    <div>
-                                        <h4 className="font-black text-sm mb-1">식사 팁</h4>
-                                        <p className="text-[11px] opacity-90 leading-relaxed">실속형 플랜은 고가의 정식보다는 '스테이크랜드'와 같은 시내 가성비 고베규 맛집이나 현지인 이자카야를 활용하면 만족도가 높습니다.</p>
+                                    <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
+                                        <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
+                                            <CreditCard size={16} /> 3. 결제 정보
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <div className="flex justify-between font-bold text-[#1a202c]">
+                                                <span>총 합계</span>
+                                                <span className="text-[#d4af37]">¥98,258</span>
+                                            </div>
+                                            <p className="text-[10px] text-gray-400 mt-1">VAT 포함, Booking.com 할인 적용됨</p>
+                                            <p className="text-[10px] text-gray-400">2026.03.17 자동 결제 예정</p>
+                                            <p className="mt-1 text-red-400 font-bold">취소기한: 3.18 23:59까지 무료</p>
+                                        </div>
                                     </div>
                                 </div>
+                            </section>
+
+                            <section className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
+                                    <Flag className={colors.accentText} size={22} /> 로코 CC 골프 예약
+                                </h2>
+                                <div className="space-y-4">
+                                    <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
+                                        <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
+                                            <MapPin size={16} /> 1. 장소 & 일시
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <p><span className="font-bold text-[#198754]">장소:</span> 六甲カントリー倶楽部 (로코 CC)</p>
+                                            <p className="text-[10px] text-gray-400">兵庫県西宮市山口町金仙寺1659-1</p>
+                                            <p className="mt-1"><span className="font-bold text-[#198754]">일시:</span> 2026년 3월 23일 (월) 07:00</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
+                                        <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
+                                            <Flag size={16} /> 2. 코스 & 비용
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <p><span className="font-bold text-[#1a365d]">코스:</span> OUT코스 / 1팀 3명</p>
+                                            <p><span className="font-bold text-[#1a365d]">비용:</span> 1인 10,540엔 (기본 9,990 + 3B할증 550 / 락커 별도)</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
+                                        <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
+                                            <AlertCircle size={16} /> 3. 주의사항
+                                        </h3>
+                                        <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                            <p>• 2주 전까지 동반자 이름 입력 필수</p>
+                                            <p>• 취소 시 3일 전부터 3,000엔/1인 수수료 발생</p>
+                                            <p className="mt-1 text-[#d4af37] font-bold">대표자: 이경진 (Lee Kyungjin)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <div className="p-6 bg-emerald-600 rounded-[2.5rem] text-white flex items-start gap-4">
+                                <CheckCircle2 className="text-white shrink-0" size={24} />
+                                <div>
+                                    <h4 className="font-black text-sm mb-1">식사 팁</h4>
+                                    <p className="text-[11px] opacity-90 leading-relaxed">실속형 플랜은 고가의 정식보다는 '스테이크랜드'와 같은 시내 가성비 고베규 맛집이나 현지인 이자카야를 활용하면 만족도가 높습니다.</p>
+                                </div>
                             </div>
-                        )}
+                        </div>
                     </div>
                 )}
             </div>
