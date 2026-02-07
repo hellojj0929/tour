@@ -68,7 +68,8 @@ const TourApp = () => {
             day: 1, date: "3월 20일 (금)", title: "고베공항 입국 & 시내 맛집", route: "고베공항 ➔ 산노미야 ➔ 이진칸",
             mainQuery: "Candeo Hotels Kobe Tor Road",
             items: [
-                { time: "10:30", icon: <Car size={16} />, activity: "고베 공항(UKB) 도착", desc: "렌트카 픽업 & 이동 (공항 데스크)", mapQuery: "Kobe Airport" },
+                { time: "08:25", icon: <Plane size={16} />, activity: "인천공항(ICN) T2 출발", desc: "KE2171 A321-neo", mapQuery: "Incheon International Airport Terminal 2" },
+                { time: "10:10", icon: <Car size={16} />, activity: "고베 공항(UKB) T2 도착", desc: "입국 수속 후 렌트카 픽업", mapQuery: "Kobe Airport" },
                 { time: "12:00", icon: <Utensils size={16} />, activity: "점심 식사 (스테이크랜드 고베)", desc: "가성비 좋은 고베규 런치 (1인 약 3,500엔~)", mapQuery: "Steakland Kobe" },
                 { time: "15:00", icon: <Hotel size={16} />, activity: "호텔 체크인", desc: "칸데오 호텔 고베 토르 로드 (주차 불포함/인근이용)", mapQuery: "Candeo Hotels Kobe Tor Road" },
                 { time: "19:00", icon: <Utensils size={16} />, activity: "디너: 고베규 이자카야", desc: "현지인 가성비 맛집", mapQuery: "Steakland Kobe" },
@@ -190,7 +191,7 @@ const TourApp = () => {
                     <div className="text-center">
                         <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
                         <p className="text-xl font-black text-[#1a202c]">출국</p>
-                        <p className={`text-xs font-black ${colors.primaryText}`}>10:30</p>
+                        <p className={`text-xs font-black ${colors.primaryText}`}>08:25</p>
                     </div>
                     <div className="flex-1 px-4 flex flex-col items-center">
                         <div className="w-full flex items-center gap-2">
