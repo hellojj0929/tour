@@ -272,8 +272,8 @@ const TourApp = () => {
                                     </div>
                                 </div>
                                 {showRealMap ? (
-                                    <div className="flex-1 w-full rounded-[2rem] overflow-hidden border border-[#e2e8f0] bg-gray-50 h-[350px]">
-                                        <iframe width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen src={`https://maps.google.com/maps?q=${encodeURIComponent(activeItinerary[selectedDay - 1].mainQuery)}&output=embed`} title="Google Maps"></iframe>
+                                    <div className="flex-1 w-full rounded-[2rem] overflow-hidden border border-[#e2e8f0] bg-gray-50 relative">
+                                        <iframe className="absolute inset-0 w-full h-full" style={{ border: 0 }} loading="lazy" allowFullScreen src={`https://maps.google.com/maps?q=${encodeURIComponent(activeItinerary[selectedDay - 1].mainQuery)}&output=embed`} title="Google Maps"></iframe>
                                     </div>
                                 ) : (
                                     <div className="flex-1 flex flex-col items-center justify-center text-center">
