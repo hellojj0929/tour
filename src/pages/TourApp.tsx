@@ -509,12 +509,21 @@ const TourApp = () => {
                                         </div>
                                     </div>
                                 </section>
-                                <div className="p-6 bg-emerald-600 rounded-[1.5rem] text-white flex items-start gap-4">
-                                    <CheckCircle2 className="text-white shrink-0" size={24} />
-                                    <div>
-                                        <h4 className="font-black text-sm mb-1">식사 팁</h4>
-                                        <p className="text-[11px] opacity-90 leading-relaxed">실속형 플랜은 고가의 정식보다는 '스테이크랜드'와 같은 시내 가성비 고베규 맛집이나 현지인 이자카야를 활용하면 만족도가 높습니다.</p>
-                                    </div>
+                            </div>
+
+                            {/* Checklist Section */}
+                            <div className="bg-white rounded-[1.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
+                                    <CheckCircle2 className={colors.accentText} size={22} /> 여행 준비 체크리스트
+                                </h2>
+                                <Checklist />
+                            </div>
+
+                            <div className="p-6 bg-emerald-600 rounded-[1.5rem] text-white flex items-start gap-4">
+                                <CheckCircle2 className="text-white shrink-0" size={24} />
+                                <div>
+                                    <h4 className="font-black text-sm mb-1">식사 팁</h4>
+                                    <p className="text-[11px] opacity-90 leading-relaxed">실속형 플랜은 고가의 정식보다는 '스테이크랜드'와 같은 시내 가성비 고베규 맛집이나 현지인 이자카야를 활용하면 만족도가 높습니다.</p>
                                 </div>
                             </div>
                         </div>
@@ -533,6 +542,52 @@ const TourApp = () => {
             {/* Decorative Background Blur */}
             <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-[#1a365d]/5 rounded-full mix-blend-multiply filter blur-3xl opacity-40 pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 bg-[#d4af37]/5 rounded-full mix-blend-multiply filter blur-3xl opacity-40 pointer-events-none"></div>
+        </div>
+    );
+};
+
+const Checklist = () => {
+    const defaultItems = [
+        { id: 1, text: "여권 (유효기간 확인)", checked: false },
+        { id: 2, text: "항공권 (E-티켓 저장)", checked: false },
+        { id: 3, text: "호텔/렌트카 바우처", checked: false },
+        { id: 4, text: "국제운전면허증 (필수)", checked: false },
+        { id: 5, text: "유심 / 포켓와이파이", checked: false },
+        { id: 6, text: "골프복 & 골프화", checked: false },
+        { id: 7, text: "골프공 & 티 (여유있게)", checked: false },
+        { id: 8, text: "110V 돼지코 어댑터", checked: false },
+        { id: 9, text: "해외결제 카드 (트래블로그 등)", checked: false },
+    ];
+
+    const [items, setItems] = useState(() => {
+        const saved = localStorage.getItem('kobe-checklist');
+        return saved ? JSON.parse(saved) : defaultItems;
+    });
+
+    useEffect(() => {
+        localStorage.setItem('kobe-checklist', JSON.stringify(items));
+    }, [items]);
+
+    const toggleItem = (id) => {
+        setItems(items.map(item =>
+            item.id === id ? { ...item, checked: !item.checked } : item
+        ));
+    };
+
+    return (
+        <div className="space-y-3">
+            {items.map((item) => (
+                <div
+                    key={item.id}
+                    onClick={() => toggleItem(item.id)}
+                    className={`p-4 rounded-2xl flex items-center gap-3 cursor-pointer transition-all duration-300 border ${item.checked ? 'bg-[#f0f9f6] border-[#d1e7dd]' : 'bg-gray-50 border-transparent hover:bg-gray-100'}`}
+                >
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${item.checked ? 'bg-[#198754] border-[#198754]' : 'border-gray-300 bg-white'}`}>
+                        {item.checked && <CheckCircle2 size={12} className="text-white" />}
+                    </div>
+                    <span className={`text-[13px] font-bold ${item.checked ? 'text-[#198754] line-through decoration-2 opacity-70' : 'text-gray-600'}`}>{item.text}</span>
+                </div>
+            ))}
         </div>
     );
 };
