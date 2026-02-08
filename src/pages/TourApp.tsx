@@ -76,15 +76,15 @@ const TourApp = () => {
             ]
         },
         {
-            day: 2, date: "3월 21일 (토)", title: "제1라운드 & 온천 마을 산책", route: "호텔 ➔ 고베 가스토니안 GC ➔ 아리마",
-            mainQuery: "Kobe Gastonian Golf Club",
+            day: 2, date: "3월 21일 (토)", title: "제1라운드 & 온천 이자카야", route: "호텔 ➔ 센추리 요시카와 GC ➔ 산노미야",
+            mainQuery: "Century Yoshikawa Golf Club",
             items: [
                 {
-                    time: "08:30", icon: <Flag size={16} />, activity: "제1라운드 (18홀)", desc: "고베 가스토니안 GC (자차 이동 약 40분)",
-                    mapQuery: "Kobe Gastonian Golf Club",
-                    bookingUrl: "https://booking.gora.golf.rakuten.co.jp/guide/obj/id/280036"
+                    time: "09:57", icon: <Flag size={16} />, activity: "제1라운드 (18홀 / 점심 포함)", desc: "센추리 요시카와 GC (IN코스 / 3B / 셀프)",
+                    mapQuery: "Century Yoshikawa Golf Club",
+                    bookingUrl: ""
                 },
-                { time: "16:00", icon: <MapPin size={16} />, activity: "아리마 온천 산책", desc: "마을 투어 및 간식 탐방", mapQuery: "Arima Onsen Town" },
+                { time: "17:00", icon: <Utensils size={16} />, activity: "저녁 식사 & 휴식", desc: "호텔 복귀 후 시내 이자카야 탐방", mapQuery: "Sannomiya Station" },
             ]
         },
         {
@@ -115,7 +115,7 @@ const TourApp = () => {
 
     const budgetItems = [
         { category: "숙박 (Stay)", detail: "총 ¥98,258 ÷ 3명 (3박)", cost: "¥32,753", icon: <Building size={20} />, color: "bg-[#f0f9f6] text-[#2d6a4f]" },
-        { category: "골프 (Golf)", detail: "가스토니안 + 로코(10,540엔)", cost: "¥32,000", icon: <Flag size={20} />, color: "bg-[#fffcf0] text-[#b08d49]" },
+        { category: "골프 (Golf)", detail: "센추리(15,510) + 로코(10,540)", cost: "¥26,050", icon: <Flag size={20} />, color: "bg-[#fffcf0] text-[#b08d49]" },
         { category: "기타 (Misc)", detail: "렌트카(1/3) + 식비 + 주유비", cost: "¥44,300", icon: <PiggyBank size={20} />, color: "bg-gray-50 text-gray-600" },
     ];
 
@@ -313,7 +313,7 @@ const TourApp = () => {
                                 <div className={`${colors.primary} p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden`}>
                                     <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-24 -mt-24"></div>
                                     <div className="flex justify-between items-center mb-4 opacity-80 text-[10px] font-black tracking-[0.4em]"><span>TOTAL ESTIMATION</span><Wallet size={16} /></div>
-                                    <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥109,053</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 1,000,000원</span></div>
+                                    <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥103,103</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 950,000원</span></div>
                                 </div>
                             </div>
                         </div>
@@ -405,6 +405,43 @@ const TourApp = () => {
                                                 <p className="text-red-400 font-bold">• 취소기한: 3월 13일까지 무료 취소</p>
                                                 <p>• 면책 보상 옵션 현장 추가 가능</p>
                                                 <p>• 공항 데스크에서 픽업 절차 진행</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section className="bg-white rounded-[1.5rem] p-8 shadow-xl border border-[#f1f5f9]">
+                                    <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-[#1a202c]">
+                                        <Flag className={colors.accentText} size={22} /> 센추리 요시카와 GC 예약
+                                    </h2>
+                                    <div className="space-y-4">
+                                        <div className="p-5 bg-[#f0f9f6] rounded-3xl border border-[#d1e7dd]">
+                                            <h3 className="font-black text-[#198754] text-sm mb-2 flex items-center gap-2">
+                                                <MapPin size={16} /> 1. 장소 & 일시
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p><span className="font-bold text-[#198754]">장소:</span> センチュリー吉川ゴルフ倶楽部</p>
+                                                <p className="text-[10px] text-gray-400">兵庫県三木市細川町金屋587-64</p>
+                                                <p className="mt-1"><span className="font-bold text-[#198754]">일시:</span> 2026년 3월 21일 (토) 09:57</p>
+                                            </div>
+                                        </div>
+                                        <div className="p-5 bg-[#f8fafc] rounded-3xl border border-[#e2e8f0]">
+                                            <h3 className={`font-black ${colors.primaryText} text-sm mb-2 flex items-center gap-2`}>
+                                                <Flag size={16} /> 2. 코스 & 비용
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p><span className="font-bold text-[#1a365d]">코스:</span> IN코스 / 3B / 셀프 / 점심포함</p>
+                                                <p><span className="font-bold text-[#1a365d]">비용:</span> 1인 15,510엔 (세금 포함)</p>
+                                            </div>
+                                        </div>
+                                        <div className="p-5 bg-[#fdfcf5] rounded-3xl border border-[#f3eee0]">
+                                            <h3 className={`font-black ${colors.accentText} text-sm mb-2 flex items-center gap-2`}>
+                                                <AlertCircle size={16} /> 3. 주의사항
+                                            </h3>
+                                            <div className="text-[11px] text-gray-500 leading-relaxed space-y-1">
+                                                <p className="text-red-400 font-bold">• 취소: 7일 전(토요일)부터 5,000엔/1인</p>
+                                                <p>• 4일 전까지 예약 변경/취소 가능</p>
+                                                <p className="mt-1 text-[#d4af37] font-bold">대표자: 이경진 (Lee Kyungjin)</p>
                                             </div>
                                         </div>
                                     </div>
