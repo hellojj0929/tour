@@ -624,28 +624,28 @@ const Scorecard = () => {
     const [selectedCourse, setSelectedCourse] = useState('century');
 
     const [players, setPlayers] = useState(() => {
-        const saved = localStorage.getItem('kobe-scorecard-players');
+        const saved = localStorage.getItem('kobe-scorecard-players-v2');
         return saved ? JSON.parse(saved) : ["이프로", "안프로", "태프로"];
     });
 
     // 18 holes x 3 players. 0 means empty.
     const [scores, setScores] = useState<number[][]>(() => {
-        const saved = localStorage.getItem('kobe-scorecard-scores');
+        const saved = localStorage.getItem('kobe-scorecard-scores-v2');
         return saved ? JSON.parse(saved) : Array(18).fill([0, 0, 0]);
     });
 
     // Pars are now derived from the selected course, but we still allow manual edits if needed (though resetting course resets pars)
     const [pars, setPars] = useState<number[]>(() => {
-        const saved = localStorage.getItem('kobe-scorecard-pars');
+        const saved = localStorage.getItem('kobe-scorecard-pars-v2');
         return saved ? JSON.parse(saved) : courses['century'].pars;
     });
 
     const [activeHalf, setActiveHalf] = useState<'OUT' | 'IN'>('OUT');
 
     useEffect(() => {
-        localStorage.setItem('kobe-scorecard-players', JSON.stringify(players));
-        localStorage.setItem('kobe-scorecard-scores', JSON.stringify(scores));
-        localStorage.setItem('kobe-scorecard-pars', JSON.stringify(pars));
+        localStorage.setItem('kobe-scorecard-players-v2', JSON.stringify(players));
+        localStorage.setItem('kobe-scorecard-scores-v2', JSON.stringify(scores));
+        localStorage.setItem('kobe-scorecard-pars-v2', JSON.stringify(pars));
     }, [players, scores, pars]);
 
     const handleCourseChange = (courseKey: string) => {
