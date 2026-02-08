@@ -37,7 +37,8 @@ import {
     Car,
     Gamepad2,
     Trophy,
-    Share2
+    Share2,
+    Minus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -770,17 +771,26 @@ const Scorecard = () => {
                             </div>
                             {row.map((score, pIdx) => (
                                 <div key={pIdx} className="flex-1 flex items-center justify-center gap-1">
-                                    <div
-                                        onClick={() => handleScoreChange(holeIdx, pIdx, 1)}
-                                        className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg cursor-pointer select-none transition-all active:scale-90 shadow-sm border ${score === 0 ? 'bg-gray-50 text-gray-300 border-[#e2e8f0]' :
-                                            score < pars[holeIdx] ? 'bg-[#d4af37] text-white border-[#d4af37]' :
-                                                score === pars[holeIdx] ? 'bg-white text-[#1a202c] border-[#e2e8f0]' :
-                                                    'bg-[#1a365d] text-white border-[#1a365d]'
-                                            }`}
-                                    >
-                                        {score === 0 ? '-' : score}
+                                    <div className="flex flex-col items-center gap-1">
+                                        <div
+                                            onClick={() => handleScoreChange(holeIdx, pIdx, 1)}
+                                            className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg cursor-pointer select-none transition-all active:scale-90 shadow-sm border ${score === 0 ? 'bg-gray-50 text-gray-300 border-[#e2e8f0]' :
+                                                    score < pars[holeIdx] ? 'bg-[#d4af37] text-white border-[#d4af37]' :
+                                                        score === pars[holeIdx] ? 'bg-white text-[#1a202c] border-[#e2e8f0]' :
+                                                            'bg-[#1a365d] text-white border-[#1a365d]'
+                                                }`}
+                                        >
+                                            {score === 0 ? '-' : score}
+                                        </div>
+                                        {score > 0 && (
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handleScoreChange(holeIdx, pIdx, -1); }}
+                                                className="w-full h-5 rounded-lg bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-400 flex items-center justify-center transition-colors"
+                                            >
+                                                <Minus size={12} strokeWidth={4} />
+                                            </button>
+                                        )}
                                     </div>
-                                    {score > 0 && <button onClick={(e) => { e.stopPropagation(); handleScoreChange(holeIdx, pIdx, -1); }} className="hidden">-</button>}
                                 </div>
                             ))}
                         </div>
