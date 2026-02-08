@@ -302,6 +302,33 @@ const TourApp = () => {
                                     <h2 className="text-2xl font-black text-[#1a202c]">3인 그룹 1인 경비</h2>
                                     <p className="text-xs text-gray-400 font-bold mt-1 uppercase">토요일 오후 티 특가 반영</p>
                                 </div>
+
+                                {/* Chart Section */}
+                                <div className="flex flex-col items-center justify-center mb-10 relative">
+                                    <div className="w-48 h-48 relative">
+                                        <svg viewBox="0 0 100 100" className="transform -rotate-90 w-full h-full drop-shadow-xl">
+                                            {/* Misc - 45.0% - Gray */}
+                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f1f5f9" strokeWidth="16" />
+                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#64748b" strokeWidth="16" strokeDasharray="113.0 251.2" strokeDashoffset="0" className="transition-all duration-1000 ease-out" />
+
+                                            {/* Stay - 30.6% - Green */}
+                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#2d6a4f" strokeWidth="16" strokeDasharray="76.9 251.2" strokeDashoffset="-113.0" className="transition-all duration-1000 ease-out delay-300" />
+
+                                            {/* Golf - 24.4% - Gold */}
+                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#d4af37" strokeWidth="16" strokeDasharray="61.3 251.2" strokeDashoffset="-189.9" className="transition-all duration-1000 ease-out delay-500" />
+                                        </svg>
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">TOTAL</p>
+                                            <p className="text-xl font-black text-[#1a202c]">¥106k</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center gap-4 mt-6 w-full">
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#2d6a4f]"></div><span className="text-[10px] font-bold text-gray-500">숙박 31%</span></div>
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#d4af37]"></div><span className="text-[10px] font-bold text-gray-500">골프 24%</span></div>
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#64748b]"></div><span className="text-[10px] font-bold text-gray-500">기타 45%</span></div>
+                                    </div>
+                                </div>
+
                                 <div className="space-y-4 mb-10">
                                     {activeBudget.map((item, i) => (
                                         <div key={i} className="flex items-center justify-between p-5 rounded-3xl bg-white border border-[#f1f5f9] shadow-sm">
