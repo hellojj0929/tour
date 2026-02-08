@@ -35,7 +35,9 @@ import {
     Globe,
     AlertCircle,
     Car,
-    Gamepad2
+    Gamepad2,
+    Trophy,
+    Share2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -528,15 +530,21 @@ const TourApp = () => {
                             </div>
                         </div>
                     )}
+                    {activeTab === 'score' && (
+                        <div className="p-6 animate-in fade-in duration-700">
+                            <Scorecard />
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* Navigation Tab Bar */}
-            <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-[#1a365d]/95 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] h-22 shadow-2xl flex items-center justify-around px-4 z-50">
-                <TabButton active={activeTab === 'itinerary'} onClick={() => setActiveTab('itinerary')} icon={<Calendar size={24} />} label="일정" />
-                <TabButton active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={<MapPin size={24} />} label="지도" />
-                <TabButton active={activeTab === 'info'} onClick={() => setActiveTab('info')} icon={<Info size={24} />} label="정보" />
-                <TabButton active={activeTab === 'budget'} onClick={() => setActiveTab('budget')} icon={<Wallet size={24} />} label="경비" />
+            <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-[#1a365d]/95 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] h-22 shadow-2xl flex items-center justify-around px-2 z-50">
+                <TabButton active={activeTab === 'itinerary'} onClick={() => setActiveTab('itinerary')} icon={<Calendar size={20} />} label="일정" />
+                <TabButton active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={<MapPin size={20} />} label="지도" />
+                <TabButton active={activeTab === 'score'} onClick={() => setActiveTab('score')} icon={<Trophy size={20} />} label="스코어" />
+                <TabButton active={activeTab === 'info'} onClick={() => setActiveTab('info')} icon={<Info size={20} />} label="정보" />
+                <TabButton active={activeTab === 'budget'} onClick={() => setActiveTab('budget')} icon={<Wallet size={20} />} label="경비" />
             </div>
 
             {/* Decorative Background Blur */}
@@ -599,3 +607,153 @@ const TabButton = ({ active, onClick, icon, label }) => (
 );
 
 export default TourApp;
+
+const Scorecard = () => {
+    const [players, setPlayers] = useState(() => {
+        const saved = localStorage.getItem('kobe-scorecard-players');
+        return saved ? JSON.parse(saved) : ["나", "동반자1", "동반자2"];
+    });
+
+    // 18 holes x 3 players. 0 means empty.
+    const [scores, setScores] = useState<number[][]>(() => {
+        const saved = localStorage.getItem('kobe-scorecard-scores');
+        return saved ? JSON.parse(saved) : Array(18).fill([0, 0, 0]);
+    });
+
+    const [pars, setPars] = useState<number[]>(() => {
+        const saved = localStorage.getItem('kobe-scorecard-pars');
+        return saved ? JSON.parse(saved) : [4, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5, 4, 4, 3, 5]; // Default Par mix
+    });
+
+    const [activeHalf, setActiveHalf] = useState<'OUT' | 'IN'>('OUT');
+
+    useEffect(() => {
+        localStorage.setItem('kobe-scorecard-players', JSON.stringify(players));
+        localStorage.setItem('kobe-scorecard-scores', JSON.stringify(scores));
+        localStorage.setItem('kobe-scorecard-pars', JSON.stringify(pars));
+    }, [players, scores, pars]);
+
+    const handleScoreChange = (holeIdx: number, playerIdx: number, delta: number) => {
+        const newScores = [...scores];
+        const currentScore = newScores[holeIdx][playerIdx];
+        // If 0 (empty), set to par + delta. If not 0, add delta.
+        // Wait, simpler: if 0, start at Par.
+        let nextScore = currentScore === 0 ? pars[holeIdx] : currentScore + delta;
+        if (nextScore < 1) nextScore = 1;
+
+        const row = [...newScores[holeIdx]];
+        row[playerIdx] = nextScore;
+        newScores[holeIdx] = row;
+        setScores(newScores);
+    };
+
+    const handleParChange = (holeIdx: number) => {
+        const newPars = [...pars];
+        const nextPar = newPars[holeIdx] === 5 ? 3 : newPars[holeIdx] + 1;
+        newPars[holeIdx] = nextPar;
+        setPars(newPars);
+    };
+
+    const handlePlayerNameChange = (idx: number, name: string) => {
+        const newPlayers = [...players];
+        newPlayers[idx] = name;
+        setPlayers(newPlayers);
+    };
+
+    const getTotal = (playerIdx: number) => {
+        return scores.reduce((sum, hole) => sum + hole[playerIdx], 0);
+    };
+
+    const copyToClipboard = () => {
+        const text = `⛳️ KOBE GOLF SCORES\n\n${players[0]}: ${getTotal(0)}\n${players[1]}: ${getTotal(1)}\n${players[2]}: ${getTotal(2)}\n\n(Generated by Kobe Tour App)`;
+        navigator.clipboard.writeText(text);
+        alert("스코어가 복사되었습니다!");
+    };
+
+    const resetScores = () => {
+        if (confirm("정말 모든 스코어를 초기화하시겠습니까?")) {
+            setScores(Array(18).fill([0, 0, 0]));
+        }
+    }
+
+    const startHole = activeHalf === 'OUT' ? 0 : 9;
+    const endHole = activeHalf === 'OUT' ? 9 : 18;
+
+    return (
+        <div className="bg-white rounded-[1.5rem] shadow-xl border border-[#f1f5f9] overflow-hidden">
+            {/* Header */}
+            <div className="p-6 bg-[#1a365d] text-white relative">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-lg font-black flex items-center gap-2"><Trophy className="text-[#d4af37]" /> SCORECARD</h2>
+                    <div className="flex gap-2">
+                        <button onClick={resetScores} className="p-2 bg-white/10 rounded-full hover:bg-white/20"><RefreshCw size={16} /></button>
+                        <button onClick={copyToClipboard} className="p-2 bg-[#d4af37] text-[#1a365d] rounded-full hover:bg-[#b08d49] shadow-lg"><Share2 size={16} /></button>
+                    </div>
+                </div>
+
+                {/* Total Scores */}
+                <div className="flex justify-around items-end bg-white/5 rounded-2xl p-4 backdrop-blur-sm">
+                    {players.map((p, idx) => (
+                        <div key={idx} className="flex flex-col items-center">
+                            <input
+                                type="text"
+                                value={p}
+                                onChange={(e) => handlePlayerNameChange(idx, e.target.value)}
+                                className="w-16 text-center bg-transparent text-[10px] text-white/60 mb-1 border-b border-white/10 focus:border-[#d4af37] outline-none"
+                            />
+                            <span className={`text-2xl font-black ${idx === 0 ? 'text-[#d4af37]' : 'text-white'}`}>{getTotal(idx)}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Controls */}
+            <div className="flex p-2 bg-[#f8fafc] border-b border-[#e2e8f0]">
+                <button onClick={() => setActiveHalf('OUT')} className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${activeHalf === 'OUT' ? 'bg-[#1a365d] text-white shadow-md' : 'text-gray-400'}`}>OUT COURSE (1-9)</button>
+                <button onClick={() => setActiveHalf('IN')} className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${activeHalf === 'IN' ? 'bg-[#1a365d] text-white shadow-md' : 'text-gray-400'}`}>IN COURSE (10-18)</button>
+            </div>
+
+            {/* Score Grid */}
+            <div className="divide-y divide-[#f1f5f9]">
+                <div className="flex bg-[#f1f5f9] text-[10px] font-black text-gray-500 py-2 px-4">
+                    <div className="w-12 text-center">HOLE</div>
+                    <div className="flex-1 text-center">PAR</div>
+                    {players.map((p, i) => <div key={i} className="flex-1 text-center truncate px-1">{p}</div>)}
+                </div>
+                {scores.slice(startHole, endHole).map((row, i) => {
+                    const holeIdx = startHole + i;
+                    return (
+                        <div key={holeIdx} className="flex items-center py-3 px-4 hover:bg-gray-50">
+                            <div className="w-12 flex flex-col items-center justify-center">
+                                <span className="text-sm font-black text-[#1a202c]">{holeIdx + 1}</span>
+                            </div>
+                            <div className="flex-1 flex justify-center">
+                                <button onClick={() => handleParChange(holeIdx)} className="w-8 h-8 rounded-full bg-white border border-[#e2e8f0] flex items-center justify-center text-xs font-bold text-gray-400 shadow-sm active:scale-95 transition-transform">
+                                    {pars[holeIdx]}
+                                </button>
+                            </div>
+                            {row.map((score, pIdx) => (
+                                <div key={pIdx} className="flex-1 flex items-center justify-center gap-1">
+                                    <div
+                                        onClick={() => handleScoreChange(holeIdx, pIdx, 1)}
+                                        className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg cursor-pointer select-none transition-all active:scale-90 shadow-sm border ${score === 0 ? 'bg-gray-50 text-gray-300 border-[#e2e8f0]' :
+                                                score < pars[holeIdx] ? 'bg-[#d4af37] text-white border-[#d4af37]' :
+                                                    score === pars[holeIdx] ? 'bg-white text-[#1a202c] border-[#e2e8f0]' :
+                                                        'bg-[#1a365d] text-white border-[#1a365d]'
+                                            }`}
+                                    >
+                                        {score === 0 ? '-' : score}
+                                    </div>
+                                    {score > 0 && <button onClick={(e) => { e.stopPropagation(); handleScoreChange(holeIdx, pIdx, -1); }} className="hidden">-</button>}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                })}
+            </div>
+            <div className="p-4 bg-[#f8fafc] text-center">
+                <p className="text-[10px] text-gray-400">💡 점수 칸을 터치하면 1타씩 증가합니다. (기록 시작 시 파로 설정됨)</p>
+            </div>
+        </div>
+    );
+};
