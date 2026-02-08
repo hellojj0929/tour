@@ -300,7 +300,7 @@ const TourApp = () => {
                                         <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${colors.accentText}`}>Value Plan</span>
                                     </div>
                                     <h2 className="text-2xl font-black text-[#1a202c]">3인 그룹 1인 경비</h2>
-                                    <p className="text-xs text-gray-400 font-bold mt-1 uppercase">토요일 오후 티 특가 반영</p>
+                                    <p className="text-xs text-gray-400 font-bold mt-1 uppercase">토요일 오후 티 특가 반영 • 항공권 별도</p>
                                 </div>
 
                                 {/* Chart Section */}
@@ -340,7 +340,7 @@ const TourApp = () => {
                                 <div className={`${colors.primary} p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden`}>
                                     <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-24 -mt-24"></div>
                                     <div className="flex justify-between items-center mb-4 opacity-80 text-[10px] font-black tracking-[0.4em]"><span>TOTAL ESTIMATION</span><Wallet size={16} /></div>
-                                    <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥106,903</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 985,000원</span></div>
+                                    <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥106,903</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 985,000원 (항공권 제외)</span></div>
                                 </div>
                             </div>
                         </div>
