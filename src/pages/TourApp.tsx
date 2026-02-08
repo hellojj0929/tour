@@ -625,7 +625,7 @@ const Scorecard = () => {
 
     const [players, setPlayers] = useState(() => {
         const saved = localStorage.getItem('kobe-scorecard-players');
-        return saved ? JSON.parse(saved) : ["나", "동반자1", "동반자2"];
+        return saved ? JSON.parse(saved) : ["이프로", "안프로", "태프로"];
     });
 
     // 18 holes x 3 players. 0 means empty.
@@ -775,9 +775,9 @@ const Scorecard = () => {
                                         <div
                                             onClick={() => handleScoreChange(holeIdx, pIdx, 1)}
                                             className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg cursor-pointer select-none transition-all active:scale-90 shadow-sm border ${score === 0 ? 'bg-gray-50 text-gray-300 border-[#e2e8f0]' :
-                                                    score < pars[holeIdx] ? 'bg-[#d4af37] text-white border-[#d4af37]' :
-                                                        score === pars[holeIdx] ? 'bg-white text-[#1a202c] border-[#e2e8f0]' :
-                                                            'bg-[#1a365d] text-white border-[#1a365d]'
+                                                score < pars[holeIdx] ? 'bg-[#d4af37] text-white border-[#d4af37]' :
+                                                    score === pars[holeIdx] ? 'bg-white text-[#1a202c] border-[#e2e8f0]' :
+                                                        'bg-[#1a365d] text-white border-[#1a365d]'
                                                 }`}
                                         >
                                             {score === 0 ? '-' : score}
