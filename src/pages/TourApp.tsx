@@ -143,12 +143,7 @@ const TourApp = () => {
                                 <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${colors.accentText}`}>Kober Edition</span>
                             </div>
                             <h1 className="text-3xl font-black tracking-tighter text-[#1a202c] leading-none mb-2">KOBE TOUR</h1>
-                            <div className="flex items-center gap-1.5">
-                                <Link to="/game" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-                                    <Gamepad2 size={14} className={colors.accentText} />
-                                    <p className={`${colors.accentText} text-sm font-black tracking-tight`}>미니 게임하러 가기! 🕹️</p>
-                                </Link>
-                            </div>
+
                         </div>
                         <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl p-2`}>
                             <img src={golfFlagIcon} alt="Golf Flag" className="w-full h-full object-contain" />
