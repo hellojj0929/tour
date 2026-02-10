@@ -24,6 +24,7 @@ export default {
             },
             spacing: {
                 '12': '2rem', // pb-12를 3rem에서 2rem으로 변경
+                '16': '3rem', // pt-16을 4rem에서 3rem으로 변경
             },
             screens: {
                 'xs': '475px', // 초소형 모바일 기기 대응
