@@ -134,7 +134,7 @@ const TourApp = () => {
             <div className="w-full h-full overflow-y-auto pb-40 no-scrollbar">
 
                 {/* Header */}
-                <div className="bg-white pt-16 pb-12 px-8 rounded-b-[4.5rem] shadow-2xl shadow-gray-200/40 relative z-10">
+                <div className="bg-white pt-16 pb-12 px-8 rounded-b-[3.5rem] shadow-2xl shadow-gray-200/40 relative z-10">
                     <div className="flex justify-between items-start mb-6">
                         <div className="flex-1">
                             <div className="flex items-center gap-1.5 mb-2">
