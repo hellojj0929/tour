@@ -150,7 +150,7 @@ const TourApp = () => {
                             </div>
                         </div>
                         <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl`}>
-                            <PiggyBank size={24} />
+                            <Flag size={24} />
                         </div>
                     </div>
 
