@@ -40,36 +40,7 @@ import {
     Minus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-// Custom Golf Icon Component
-const GolfIcon = ({ size = 24, className = "" }) => (
-    <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill="none"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-    >
-        {/* Golf Club */}
-        <path
-            d="M4 20 L12 4 L13 4 L5 20 Z"
-            fill="currentColor"
-            opacity="0.9"
-        />
-        {/* Golf Ball */}
-        <circle
-            cx="17"
-            cy="17"
-            r="3.5"
-            fill="currentColor"
-        />
-        {/* Ball dimples */}
-        <circle cx="16" cy="16" r="0.4" fill="currentColor" opacity="0.3" />
-        <circle cx="18" cy="16" r="0.4" fill="currentColor" opacity="0.3" />
-        <circle cx="17" cy="18" r="0.4" fill="currentColor" opacity="0.3" />
-    </svg>
-);
+import golfSwingIcon from '../assets/golf-swing-icon.png';
 
 const TourApp = () => {
     const [activeTab, setActiveTab] = useState('itinerary');
@@ -179,8 +150,8 @@ const TourApp = () => {
                                 </Link>
                             </div>
                         </div>
-                        <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl`}>
-                            <GolfIcon size={24} />
+                        <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl p-2`}>
+                            <img src={golfSwingIcon} alt="Golf" className="w-full h-full object-contain" />
                         </div>
                     </div>
 
