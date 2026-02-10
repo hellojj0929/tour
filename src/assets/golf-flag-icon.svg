@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <g fill="#d4af37">
+    <!-- Hole (Oval Base) -->
+    <ellipse cx="256" cy="420" rx="180" ry="50" />
+    
+    <!-- Hole Cutout (Optional depth feel) -->
+    <ellipse cx="256" cy="420" rx="50" ry="15" fill="#b08d49" />
+
+    <!-- Flag Pole -->
+    <path d="M 246 420 L 246 50 C 246 42 250 38 256 38 C 262 38 266 42 266 50 L 266 420 L 246 420 Z" />
+    
+    <!-- Wavy Flag -->
+    <path d="M 266 50 C 320 30 380 90 440 70 L 440 200 C 380 220 320 160 266 180 L 266 50 Z" />
+  </g>
+</svg>

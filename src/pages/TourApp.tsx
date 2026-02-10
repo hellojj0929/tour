@@ -40,7 +40,7 @@ import {
     Minus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import golfSwingIcon from '../assets/golf-swing-icon.svg';
+import golfFlagIcon from '../assets/golf-flag-icon.svg';
 
 const TourApp = () => {
     const [activeTab, setActiveTab] = useState('itinerary');
@@ -151,7 +151,7 @@ const TourApp = () => {
                             </div>
                         </div>
                         <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl p-2`}>
-                            <img src={golfSwingIcon} alt="Golf" className="w-full h-full object-contain" />
+                            <img src={golfFlagIcon} alt="Golf Flag" className="w-full h-full object-contain" />
                         </div>
                     </div>
 
