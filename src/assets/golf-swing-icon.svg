@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" fill="none">
+  <!-- Female golfer silhouette in gold color -->
+  <g fill="#d4af37">
+    <!-- Head with cap -->
+    <ellipse cx="100" cy="50" rx="20" ry="22"/>
+    <path d="M 85 45 Q 80 35 90 30 L 110 30 Q 120 35 115 45 Z"/>
+    
+    <!-- Torso -->
+    <path d="M 90 70 Q 85 90 88 120 L 92 160 Q 95 165 100 165 Q 105 165 108 160 L 112 120 Q 115 90 110 70 Z"/>
+    
+    <!-- Arms - swing position -->
+    <!-- Left arm extended back -->
+    <path d="M 88 85 Q 70 80 50 90 Q 45 95 48 100 Q 52 102 60 98 Q 75 92 90 95 Z"/>
+    
+    <!-- Right arm raised with club -->
+    <path d="M 112 85 Q 125 70 135 55 Q 138 50 142 52 L 145 55 Q 147 60 143 65 Q 130 80 115 95 Z"/>
+    
+    <!-- Golf club -->
+    <path d="M 140 50 L 35 85 Q 30 87 28 90 Q 27 95 30 98 Q 33 100 38 98 L 145 60 Q 148 58 148 55 Q 148 52 145 50 Z" opacity="0.9"/>
+    
+    <!-- Club head -->
+    <ellipse cx="32" cy="92" rx="8" ry="6" transform="rotate(-15 32 92)"/>
+    
+    <!-- Skirt/shorts -->
+    <path d="M 92 160 L 88 200 Q 87 210 82 240 L 80 260 Q 78 265 82 268 Q 86 270 90 265 L 95 230 Q 97 215 98 200 L 100 165 L 102 200 Q 103 215 105 230 L 110 265 Q 114 270 118 268 Q 122 265 120 260 L 118 240 Q 113 210 112 200 L 108 160 Z"/>
+    
+    <!-- Left leg -->
+    <path d="M 88 240 Q 85 280 82 320 L 78 360 Q 76 370 70 385 Q 68 390 72 393 Q 76 395 82 390 L 95 375 Q 100 365 102 355 L 108 310 Q 110 290 108 270 Z"/>
+    
+    <!-- Right leg -->
+    <path d="M 112 240 Q 115 280 118 320 L 122 360 Q 124 370 130 385 Q 132 390 128 393 Q 124 395 118 390 L 105 375 Q 100 365 98 355 L 92 310 Q 90 290 92 270 Z"/>
+    
+    <!-- Feet -->
+    <ellipse cx="77" cy="390" rx="12" ry="6"/>
+    <ellipse cx="123" cy="390" rx="12" ry="6"/>
+  </g>
+</svg>

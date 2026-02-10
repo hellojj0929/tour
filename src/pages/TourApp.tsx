@@ -40,7 +40,7 @@ import {
     Minus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import golfSwingIcon from '../assets/golf-swing-icon.png';
+import golfSwingIcon from '../assets/golf-swing-icon.svg';
 
 const TourApp = () => {
     const [activeTab, setActiveTab] = useState('itinerary');
