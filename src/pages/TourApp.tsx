@@ -16,7 +16,6 @@ import {
     Info,
     Hotel,
     Building,
-    Loader2,
     RefreshCw,
     ArrowRightCircle,
     ExternalLink,
@@ -42,18 +41,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import mapImageStatic from '../assets/kobe_map_custom.jpg';
-
 const TourApp = () => {
     const [activeTab, setActiveTab] = useState('itinerary');
 
     const [selectedDay, setSelectedDay] = useState(1);
-    const [mapImage, setMapImage] = useState<string | null>(mapImageStatic);
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [showRealMap, setShowRealMap] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const apiKey = "";
 
     const colors = {
         primary: 'bg-[#1a365d]',
@@ -125,31 +116,6 @@ const TourApp = () => {
     const activeItinerary = itinerary;
     const activeBudget = budgetItems;
 
-    const generateMap = async () => {
-        if (!apiKey) {
-            setMapImage(mapImageStatic);
-            return;
-        }
-        setIsGenerating(true);
-        setMapImage(null);
-        const prompt = `A luxury travel map of Kobe Japan starting from Kobe Airport. Plan Value. Navy and gold colors.`;
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ instances: [{ prompt: prompt }], parameters: { sampleCount: 1 } })
-            });
-            const result = await response.json();
-            if (result.predictions?.[0]?.bytesBase64Encoded) {
-                setMapImage(`data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`);
-            }
-        } catch (err) {
-            setError("지도를 불러올 수 없습니다.");
-        } finally {
-            setIsGenerating(false);
-        }
-    };
-
     const openUrl = (url) => {
         if (url) window.open(url, '_blank');
     };
@@ -158,10 +124,6 @@ const TourApp = () => {
         const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
         window.open(url, '_blank');
     };
-
-    useEffect(() => {
-        if (activeTab === 'map') generateMap();
-    }, [activeTab]);
 
     const currentPlanName = '시내 실속형';
 
@@ -192,26 +154,28 @@ const TourApp = () => {
                         </div>
                     </div>
 
-                    <div className="bg-[#f8fafc] rounded-[1.5rem] p-8 flex items-center justify-between border border-[#e2e8f0]">
-                        <div className="text-center">
-                            <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
-                            <p className="text-xl font-black text-[#1a202c]">출국</p>
-                            <p className={`text-xs font-black ${colors.primaryText}`}>08:25</p>
-                        </div>
-                        <div className="flex-1 px-4 flex flex-col items-center">
-                            <div className="w-full flex items-center gap-2">
-                                <div className="flex-1 h-[1px] bg-[#cbd5e1]"></div>
-                                <Plane className={colors.primaryText} size={16} />
-                                <div className="flex-1 h-[1px] bg-[#cbd5e1]"></div>
+                    {activeTab === 'itinerary' && (
+                        <div className="bg-[#f8fafc] rounded-[1.5rem] p-8 flex items-center justify-between border border-[#e2e8f0]">
+                            <div className="text-center">
+                                <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
+                                <p className="text-xl font-black text-[#1a202c]">출국</p>
+                                <p className={`text-xs font-black ${colors.primaryText}`}>08:25</p>
                             </div>
-                            <p className="text-[10px] text-gray-400 mt-2 font-black tracking-widest uppercase">Kobe Airport</p>
+                            <div className="flex-1 px-4 flex flex-col items-center">
+                                <div className="w-full flex items-center gap-2">
+                                    <div className="flex-1 h-[1px] bg-[#cbd5e1]"></div>
+                                    <Plane className={colors.primaryText} size={16} />
+                                    <div className="flex-1 h-[1px] bg-[#cbd5e1]"></div>
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-2 font-black tracking-widest uppercase">Kobe Airport</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
+                                <p className="text-xl font-black text-[#1a202c]">귀국</p>
+                                <p className={`text-xs font-black ${colors.primaryText}`}>18:40</p>
+                            </div>
                         </div>
-                        <div className="text-center">
-                            <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UKB</p>
-                            <p className="text-xl font-black text-[#1a202c]">귀국</p>
-                            <p className={`text-xs font-black ${colors.primaryText}`}>18:40</p>
-                        </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Content */}
@@ -270,19 +234,21 @@ const TourApp = () => {
                                 <div className="flex items-center justify-between mb-4 px-2">
                                     <h3 className="font-black text-xs uppercase tracking-widest text-gray-400">Day {selectedDay} Map</h3>
                                     <div className="flex bg-gray-100 p-1 rounded-full">
-                                        <button onClick={() => setShowRealMap(true)} className={`px-3 py-1 text-[10px] font-black rounded-full transition-all ${showRealMap ? `${colors.primary} text-white shadow-md` : 'text-gray-400'}`}>구글 지도</button>
-                                        <button onClick={() => setShowRealMap(false)} className={`px-3 py-1 text-[10px] font-black rounded-full transition-all ${!showRealMap ? `${colors.primary} text-white shadow-md` : 'text-gray-400'}`}>일러스트</button>
+                                        <span className="px-3 py-1 text-[10px] font-black rounded-full bg-white text-gray-700 shadow-md">
+                                            구글 지도
+                                        </span>
                                     </div>
                                 </div>
-                                {showRealMap ? (
-                                    <div className="flex-1 w-full rounded-[2rem] overflow-hidden border border-[#e2e8f0] bg-gray-50 relative">
-                                        <iframe className="absolute inset-0 w-full h-full" style={{ border: 0 }} loading="lazy" allowFullScreen src={`https://maps.google.com/maps?q=${encodeURIComponent(activeItinerary[selectedDay - 1].mainQuery)}&output=embed`} title="Google Maps"></iframe>
-                                    </div>
-                                ) : (
-                                    <div className="flex-1 flex flex-col items-center justify-center text-center">
-                                        {isGenerating ? <Loader2 className="animate-spin text-[#1a365d] mb-4" size={40} /> : mapImage ? <img src={mapImage} className="rounded-3xl shadow-2xl" alt="Map Illustration" /> : <p className="text-gray-400">지도를 로드 중...</p>}
-                                    </div>
-                                )}
+                                <div className="flex-1 w-full rounded-[2rem] overflow-hidden border border-[#e2e8f0] bg-gray-50 relative">
+                                    <iframe
+                                        className="absolute inset-0 w-full h-full"
+                                        style={{ border: 0 }}
+                                        loading="lazy"
+                                        allowFullScreen
+                                        src={`https://maps.google.com/maps?q=${encodeURIComponent(activeItinerary[selectedDay - 1].mainQuery)}&output=embed`}
+                                        title="Google Maps"
+                                    ></iframe>
+                                </div>
                                 <div className="mt-6 p-6 bg-[#f8fafc] rounded-[2rem] border border-[#e2e8f0]">
                                     <h4 className="font-black text-[#1a202c] mb-1 flex items-center gap-2"><Compass size={18} className={colors.accentText} /> {currentPlanName} 경로</h4>
                                     <p className="text-xs font-bold text-gray-500">{activeItinerary[selectedDay - 1].route}</p>
@@ -624,28 +590,28 @@ const Scorecard = () => {
     const [selectedCourse, setSelectedCourse] = useState('century');
 
     const [players, setPlayers] = useState(() => {
-        const saved = localStorage.getItem('kobe-scorecard-players-v2');
+        const saved = localStorage.getItem('kobe-scorecard-players-v3');
         return saved ? JSON.parse(saved) : ["이프로", "안프로", "태프로"];
     });
 
     // 18 holes x 3 players. 0 means empty.
     const [scores, setScores] = useState<number[][]>(() => {
-        const saved = localStorage.getItem('kobe-scorecard-scores-v2');
+        const saved = localStorage.getItem('kobe-scorecard-scores-v3');
         return saved ? JSON.parse(saved) : Array(18).fill([0, 0, 0]);
     });
 
     // Pars are now derived from the selected course, but we still allow manual edits if needed (though resetting course resets pars)
     const [pars, setPars] = useState<number[]>(() => {
-        const saved = localStorage.getItem('kobe-scorecard-pars-v2');
+        const saved = localStorage.getItem('kobe-scorecard-pars-v3');
         return saved ? JSON.parse(saved) : courses['century'].pars;
     });
 
     const [activeHalf, setActiveHalf] = useState<'OUT' | 'IN'>('OUT');
 
     useEffect(() => {
-        localStorage.setItem('kobe-scorecard-players-v2', JSON.stringify(players));
-        localStorage.setItem('kobe-scorecard-scores-v2', JSON.stringify(scores));
-        localStorage.setItem('kobe-scorecard-pars-v2', JSON.stringify(pars));
+        localStorage.setItem('kobe-scorecard-players-v3', JSON.stringify(players));
+        localStorage.setItem('kobe-scorecard-scores-v3', JSON.stringify(scores));
+        localStorage.setItem('kobe-scorecard-pars-v3', JSON.stringify(pars));
     }, [players, scores, pars]);
 
     const handleCourseChange = (courseKey: string) => {
