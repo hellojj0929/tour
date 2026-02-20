@@ -6,6 +6,7 @@ import { db, isFirebaseConfigured } from '../lib/firebase';
 
 import greenTexture from '../assets/green-texture.png';
 import golfBallImage from '../assets/golf-ball.png';
+import golfCourseBg from '../assets/golf-course-bg.jpg';
 
 // Type Definitions
 interface LeaderboardEntry {
@@ -584,9 +585,19 @@ const PuttingGame: React.FC = () => {
 
                 {/* Overlays */}
                 {(gameState === 'START' || gameState === 'GAMEOVER' || gameState === 'LEADERBOARD') && (
-                    <div className="absolute inset-4 bg-black/70 backdrop-blur-sm rounded-[1.5rem] flex flex-col items-center justify-center text-white p-6 text-center animate-in fade-in">
+                    <div className="absolute inset-4 rounded-[1.5rem] flex flex-col items-center justify-center text-white p-6 text-center animate-in fade-in overflow-hidden">
+                        {/* Background image for START screen */}
                         {gameState === 'START' && (
-                            <>
+                            <div
+                                className="absolute inset-0 bg-cover bg-center"
+                                style={{ backgroundImage: `url(${golfCourseBg})` }}
+                            />
+                        )}
+                        {/* Dark overlay */}
+                        <div className={`absolute inset-0 ${gameState === 'START' ? 'bg-black/50' : 'bg-black/70 backdrop-blur-sm'}`} />
+
+                        {gameState === 'START' && (
+                            <div className="relative z-10">
                                 <div className="text-5xl mb-4">⛳</div>
                                 <h1 className="text-3xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">MINI PUTT</h1>
                                 <p className="text-slate-300 text-sm mb-6">드래그해서 퍼팅! 9홀 도전!</p>
@@ -611,11 +622,11 @@ const PuttingGame: React.FC = () => {
                                 <button onClick={initGame} className="w-full bg-gradient-to-r from-green-500 to-emerald-500 py-4 rounded-xl font-black text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
                                     <Play fill="white" size={20} /> START
                                 </button>
-                            </>
+                            </div>
                         )}
 
                         {gameState === 'GAMEOVER' && (
-                            <>
+                            <div className="relative z-10">
                                 <div className="text-5xl mb-2">🏌️</div>
                                 <h2 className="text-2xl font-black mb-2">ROUND COMPLETE!</h2>
                                 <p className="text-3xl font-black text-amber-400 mb-1">{score} Strokes</p>
@@ -645,11 +656,11 @@ const PuttingGame: React.FC = () => {
                                         RANK
                                     </button>
                                 </div>
-                            </>
+                            </div>
                         )}
 
                         {gameState === 'LEADERBOARD' && (
-                            <div className="w-full h-full flex flex-col">
+                            <div className="w-full h-full flex flex-col relative z-10">
                                 <h2 className="text-xl font-black mb-4 flex items-center justify-center gap-2"><Medal className="text-yellow-500" /> RANKING</h2>
                                 <p className="text-slate-400 text-xs mb-3">Lower is better! ⛳</p>
                                 <div className="flex-1 overflow-y-auto space-y-2 mb-4">
