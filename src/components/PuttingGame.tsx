@@ -202,6 +202,10 @@ const PuttingGame: React.FC = () => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
+        // High quality image rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // Green background gradient
