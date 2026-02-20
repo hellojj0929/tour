@@ -105,6 +105,19 @@ const GameIntro: React.FC = () => {
                     >
                         <div className="text-5xl opacity-40 text-center">⭐✨</div>
                     </GameCard>
+
+                    {/* Putting Game */}
+                    <GameCard
+                        to="/game/putting"
+                        title="MINI PUTT"
+                        desc="골프 퍼팅 게임"
+                        color="green"
+                        iconColor="bg-green-500"
+                        isNew={true}
+                        highScore={(localStorage.getItem('puttingLeaderboard') ? JSON.parse(localStorage.getItem('puttingLeaderboard') || '[]')[0]?.score || '-' : '-').toString()}
+                    >
+                        <div className="text-5xl opacity-40 text-center">⛳🏌️</div>
+                    </GameCard>
                 </div>
 
                 {/* Decorative elements */}
@@ -140,6 +153,7 @@ const GameCard: React.FC<GameCardProps> = ({ to, title, desc, color, iconColor, 
         cyan: 'group-hover:border-cyan-500/50 group-hover:shadow-cyan-500/20',
         pink: 'group-hover:border-pink-500/50 group-hover:shadow-pink-500/20',
         yellow: 'group-hover:border-yellow-500/50 group-hover:shadow-yellow-500/20',
+        green: 'group-hover:border-green-500/50 group-hover:shadow-green-500/20',
     };
 
     const bgGradients: Record<string, string> = {
@@ -148,6 +162,7 @@ const GameCard: React.FC<GameCardProps> = ({ to, title, desc, color, iconColor, 
         cyan: 'from-cyan-600/20 to-blue-600/20',
         pink: 'from-pink-600/20 to-orange-600/20',
         yellow: 'from-yellow-600/20 to-orange-600/20',
+        green: 'from-green-600/20 to-emerald-600/20',
     };
 
     const btnColors: Record<string, string> = {
@@ -156,6 +171,7 @@ const GameCard: React.FC<GameCardProps> = ({ to, title, desc, color, iconColor, 
         cyan: 'bg-cyan-500 shadow-cyan-500/30',
         pink: 'bg-pink-500 shadow-pink-500/30',
         yellow: 'bg-yellow-500 shadow-yellow-500/30',
+        green: 'bg-green-500 shadow-green-500/30',
     };
 
     const textColors: Record<string, string> = {
@@ -164,6 +180,7 @@ const GameCard: React.FC<GameCardProps> = ({ to, title, desc, color, iconColor, 
         cyan: 'text-cyan-300',
         pink: 'text-pink-300',
         yellow: 'text-yellow-300',
+        green: 'text-green-300',
     };
 
 

@@ -142,8 +142,11 @@ const TourApp = () => {
                                 <Award size={14} className={colors.accentText} />
                                 <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${colors.accentText}`}>Kober Edition</span>
                             </div>
-                            <h1 className="text-3xl font-black tracking-tighter text-[#1a202c] leading-none mb-2">KOBE TOUR</h1>
-
+                            <h1 className="text-3xl font-black tracking-tighter text-[#1a202c] leading-none mb-4">KOBE TOUR</h1>
+                            <Link to="/game/putting" className="inline-flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-[#d4af37] to-[#b08d49] text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 border-2 border-[#d4af37]/30">
+                                <Gamepad2 size={20} className="text-white" />
+                                <span className="text-base font-black tracking-tight">미니 게임하러 가기! 🕹️</span>
+                            </Link>
                         </div>
                         <div className={`${colors.primary} w-14 h-14 rounded-2xl flex items-center justify-center text-[#d4af37] shadow-xl p-2`}>
                             <img src={golfFlagIcon} alt="Golf Flag" className="w-full h-full object-contain" />

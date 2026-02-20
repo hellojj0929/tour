@@ -7,6 +7,7 @@ import MemoryGame from './components/MemoryGame';
 import RunnerGame from './components/RunnerGame';
 import ColorMatchGame from './components/ColorMatchGame';
 import ConstellationGame from './components/ConstellationGame';
+import PuttingGame from './components/PuttingGame';
 import Layout from './components/Layout';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/game/runner" element={<RunnerGame />} />
           <Route path="/game/colormatch" element={<ColorMatchGame />} />
           <Route path="/game/constellation" element={<ConstellationGame />} />
+          <Route path="/game/putting" element={<PuttingGame />} />
         </Routes>
       </Layout>
     </Router>
