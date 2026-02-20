@@ -231,42 +231,35 @@ const PuttingGame: React.FC = () => {
 
             // Background circle for visibility
             ctx.beginPath();
-            ctx.arc(0, 0, 22, 0, Math.PI * 2);
+            ctx.arc(0, 0, 11, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
             ctx.fill();
 
             // Draw multiple chevrons to show direction
             for (let i = 0; i < 3; i++) {
-                const offset = (i - 1) * 9;
+                const offset = (i - 1) * 4.5;
                 const alpha = 0.9 - i * 0.2;
 
                 ctx.beginPath();
-                ctx.moveTo(offset - 6, -6);
-                ctx.lineTo(offset + 4, 0);
-                ctx.lineTo(offset - 6, 6);
+                ctx.moveTo(offset - 3, -3);
+                ctx.lineTo(offset + 2, 0);
+                ctx.lineTo(offset - 3, 3);
                 ctx.strokeStyle = `rgba(255, 220, 100, ${alpha})`;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.stroke();
 
                 // White outline for contrast
                 ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
 
                 // Yellow fill
                 ctx.strokeStyle = `rgba(255, 200, 50, ${alpha})`;
-                ctx.lineWidth = 1.5;
+                ctx.lineWidth = 0.75;
                 ctx.stroke();
             }
-
-            // "SLOPE" label
-            ctx.rotate(-slope.angle); // Reset rotation for text
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.font = 'bold 8px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('SLOPE', 0, 18);
 
             ctx.restore();
         });
