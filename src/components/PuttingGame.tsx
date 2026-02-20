@@ -507,7 +507,7 @@ const PuttingGame: React.FC = () => {
             {/* Header */}
             <div className="w-full bg-slate-800 p-4 pt-10 pb-6 rounded-b-[2rem] shadow-xl z-10 flex flex-col gap-4 mt-0">
                 <div className="flex justify-between items-center px-2">
-                    <Link to="/game" className="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-bold">
+                    <Link to="/" className="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-bold">
                         <ArrowLeft size={18} /> EXIT
                     </Link>
                     <div className="flex items-center gap-4">
