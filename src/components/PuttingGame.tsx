@@ -5,6 +5,7 @@ import { collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp, Ti
 import { db, isFirebaseConfigured } from '../lib/firebase';
 
 import greenTexture from '../assets/green-texture.png';
+import golfBallImage from '../assets/golf-ball.png';
 
 // Type Definitions
 interface LeaderboardEntry {
@@ -39,6 +40,7 @@ interface SlopeArrow {
 const PuttingGame: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const bgImageRef = useRef<HTMLImageElement | null>(null);
+    const ballImageRef = useRef<HTMLImageElement | null>(null);
 
     // States
     const [gameState, setGameState] = useState<'START' | 'PLAYING' | 'AIMING' | 'ROLLING' | 'HOLE_IN' | 'GAMEOVER' | 'LEADERBOARD'>('START');
@@ -152,6 +154,12 @@ const PuttingGame: React.FC = () => {
         img.onload = () => {
             bgImageRef.current = img;
         };
+
+        const ballImg = new Image();
+        ballImg.src = golfBallImage;
+        ballImg.onload = () => {
+            ballImageRef.current = ballImg;
+        };
     }, []);
 
     useEffect(() => {
@@ -259,24 +267,30 @@ const PuttingGame: React.FC = () => {
 
         // Ball shadow
         ctx.beginPath();
-        ctx.ellipse(ballRef.current.x + 2, ballRef.current.y + 2, BALL_RADIUS, BALL_RADIUS * 0.6, 0, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.ellipse(ballRef.current.x + 2, ballRef.current.y + 4, BALL_RADIUS, BALL_RADIUS * 0.5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
         ctx.fill();
 
-        // Ball
-        ctx.beginPath();
-        ctx.arc(ballRef.current.x, ballRef.current.y, BALL_RADIUS, 0, Math.PI * 2);
-        const ballGradient = ctx.createRadialGradient(
-            ballRef.current.x - 3, ballRef.current.y - 3, 0,
-            ballRef.current.x, ballRef.current.y, BALL_RADIUS
-        );
-        ballGradient.addColorStop(0, '#ffffff');
-        ballGradient.addColorStop(1, '#e5e5e5');
-        ctx.fillStyle = ballGradient;
-        ctx.fill();
-        ctx.strokeStyle = '#d4d4d4';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        // Ball (image)
+        if (ballImageRef.current && ballImageRef.current.complete) {
+            const ballSize = BALL_RADIUS * 2.2;
+            ctx.drawImage(
+                ballImageRef.current,
+                ballRef.current.x - ballSize / 2,
+                ballRef.current.y - ballSize / 2,
+                ballSize,
+                ballSize
+            );
+        } else {
+            // Fallback to drawn ball if image not loaded
+            ctx.beginPath();
+            ctx.arc(ballRef.current.x, ballRef.current.y, BALL_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.strokeStyle = '#d4d4d4';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
 
         // Aiming line
         if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
