@@ -616,7 +616,7 @@ const PuttingGame: React.FC = () => {
                                         value={playerName}
                                         onChange={(e) => setPlayerName(e.target.value)}
                                         placeholder="Enter Nickname"
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-center font-bold text-white"
+                                        className="w-full bg-transparent border border-white/40 rounded-xl px-4 py-3 text-center font-bold text-white placeholder-white/50"
                                     />
                                 </div>
                                 <button onClick={initGame} className="w-full bg-gradient-to-r from-green-500 to-emerald-500 py-4 rounded-xl font-black text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
