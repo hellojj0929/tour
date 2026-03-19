@@ -11,7 +11,6 @@ import {
     Clock,
     Flag,
     Waves,
-    ShoppingBag,
     Navigation,
     Info,
     Hotel,
@@ -37,7 +36,11 @@ import {
     Gamepad2,
     Trophy,
     Share2,
-    Minus
+    Minus,
+    Paperclip,
+    FileText,
+    X,
+    Image as ImageIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import golfFlagIcon from '../assets/golf-flag-icon.svg';
@@ -60,18 +63,19 @@ const TourApp = () => {
     // 시내 실속형
     const itinerary = [
         {
-            day: 1, date: "3월 20일 (금)", title: "고베공항 입국 & 시내 맛집", route: "고베공항 ➔ 산노미야 ➔ 이진칸",
-            mainQuery: "Candeo Hotels Kobe Tor Road",
+            day: 1, date: "3월 20일 (금)", title: "고베공항 입국 & 하버랜드 야경", route: "고베공항 ➔ 호텔 ➔ 메리켄파크 ➔ 하버랜드",
+            mainQuery: "Kobe Harborland",
             items: [
                 { time: "08:25", icon: <Plane size={16} />, activity: "인천공항(ICN) T2 출발", desc: "KE2171 A321-neo", mapQuery: "Incheon International Airport Terminal 2" },
                 { time: "10:10", icon: <Car size={16} />, activity: "고베 공항(UKB) T2 도착", desc: "입국 수속 후 렌트카 픽업", mapQuery: "Kobe Airport" },
                 { time: "12:00", icon: <Utensils size={16} />, activity: "점심 식사 (스테이크랜드 고베)", desc: "가성비 좋은 고베규 런치 (1인 약 3,500엔~)", mapQuery: "Steakland Kobe" },
                 { time: "15:00", icon: <Hotel size={16} />, activity: "호텔 체크인", desc: "칸데오 호텔 고베 토르 로드 (주차 불포함/인근이용)", mapQuery: "Candeo Hotels Kobe Tor Road" },
-                { time: "19:00", icon: <Utensils size={16} />, activity: "디너: 고베규 이자카야", desc: "현지인 가성비 맛집", mapQuery: "Steakland Kobe" },
+                { time: "16:00", icon: <Coffee size={16} />, activity: "메리켄 파크 산책", desc: "고베 포트 타워 & 사진 명소", mapQuery: "Meriken Park" },
+                { time: "18:30", icon: <MapPin size={16} />, activity: "하버랜드 야경 감상", desc: "모자이크 몰 관람차 & 야경 디너", mapQuery: "Kobe Harborland" },
             ]
         },
         {
-            day: 2, date: "3월 21일 (토)", title: "제1라운드 & 온천 이자카야", route: "호텔 ➔ 센추리 요시카와 GC ➔ 산노미야",
+            day: 2, date: "3월 21일 (토)", title: "제1라운드 & 누노비키 허브엔", route: "호텔 ➔ 센추리 요시카와 GC ➔ 누노비키 ➔ 기타노",
             mainQuery: "Century Yoshikawa Golf Club",
             items: [
                 {
@@ -79,16 +83,19 @@ const TourApp = () => {
                     mapQuery: "Century Yoshikawa Golf Club",
                     bookingUrl: ""
                 },
-                { time: "17:00", icon: <Utensils size={16} />, activity: "저녁 식사 & 휴식", desc: "호텔 복귀 후 시내 이자카야 탐방", mapQuery: "Sannomiya Station" },
+                { time: "15:30", icon: <Mountain size={16} />, activity: "누노비키 허브엔 & 로프웨이", desc: "로프웨이로 고베 시내+바다 전망 감상, 봄꽃 허브 정원 산책", mapQuery: "Kobe Nunobiki Herb Gardens Ropeway" },
+                { time: "17:30", icon: <Coffee size={16} />, activity: "기타노텐만 신사 & 이진칸 거리", desc: "유럽풍 거리 산책 + 신사에서 고베 시내 전망", mapQuery: "Kitano Tenmangu Shrine Kobe" },
+                { time: "19:00", icon: <Utensils size={16} />, activity: "저녁 식사", desc: "시내 이자카야 탐방", mapQuery: "Sannomiya Station" },
             ]
         },
         {
-            day: 3, date: "3월 22일 (일)", title: "고베 시티 투어 & 하버랜드 야경", route: "산노미야 ➔ 모토마치 ➔ 하버랜드",
-            mainQuery: "Kobe Harborland",
+            day: 3, date: "3월 22일 (일)", title: "겟코엔 유게츠산소 & 소라쿠엔", route: "호텔 ➔ 겟코엔 유게츠산소 ➔ 소라쿠엔 ➔ 시내",
+            mainQuery: "Gekkoen Yugetsusanso",
             items: [
-                { time: "11:00", icon: <ShoppingBag size={16} />, activity: "모토마치 & 난킨마치", desc: "고베 속 차이나타운 & 쇼핑몰", mapQuery: "Nankin-machi" },
-                { time: "15:00", icon: <Coffee size={16} />, activity: "메리켄 파크 산책", desc: "고베 포트 타워 & 사진 명소", mapQuery: "Meriken Park" },
-                { time: "19:00", icon: <MapPin size={16} />, activity: "하버랜드 야경 감상", desc: "모자이크 몰 관람차 & 야경 디너", mapQuery: "Kobe Harborland" },
+                { time: "11:00", icon: <Mountain size={16} />, activity: "겟코엔 유게츠산소 입장", desc: "전통 일본 정원 & 료칸 체험 (3인 28,600엔 / 15시까지 이용)", mapQuery: "Gekkoen Yugetsusanso Kobe" },
+                { time: "15:30", icon: <Coffee size={16} />, activity: "소라쿠엔 정원", desc: "도심 속 전통 일본 정원에서 봄꽃 감상", mapQuery: "Sorakuen Garden Kobe" },
+                { time: "17:00", icon: <MapPin size={16} />, activity: "시내 자유시간", desc: "산노미야 쇼핑 또는 카페 탐방", mapQuery: "Sannomiya Station" },
+                { time: "19:00", icon: <Utensils size={16} />, activity: "저녁 식사", desc: "현지 맛집 탐방", mapQuery: "Sannomiya Station" },
             ]
         },
         {
@@ -111,6 +118,7 @@ const TourApp = () => {
     const budgetItems = [
         { category: "숙박 (Stay)", detail: "총 ¥98,258 ÷ 3명 (3박)", cost: "¥32,753", icon: <Building size={20} />, color: "bg-[#f0f9f6] text-[#2d6a4f]" },
         { category: "골프 (Golf)", detail: "센추리(15,510) + 로코(10,540)", cost: "¥26,050", icon: <Flag size={20} />, color: "bg-[#fffcf0] text-[#b08d49]" },
+        { category: "겟코엔 (Gekkoen)", detail: "유게츠산소 (28,600÷3명)", cost: "¥9,534", icon: <Mountain size={20} />, color: "bg-[#fef3f2] text-[#b91c1c]" },
         { category: "기타 (Misc)", detail: "렌트카(1/3) + 식비 + 주유비", cost: "¥48,100", icon: <PiggyBank size={20} />, color: "bg-gray-50 text-gray-600" },
     ];
 
@@ -228,8 +236,108 @@ const TourApp = () => {
                     )}
 
                     {activeTab === 'map' && (
-                        <div className="p-6 animate-in fade-in duration-700">
-                            <div className={`${colors.card} rounded-[1.5rem] p-4 shadow-xl border border-[#f1f5f9] min-h-[500px] flex flex-col`}>
+                        <div className="p-6 animate-in fade-in duration-700 space-y-6">
+                            {/* 전체 여정 오버뷰 */}
+                            <div className={`${colors.card} rounded-[1.5rem] p-6 shadow-xl border border-[#f1f5f9]`}>
+                                <h3 className="font-black text-lg text-[#1a202c] mb-6 flex items-center gap-2">
+                                    <Navigation size={20} className={colors.accentText} /> 3박 4일 전체 이동 라인
+                                </h3>
+
+                                {/* Route Visual Map */}
+                                <div className="relative">
+                                    {/* Vertical Timeline Line */}
+                                    <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-[#d4af37] via-[#1a365d] to-[#d4af37]"></div>
+
+                                    {/* Day 1 */}
+                                    <div className="relative pl-16 pb-8">
+                                        <div className="absolute left-4 w-5 h-5 rounded-full bg-[#d4af37] border-4 border-white shadow-lg flex items-center justify-center">
+                                            <span className="text-[8px] font-black text-white">1</span>
+                                        </div>
+                                        <div className="bg-gradient-to-r from-[#fffcf0] to-white rounded-2xl p-4 border border-[#f3eee0]">
+                                            <p className="text-[10px] font-black text-[#d4af37] uppercase tracking-wider mb-1">Day 1 · 3월 20일 (금)</p>
+                                            <p className="text-sm font-black text-[#1a202c] mb-2">입국 & 하버랜드 야경</p>
+                                            <div className="flex flex-wrap items-center gap-1 text-[10px] text-gray-500">
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">✈️ 고베공항</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-[#1a365d] text-white rounded-full">🏨 호텔</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">🌊 메리켄파크</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">🌃 하버랜드</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Day 2 */}
+                                    <div className="relative pl-16 pb-8">
+                                        <div className="absolute left-4 w-5 h-5 rounded-full bg-[#2d6a4f] border-4 border-white shadow-lg flex items-center justify-center">
+                                            <span className="text-[8px] font-black text-white">2</span>
+                                        </div>
+                                        <div className="bg-gradient-to-r from-[#f0f9f6] to-white rounded-2xl p-4 border border-[#d1e7dd]">
+                                            <p className="text-[10px] font-black text-[#2d6a4f] uppercase tracking-wider mb-1">Day 2 · 3월 21일 (토)</p>
+                                            <p className="text-sm font-black text-[#1a202c] mb-2">제1라운드 & 누노비키 허브엔</p>
+                                            <div className="flex flex-wrap items-center gap-1 text-[10px] text-gray-500">
+                                                <span className="px-2 py-0.5 bg-[#1a365d] text-white rounded-full">🏨 호텔</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">⛳ 센추리 GC</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">🌿 누노비키</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">🌸 기타노</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Day 3 */}
+                                    <div className="relative pl-16 pb-8">
+                                        <div className="absolute left-4 w-5 h-5 rounded-full bg-[#b91c1c] border-4 border-white shadow-lg flex items-center justify-center">
+                                            <span className="text-[8px] font-black text-white">3</span>
+                                        </div>
+                                        <div className="bg-gradient-to-r from-[#fef3f2] to-white rounded-2xl p-4 border border-[#fecaca]">
+                                            <p className="text-[10px] font-black text-[#b91c1c] uppercase tracking-wider mb-1">Day 3 · 3월 22일 (일)</p>
+                                            <p className="text-sm font-black text-[#1a202c] mb-2">겟코엔 & 소라쿠엔</p>
+                                            <div className="flex flex-wrap items-center gap-1 text-[10px] text-gray-500">
+                                                <span className="px-2 py-0.5 bg-[#1a365d] text-white rounded-full">🏨 호텔</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">🏯 겟코엔</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">🌿 소라쿠엔</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">🛍️ 산노미야</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Day 4 */}
+                                    <div className="relative pl-16">
+                                        <div className="absolute left-4 w-5 h-5 rounded-full bg-[#d4af37] border-4 border-white shadow-lg flex items-center justify-center">
+                                            <span className="text-[8px] font-black text-white">4</span>
+                                        </div>
+                                        <div className="bg-gradient-to-r from-[#fffcf0] to-white rounded-2xl p-4 border border-[#f3eee0]">
+                                            <p className="text-[10px] font-black text-[#d4af37] uppercase tracking-wider mb-1">Day 4 · 3월 23일 (월)</p>
+                                            <p className="text-sm font-black text-[#1a202c] mb-2">제2라운드 & 귀국</p>
+                                            <div className="flex flex-wrap items-center gap-1 text-[10px] text-gray-500">
+                                                <span className="px-2 py-0.5 bg-[#1a365d] text-white rounded-full">🏨 호텔</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">⛳ 로코 CC</span>
+                                                <span>→</span>
+                                                <span className="px-2 py-0.5 bg-white rounded-full border">✈️ 고베공항</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Google Maps Full Route Button */}
+                                <button
+                                    onClick={() => window.open('https://www.google.com/maps/dir/Kobe+Airport/Steakland+Kobe/Candeo+Hotels+Kobe+Tor+Road/Meriken+Park/Kobe+Harborland/Century+Yoshikawa+Golf+Club/Gekkoen+Yugetsusanso/Rokko+Country+Club/Kobe+Airport', '_blank')}
+                                    className={`mt-6 w-full py-4 rounded-2xl ${colors.primary} text-white text-sm font-black flex items-center justify-center gap-2 shadow-lg`}
+                                >
+                                    <MapIcon size={18} /> 전체 경로 구글 지도에서 보기
+                                </button>
+                            </div>
+
+                            {/* 일별 지도 */}
+                            <div className={`${colors.card} rounded-[1.5rem] p-4 shadow-xl border border-[#f1f5f9] min-h-[400px] flex flex-col`}>
                                 <div className="flex items-center justify-between mb-4 px-2">
                                     <h3 className="font-black text-xs uppercase tracking-widest text-gray-400">Day {selectedDay} Map</h3>
                                     <div className="flex bg-gray-100 p-1 rounded-full">
@@ -238,7 +346,7 @@ const TourApp = () => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="flex-1 w-full rounded-[2rem] overflow-hidden border border-[#e2e8f0] bg-gray-50 relative">
+                                <div className="flex-1 w-full rounded-[2rem] overflow-hidden border border-[#e2e8f0] bg-gray-50 relative min-h-[280px]">
                                     <iframe
                                         className="absolute inset-0 w-full h-full"
                                         style={{ border: 0 }}
@@ -248,12 +356,9 @@ const TourApp = () => {
                                         title="Google Maps"
                                     ></iframe>
                                 </div>
-                                <div className="mt-6 p-6 bg-[#f8fafc] rounded-[2rem] border border-[#e2e8f0]">
-                                    <h4 className="font-black text-[#1a202c] mb-1 flex items-center gap-2"><Compass size={18} className={colors.accentText} /> {currentPlanName} 경로</h4>
+                                <div className="mt-4 p-4 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0]">
+                                    <h4 className="font-black text-[#1a202c] mb-1 flex items-center gap-2 text-sm"><Compass size={16} className={colors.accentText} /> {activeItinerary[selectedDay - 1].date}</h4>
                                     <p className="text-xs font-bold text-gray-500">{activeItinerary[selectedDay - 1].route}</p>
-                                    <button onClick={() => openInGoogleMaps(activeItinerary[selectedDay - 1].mainQuery)} className={`mt-4 w-full py-3.5 rounded-2xl ${colors.primary} text-white text-[11px] font-black flex items-center justify-center gap-2 shadow-lg`}>
-                                        <MapIcon size={14} /> 구글 지도 앱에서 크게 보기
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -275,25 +380,29 @@ const TourApp = () => {
                                 <div className="flex flex-col items-center justify-center mb-10 relative">
                                     <div className="w-48 h-48 relative">
                                         <svg viewBox="0 0 100 100" className="transform -rotate-90 w-full h-full drop-shadow-xl">
-                                            {/* Misc - 45.0% - Gray */}
+                                            {/* Misc - 41.3% - Gray */}
                                             <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f1f5f9" strokeWidth="16" />
-                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#64748b" strokeWidth="16" strokeDasharray="113.0 251.2" strokeDashoffset="0" className="transition-all duration-1000 ease-out" />
+                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#64748b" strokeWidth="16" strokeDasharray="103.7 251.2" strokeDashoffset="0" className="transition-all duration-1000 ease-out" />
 
-                                            {/* Stay - 30.6% - Green */}
-                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#2d6a4f" strokeWidth="16" strokeDasharray="76.9 251.2" strokeDashoffset="-113.0" className="transition-all duration-1000 ease-out delay-300" />
+                                            {/* Stay - 28.1% - Green */}
+                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#2d6a4f" strokeWidth="16" strokeDasharray="70.6 251.2" strokeDashoffset="-103.7" className="transition-all duration-1000 ease-out delay-300" />
 
-                                            {/* Golf - 24.4% - Gold */}
-                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#d4af37" strokeWidth="16" strokeDasharray="61.3 251.2" strokeDashoffset="-189.9" className="transition-all duration-1000 ease-out delay-500" />
+                                            {/* Golf - 22.4% - Gold */}
+                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#d4af37" strokeWidth="16" strokeDasharray="56.3 251.2" strokeDashoffset="-174.3" className="transition-all duration-1000 ease-out delay-400" />
+
+                                            {/* Gekkoen - 8.2% - Red */}
+                                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#b91c1c" strokeWidth="16" strokeDasharray="20.6 251.2" strokeDashoffset="-230.6" className="transition-all duration-1000 ease-out delay-500" />
                                         </svg>
                                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">TOTAL</p>
-                                            <p className="text-xl font-black text-[#1a202c]">¥106k</p>
+                                            <p className="text-xl font-black text-[#1a202c]">¥116k</p>
                                         </div>
                                     </div>
-                                    <div className="flex justify-center gap-4 mt-6 w-full">
-                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#2d6a4f]"></div><span className="text-[10px] font-bold text-gray-500">숙박 31%</span></div>
-                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#d4af37]"></div><span className="text-[10px] font-bold text-gray-500">골프 24%</span></div>
-                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#64748b]"></div><span className="text-[10px] font-bold text-gray-500">기타 45%</span></div>
+                                    <div className="flex flex-wrap justify-center gap-3 mt-6 w-full">
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#2d6a4f]"></div><span className="text-[10px] font-bold text-gray-500">숙박 28%</span></div>
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#d4af37]"></div><span className="text-[10px] font-bold text-gray-500">골프 22%</span></div>
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#b91c1c]"></div><span className="text-[10px] font-bold text-gray-500">겟코엔 8%</span></div>
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#64748b]"></div><span className="text-[10px] font-bold text-gray-500">기타 41%</span></div>
                                     </div>
                                 </div>
 
@@ -308,7 +417,7 @@ const TourApp = () => {
                                 <div className={`${colors.primary} p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden`}>
                                     <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-24 -mt-24"></div>
                                     <div className="flex justify-between items-center mb-4 opacity-80 text-[10px] font-black tracking-[0.4em]"><span>TOTAL ESTIMATION</span><Wallet size={16} /></div>
-                                    <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥106,903</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 985,000원 (항공권 제외)</span></div>
+                                    <div className="flex flex-col"><span className="text-5xl font-black text-[#d4af37]">¥116,437</span><span className="text-white/60 text-xs font-bold mt-3 tracking-wide text-center">한화 약 1,071,000원 (항공권 제외)</span></div>
                                 </div>
                             </div>
                         </div>
@@ -438,6 +547,7 @@ const TourApp = () => {
                                                 <p className="mt-1 text-[#d4af37] font-bold">대표자: 이경진 (Lee Kyungjin)</p>
                                             </div>
                                         </div>
+                                        <GolfDocumentUpload courseId="century" courseName="센추리 요시카와 GC" />
                                     </div>
                                 </section>
 
@@ -475,6 +585,7 @@ const TourApp = () => {
                                                 <p className="mt-1 text-[#d4af37] font-bold">대표자: 이경진 (Lee Kyungjin)</p>
                                             </div>
                                         </div>
+                                        <GolfDocumentUpload courseId="rokko" courseName="로코 CC" />
                                     </div>
                                 </section>
                             </div>
@@ -573,6 +684,159 @@ const TabButton = ({ active, onClick, icon, label }) => (
 );
 
 export default TourApp;
+
+const GolfDocumentUpload = ({ courseId, courseName }: { courseId: string; courseName: string }) => {
+    const [document, setDocument] = useState<{ name: string; data: string; type: string } | null>(() => {
+        const saved = localStorage.getItem(`kobe-golf-doc-${courseId}`);
+        return saved ? JSON.parse(saved) : null;
+    });
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('파일 크기는 5MB 이하여야 합니다.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            const docData = {
+                name: file.name,
+                data: reader.result as string,
+                type: file.type
+            };
+            setDocument(docData);
+            localStorage.setItem(`kobe-golf-doc-${courseId}`, JSON.stringify(docData));
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleRemove = () => {
+        if (confirm('첨부된 문서를 삭제하시겠습니까?')) {
+            setDocument(null);
+            localStorage.removeItem(`kobe-golf-doc-${courseId}`);
+        }
+    };
+
+    const isImage = document?.type?.startsWith('image/');
+    const isPDF = document?.type === 'application/pdf';
+
+    return (
+        <div className="mt-4 p-4 bg-white rounded-2xl border-2 border-dashed border-[#e2e8f0]">
+            <div className="flex items-center gap-2 mb-3">
+                <Paperclip size={16} className="text-[#d4af37]" />
+                <span className="text-xs font-black text-gray-600">예약 확인서 첨부</span>
+            </div>
+
+            {!document ? (
+                <label className="flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-gray-50 rounded-xl transition-colors">
+                    <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                    />
+                    <div className="w-12 h-12 rounded-full bg-[#f8fafc] flex items-center justify-center mb-2">
+                        <FileText size={24} className="text-gray-400" />
+                    </div>
+                    <p className="text-xs text-gray-500 font-bold text-center">
+                        이미지 또는 PDF 파일을 선택하세요
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-1">최대 5MB</p>
+                </label>
+            ) : (
+                <div className="space-y-3">
+                    {/* File preview */}
+                    <div
+                        onClick={() => setIsPreviewOpen(true)}
+                        className="relative cursor-pointer group"
+                    >
+                        {isImage ? (
+                            <div className="relative rounded-xl overflow-hidden border border-[#e2e8f0]">
+                                <img
+                                    src={document.data}
+                                    alt="예약 확인서"
+                                    className="w-full h-32 object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <span className="text-white text-xs font-bold">크게 보기</span>
+                                </div>
+                            </div>
+                        ) : isPDF ? (
+                            <div className="flex items-center gap-3 p-4 bg-[#fef3f2] rounded-xl border border-[#fecaca]">
+                                <div className="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center">
+                                    <FileText size={20} className="text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-bold text-gray-700 truncate">{document.name}</p>
+                                    <p className="text-[10px] text-gray-400">PDF 문서</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                                <FileText size={20} className="text-gray-400" />
+                                <span className="text-sm font-bold text-gray-600 truncate">{document.name}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2">
+                        <label className="flex-1 py-2 px-4 bg-[#f8fafc] rounded-xl text-center cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input
+                                type="file"
+                                accept="image/*,.pdf"
+                                onChange={handleFileUpload}
+                                className="hidden"
+                            />
+                            <span className="text-[11px] font-bold text-gray-500">변경</span>
+                        </label>
+                        <button
+                            onClick={handleRemove}
+                            className="py-2 px-4 bg-red-50 rounded-xl text-[11px] font-bold text-red-400 hover:bg-red-100 transition-colors"
+                        >
+                            삭제
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Full Preview Modal */}
+            {isPreviewOpen && document && (
+                <div
+                    className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4"
+                    onClick={() => setIsPreviewOpen(false)}
+                >
+                    <button
+                        onClick={() => setIsPreviewOpen(false)}
+                        className="absolute top-4 right-4 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                    >
+                        <X size={24} />
+                    </button>
+                    <div className="max-w-full max-h-full overflow-auto" onClick={(e) => e.stopPropagation()}>
+                        {isImage ? (
+                            <img
+                                src={document.data}
+                                alt="예약 확인서"
+                                className="max-w-full max-h-[85vh] object-contain rounded-lg"
+                            />
+                        ) : isPDF ? (
+                            <iframe
+                                src={document.data}
+                                className="w-[90vw] h-[85vh] bg-white rounded-lg"
+                                title="PDF Preview"
+                            />
+                        ) : null}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const Scorecard = () => {
     const courses = {
